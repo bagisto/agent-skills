@@ -22,6 +22,30 @@ Payment gateway development in Bagisto.
 
 ---
 
+### `shipping-method-development`
+
+Shipping method development in Bagisto.
+
+**Activates when:** creating shipping methods, integrating shipping carriers like FedEx, UPS, DHL, or any third-party shipping provider — or when the user mentions `shipping`, `shipping method`, `shipping carrier`, `delivery`, or needs to add a new shipping option to checkout.
+
+---
+
+### `package-development`
+
+Package development in Bagisto.
+
+**Activates when:** creating packages, migrations, models, repositories, routes, controllers, views, localization, DataGrid, menus, ACL, or system configuration — or when the user mentions `package`, `migration`, `model`, `repository`, `controller`, `DataGrid`, `menu`, or `ACL`.
+
+---
+
+### `product-type-development`
+
+Product type development in Bagisto.
+
+**Activates when:** creating custom product types, defining product behaviors, or implementing specialized product logic — or when the user mentions `product type`, `custom product`, or needs to implement product-specific behavior.
+
+---
+
 ## Install
 
 Install all skills from this repo into your AI agent:
@@ -35,6 +59,9 @@ Install a specific skill only:
 ```bash
 npx skills add bagisto/agent-skills --skill "pest-testing"
 npx skills add bagisto/agent-skills --skill "payment-method-development"
+npx skills add bagisto/agent-skills --skill "shipping-method-development"
+npx skills add bagisto/agent-skills --skill "package-development"
+npx skills add bagisto/agent-skills --skill "product-type-development"
 ```
 
 Install for a specific agent:
@@ -51,7 +78,13 @@ agent-skills/
 ├── skills/
 │   ├── pest-testing/
 │   │   └── SKILL.md
-│   └── payment-method-development/
+│   ├── payment-method-development/
+│   │   └── SKILL.md
+│   ├── shipping-method-development/
+│   │   └── SKILL.md
+│   ├── package-development/
+│   │   └── SKILL.md
+│   └── product-type-development/
 │       └── SKILL.md
 ├── AGENTS.md
 └── README.md

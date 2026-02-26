@@ -58,6 +58,12 @@ This project has domain-specific skills available. You MUST activate the relevan
 
 - `payment-method-development` — Payment gateway development in Bagisto. Activates when creating payment methods, integrating payment gateways like Stripe, PayPal, or any third-party payment processor; or when the user mentions payment, payment gateway, payment method, Stripe, PayPal, or needs to add a new payment option to the checkout.
 
+- `shipping-method-development` — Shipping method development in Bagisto. Activates when creating shipping methods, integrating shipping carriers like FedEx, UPS, DHL, or any third-party shipping provider; or when the user mentions shipping, shipping method, shipping carrier, delivery, or needs to add a new shipping option to checkout.
+
+- `package-development` — Package development in Bagisto. Activates when creating packages, migrations, models, repositories, routes, controllers, views, localization, DataGrid, menus, ACL, or system configuration. Use references: @core (package structure, service providers), @data (migrations, models, repositories), @ui (routes, controllers, views), @features (localization, DataGrid, menus, ACL, system config).
+
+- `product-type-development` — Product type development in Bagisto. Activates when creating custom product types, defining product behaviors, or implementing specialized product logic. Use references: @config (product type configuration), @abstract (AbstractType methods), @build (complete subscription implementation).
+
 ## Bagisto Architecture
 
 ### Package Structure
@@ -380,5 +386,75 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Service providers must merge payment method configuration using `$this->mergeConfigFrom()`.
 - Always follow the existing code patterns and PHPDoc conventions when creating payment methods.
 - For testing payment methods, refer to `packages/Webkul/Shop/tests/Feature/Checkout/CheckoutTest.php`.
+
+=== shipping-method-development rules ===
+
+# Shipping Method Development
+
+- CRITICAL: ALWAYS use the shipping-method-development skill when working with shipping methods in Bagisto.
+- Shipping methods in Bagisto are located in `packages/Webkul/Shipping/src/Carriers/`.
+- All shipping methods extend `Webkul\Shipping\Carriers\AbstractShipping` abstract class.
+- Shipping carrier configuration is defined in `Config/carriers.php` files.
+- System configuration for admin panel is defined in `Config/system.php` files.
+- Service providers must merge carrier configuration using `$this->mergeConfigFrom()`.
+- Always follow the existing code patterns and PHPDoc conventions when creating shipping methods.
+- Use `core()->convertPrice()` for multi-currency support when setting prices.
+- Check `$item->getTypeInstance()->isStockable()` for per-item shipping calculations.
+
+=== package-development rules ===
+
+# Package Development
+
+- CRITICAL: ALWAYS use the package-development skill when creating packages in Bagisto.
+- Use the Bagisto Package Generator (`composer require bagisto/bagisto-package-generator`) for quick setup.
+- Package structure must follow the standardized layout in `packages/Webkul/`.
+- Service providers must be registered in `bootstrap/providers.php`.
+- Always run `composer dump-autoload` after adding new packages.
+- Use references: @core for structure/service providers, @data for models/migrations, @ui for routes/controllers/views, @features for localization/DataGrid/menus/ACL/config.
+
+#### @core - Core
+- Use `$this->loadMigrationsFrom()`, `$this->loadRoutesFrom()`, `$this->loadViewsFrom()`, `$this->loadTranslationsFrom()` in service provider boot() method.
+- Use `$this->mergeConfigFrom()` in service provider register() method for config merging.
+- Register models in ModuleServiceProvider using Concord for proxy resolution.
+
+#### @data - Data Layer
+- Use migrations in `src/Database/Migrations/` for database schema.
+- Always create Contract, Model, and Proxy for each data entity (three-component model system).
+- Use Prettus L5 Repository pattern for data access (extends `Webkul\Core\Eloquent\Repository`).
+- Repository model() method must return the contract class path, not the model class.
+- Use package prefix for table names (e.g., `rma_requests` instead of `return_requests`).
+- Register models in `config/concord.php` via ModuleServiceProvider.
+
+#### @ui - UI Layer
+- Routes must be in `src/Routes/admin-routes.php` and `src/Routes/shop-routes.php`.
+- Admin routes use middleware `['web', 'admin']` with prefix from `config('app.admin_url')`.
+- Shop routes use middleware `['web', 'locale', 'theme', 'currency']`.
+- Controllers must extend package base Controller which extends `Illuminate\Routing\Controller`.
+- Use dependency injection for repositories in controllers.
+- Use `<x-admin::layouts>` and `<x-shop::layouts>` for Blade views.
+- Use `<x-admin::datagrid>` component for admin tables.
+- Views must be loaded with namespace prefix (e.g., `rma::admin.return-requests.index`).
+
+#### @features - Features
+- Translation files go in `src/Resources/lang/{locale}/` and use namespace `rma::`.
+- DataGrid classes extend `Webkul\DataGrid\DataGrid` and are placed in `src/DataGrids/Admin/`.
+- Admin menu is configured in `src/Config/admin-menu.php` and merged to `menu.admin`.
+- ACL is configured in `src/Config/acl.php` and merged to `acl`.
+- System configuration is in `src/Config/system.php` and merged to `core`.
+- Use `core()->getConfigData('key.path')` to retrieve configuration values.
+- Use `bouncer()->hasPermission('key')` to check ACL permissions in controllers and views.
+
+=== product-type-development rules ===
+
+# Product Type Development
+
+- CRITICAL: ALWAYS use the product-type-development skill when working with product types in Bagisto.
+- Product types extend `Webkul\Product\Type\AbstractType` base class.
+- Product type configuration is defined in `Config/product-types.php` files.
+- Use references: @config for configuration structure, @abstract for AbstractType methods, @build for complete implementation.
+- Product types must be registered in service provider using `$this->mergeConfigFrom()`.
+- Key methods to override: `isSaleable()`, `isStockable()`, `showQuantityBox()`, `haveSufficientQuantity()`, `prepareForCart()`, `getTypeValidationRules()`.
+- Use `$additionalViews` for custom admin interface sections.
+- Use `$skipAttributes` to hide irrelevant attributes for product type.
 
 </bagisto-guidelines>
