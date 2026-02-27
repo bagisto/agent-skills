@@ -54,15 +54,19 @@ Bagisto uses a modular package structure in `packages/Webkul/`:
 
 This project has domain-specific skills available. You MUST activate the relevant skill whenever you work in that domain—don't wait until you're stuck.
 
-- `pest-testing` — Tests applications using the Pest 3 PHP framework. Activates when writing tests, creating unit or feature tests, adding assertions, testing Livewire components, architecture testing, debugging test failures, working with datasets or mocking; or when the user mentions test, spec, TDD, expects, assertion, coverage, or needs to verify functionality works.
-
-- `payment-method-development` — Payment gateway development in Bagisto. Activates when creating payment methods, integrating payment gateways like Stripe, PayPal, or any third-party payment processor; or when the user mentions payment, payment gateway, payment method, Stripe, PayPal, or needs to add a new payment option to the checkout.
+- `package-development` — Package development in Bagisto. Activates when creating packages, migrations, models, repositories, routes, controllers, views, localization, DataGrid, menus, ACL, or system configuration. Use references: @core (package structure, service providers), @data (migrations, models, repositories), @ui (routes, controllers, views), @features (localization, DataGrid, menus, ACL, system config).
 
 - `shipping-method-development` — Shipping method development in Bagisto. Activates when creating shipping methods, integrating shipping carriers like FedEx, UPS, DHL, or any third-party shipping provider; or when the user mentions shipping, shipping method, shipping carrier, delivery, or needs to add a new shipping option to checkout.
 
-- `package-development` — Package development in Bagisto. Activates when creating packages, migrations, models, repositories, routes, controllers, views, localization, DataGrid, menus, ACL, or system configuration. Use references: @core (package structure, service providers), @data (migrations, models, repositories), @ui (routes, controllers, views), @features (localization, DataGrid, menus, ACL, system config).
+- `payment-method-development` — Payment gateway development in Bagisto. Activates when creating payment methods, integrating payment gateways like Stripe, PayPal, or any third-party payment processor; or when the user mentions payment, payment gateway, payment method, Stripe, PayPal, or needs to add a new payment option to the checkout.
 
 - `product-type-development` — Product type development in Bagisto. Activates when creating custom product types, defining product behaviors, or implementing specialized product logic. Use references: @config (product type configuration), @abstract (AbstractType methods), @build (complete subscription implementation).
+
+- `shop-theme-development` — Shop theme development in Bagisto. Activates when creating custom storefront themes, modifying shop layouts, building theme packages, or working with Vite-powered assets for the customer-facing side of the application.
+
+- `admin-theme-development` — Admin theme development in Bagisto. Activates when creating custom admin themes, modifying admin layouts, building admin theme packages, or working with admin panel styling and interface customization.
+
+- `pest-testing` — Tests applications using the Pest 3 PHP framework. Activates when writing tests, creating unit or feature tests, adding assertions, testing Livewire components, architecture testing, debugging test failures, working with datasets or mocking; or when the user mentions test, spec, TDD, expects, assertion, coverage, or needs to verify functionality works.
 
 ## Bagisto Architecture
 

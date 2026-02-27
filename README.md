@@ -6,19 +6,11 @@ These skills provide domain-specific, reusable context for AI agents (Claude Cod
 
 ## Available Skills
 
-### `pest-testing`
+### `package-development`
 
-Tests applications using the Pest 3 PHP framework.
+Package development in Bagisto.
 
-**Activates when:** writing tests, creating unit or feature tests, adding assertions, testing Livewire components, architecture testing, debugging test failures, working with datasets or mocking — or when the user mentions `test`, `spec`, `TDD`, `expects`, `assertion`, `coverage`, or needs to verify functionality works.
-
----
-
-### `payment-method-development`
-
-Payment gateway development in Bagisto.
-
-**Activates when:** creating payment methods, integrating payment gateways like Stripe, PayPal, or any third-party payment processor — or when the user mentions `payment`, `payment gateway`, `payment method`, `Stripe`, `PayPal`, or needs to add a new payment option to the checkout.
+**Activates when:** creating packages, migrations, models, repositories, routes, controllers, views, localization, DataGrid, menus, ACL, or system configuration — or when the user mentions `package`, `migration`, `model`, `repository`, `controller`, `DataGrid`, `menu`, or `ACL`.
 
 ---
 
@@ -30,11 +22,11 @@ Shipping method development in Bagisto.
 
 ---
 
-### `package-development`
+### `payment-method-development`
 
-Package development in Bagisto.
+Payment gateway development in Bagisto.
 
-**Activates when:** creating packages, migrations, models, repositories, routes, controllers, views, localization, DataGrid, menus, ACL, or system configuration — or when the user mentions `package`, `migration`, `model`, `repository`, `controller`, `DataGrid`, `menu`, or `ACL`.
+**Activates when:** creating payment methods, integrating payment gateways like Stripe, PayPal, or any third-party payment processor — or when the user mentions `payment`, `payment gateway`, `payment method`, `Stripe`, `PayPal`, or needs to add a new payment option to the checkout.
 
 ---
 
@@ -43,6 +35,30 @@ Package development in Bagisto.
 Product type development in Bagisto.
 
 **Activates when:** creating custom product types, defining product behaviors, or implementing specialized product logic — or when the user mentions `product type`, `custom product`, or needs to implement product-specific behavior.
+
+---
+
+### `shop-theme-development`
+
+Shop theme development in Bagisto.
+
+**Activates when:** creating custom storefront themes, modifying shop layouts, building theme packages, or working with Vite-powered assets for the customer-facing side of the application.
+
+---
+
+### `admin-theme-development`
+
+Admin theme development in Bagisto.
+
+**Activates when:** creating custom admin themes, modifying admin layouts, building admin theme packages, or working with admin panel styling and interface customization.
+
+---
+
+### `pest-testing`
+
+Tests applications using the Pest 3 PHP framework.
+
+**Activates when:** writing tests, creating unit or feature tests, adding assertions, testing Livewire components, architecture testing, debugging test failures, working with datasets or mocking — or when the user mentions `test`, `spec`, `TDD`, `expects`, `assertion`, `coverage`, or needs to verify functionality works.
 
 ---
 
@@ -57,11 +73,13 @@ npx skills add bagisto/agent-skills
 Install a specific skill only:
 
 ```bash
-npx skills add bagisto/agent-skills --skill "pest-testing"
-npx skills add bagisto/agent-skills --skill "payment-method-development"
-npx skills add bagisto/agent-skills --skill "shipping-method-development"
 npx skills add bagisto/agent-skills --skill "package-development"
+npx skills add bagisto/agent-skills --skill "shipping-method-development"
+npx skills add bagisto/agent-skills --skill "payment-method-development"
 npx skills add bagisto/agent-skills --skill "product-type-development"
+npx skills add bagisto/agent-skills --skill "shop-theme-development"
+npx skills add bagisto/agent-skills --skill "admin-theme-development"
+npx skills add bagisto/agent-skills --skill "pest-testing"
 ```
 
 Install for a specific agent:
@@ -76,15 +94,19 @@ npx skills add bagisto/agent-skills -a cursor
 ```
 agent-skills/
 ├── skills/
-│   ├── pest-testing/
-│   │   └── SKILL.md
-│   ├── payment-method-development/
+│   ├── package-development/
 │   │   └── SKILL.md
 │   ├── shipping-method-development/
 │   │   └── SKILL.md
-│   ├── package-development/
+│   ├── payment-method-development/
 │   │   └── SKILL.md
-│   └── product-type-development/
+│   ├── product-type-development/
+│   │   └── SKILL.md
+│   ├── shop-theme-development/
+│   │   └── SKILL.md
+│   ├── admin-theme-development/
+│   │   └── SKILL.md
+│   └── pest-testing/
 │       └── SKILL.md
 ├── AGENTS.md
 └── README.md
