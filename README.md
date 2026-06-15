@@ -62,6 +62,34 @@ Tests applications using the Pest 3 PHP framework.
 
 ---
 
+## API Platform Skills
+
+These cover the **Bagisto API Platform** package — the REST + GraphQL API layer (storefront + admin). They're grouped under `skills/api-platform-development/`, and each ships a `reference/` tree of per-feature guides and checklists (the skills above are single `SKILL.md` files).
+
+### `bagisto-api-develop`
+
+Install / remove / extend the `bagisto-api` package.
+
+**Activates when:** installing or removing the package, or adding/changing a REST or GraphQL endpoint, a resource, or an admin menu's API — or when the user mentions `ApiResource`, `Provider`, `Processor`, `DTO`, "install the package", or "add an endpoint". (Install and removal run only on explicit request.)
+
+---
+
+### `bagisto-api-shop`
+
+Build a storefront app or UI on the **Shop API** (`/api/shop/*` + `/api/graphql`).
+
+**Activates when:** building a customer-facing storefront, catalog/cart/checkout flow, customer account, or mobile shopping app — or when the user mentions products, cart, checkout, coupons, wishlist, or customer login/account.
+
+---
+
+### `bagisto-api-admin`
+
+Build an admin app or UI on the **Admin API** (`/api/admin/*` + `/api/admin/graphql`).
+
+**Activates when:** building an admin dashboard, back-office panel, or an order/catalog/customer/marketing/CMS/settings management screen — or when the user mentions admin orders, products, customers, reporting, or "admin panel on the API".
+
+---
+
 ## Install
 
 Install all skills from this repo into your AI agent:
@@ -81,6 +109,16 @@ npx skills add bagisto/agent-skills --skill "shop-theme-development"
 npx skills add bagisto/agent-skills --skill "admin-theme-development"
 npx skills add bagisto/agent-skills --skill "pest-testing"
 ```
+
+Install an API Platform skill (grouped under `skills/api-platform-development/`):
+
+```bash
+npx skills add bagisto/agent-skills --skill "bagisto-api-develop"
+npx skills add bagisto/agent-skills --skill "bagisto-api-shop"
+npx skills add bagisto/agent-skills --skill "bagisto-api-admin"
+```
+
+> The API skills are grouped under `skills/api-platform-development/` and carry `reference/` subfolders. The `skills` CLI discovers grouped skills automatically (it walks subfolders under `skills/`), so `npx skills add bagisto/agent-skills` and the `--skill <name>` commands pick them up. To install one manually instead, copy it in: `cp -r skills/api-platform-development/bagisto-api-shop ~/.claude/skills/` (user-wide) or into a project's `.claude/skills/`.
 
 Install for a specific agent:
 
@@ -106,10 +144,20 @@ agent-skills/
 │   │   └── SKILL.md
 │   ├── admin-theme-development/
 │   │   └── SKILL.md
-│   └── pest-testing/
-│       └── SKILL.md
+│   ├── pest-testing/
+│   │   └── SKILL.md
+│   └── api-platform-development/        # REST + GraphQL API skills (grouped)
+│       ├── bagisto-api-develop/
+│       │   ├── SKILL.md
+│       │   └── reference/               # install, structure, conventions, …
+│       ├── bagisto-api-shop/
+│       │   ├── SKILL.md
+│       │   └── reference/               # flows/, features/
+│       └── bagisto-api-admin/
+│           ├── SKILL.md
+│           └── reference/               # flows/, menus/
 ├── AGENTS.md
 └── README.md
 ```
 
-Each skill folder contains a SKILL.md file with agent-readable instructions and a YAML frontmatter block that defines when the skill activates.
+Each skill folder contains a `SKILL.md` with agent-readable instructions and a YAML frontmatter block that defines when the skill activates. The API Platform skills additionally carry a `reference/` folder of per-feature guides and checklists that their `SKILL.md` links to.
