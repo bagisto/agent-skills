@@ -36,6 +36,72 @@ Activate this skill when:
 
 ---
 
+# PHP Code Style
+
+`vendor/bin/pint` fixes most formatting, so run it and trust it. The rules below are the ones Pint
+does **not** enforce — they have to be written by hand, and they apply to every PHP file in a
+package (controllers, repositories, models, DataGrids, enums, listeners, jobs).
+
+These are PHP rules. Blade templates carry their own conventions and differ on some points —
+notably, arrays inside `.blade.php` hand-align their `=>`, while real PHP never does.
+
+## Multi-clause conditions go multiline
+
+A condition with **more than one clause** (two or more operands joined by `&&` / `||`) is broken
+across lines: the `(` opens alone, each clause sits on its own line at one indent, the boolean
+operator **leads** the line it joins, and `) {` closes back at the statement's indent.
+
+```php
+// Good — each clause is one scannable line, and the operator is the first thing you read.
+if (
+    $product->is_owner
+    && $product->is_approved
+    && ! $product->is_draft
+) {
+    app(SellerProductIndexer::class)->reindex($product->product);
+}
+
+// Bad — clauses run together, and the operators hide at the end of the line.
+if ($product->is_owner && $product->is_approved && ! $product->is_draft) {
+    app(SellerProductIndexer::class)->reindex($product->product);
+}
+```
+
+A **single-clause** condition stays inline — wrapping it adds noise and hides nothing:
+
+```php
+if (! $product) {
+    return;
+}
+
+if ($request->ajax()) {
+    return datagrid(ProductDataGrid::class)->process();
+}
+```
+
+The rule keys off the number of clauses, not line length: two short clauses still go multiline.
+
+```php
+if (
+    $product->is_approved
+    && $product->seller->is_approved
+) {
+    // ...
+}
+```
+
+Applies equally to `elseif`, `while`, and a `return` of a compound boolean:
+
+```php
+return is_null($value)
+    || $value === '';
+```
+
+Guard clauses that merely negate one call (`if (! $this->cart) {`) are single-clause and stay
+inline, as do single-clause returns, ternaries, and arrow functions.
+
+---
+
 # @core: Package Development - Core
 
 ## Package Structure

@@ -593,7 +593,7 @@ Payment methods can be tested using the checkout tests in `packages/Webkul/Shop/
 |------|---------|
 | `packages/Webkul/Payment/src/Payment/Payment.php` | Base abstract class |
 | `packages/Webkul/Payment/src/Payment.php` | Payment facade methods |
-| `packages/Webkul/Payment/src/Config/paymentmethods.php` | Default payment methods config |
+| `packages/Webkul/Payment/src/Config/payment-methods.php` | Default payment methods config |
 | `packages/Webkul/Paypal/src/Payment/SmartButton.php` | Complex payment example |
 | `packages/Webkul/Paypal/src/Providers/PaypalServiceProvider.php` | Service provider example |
 | `packages/Webkul/Payment/src/Payment/CashOnDelivery.php` | Simple payment example |

@@ -7,12 +7,12 @@ Bagisto is a Laravel-based e-commerce platform. These guidelines are specificall
 
 ## Foundational Context
 
-This application is a **Bagisto** e-commerce platform built on Laravel 11. You must be familiar with both Laravel and Bagisto's modular package architecture.
+This application is a **Bagisto** e-commerce platform built on Laravel 12. You must be familiar with both Laravel and Bagisto's modular package architecture.
 
 ### Technology Stack
 
-- **PHP**: 8.3.28
-- **Laravel**: v11
+- **PHP**: 8.3+
+- **Laravel**: v12
 - **Vue.js**: For admin panel interactivity
 - **Tailwind CSS**: For styling
 - **Laravel Octane**: v2
@@ -102,10 +102,10 @@ packages/Webkul/{PackageName}/
 │   │   └── {Package}Repository.php
 │   ├── Resources/
 │   │   ├── views/
-│   │   └── lang/
-│   ├── Providers/
-│   │   └── {Package}ServiceProvider.php
-│   └── manifest.php
+│   │   ├── lang/
+│   │   └── manifest.php
+│   └── Providers/
+│       └── {Package}ServiceProvider.php
 └── composer.json
 ```
 
@@ -114,12 +114,18 @@ packages/Webkul/{PackageName}/
 Bagisto uses the Prettus L5 Repository pattern. Always use repositories for data access:
 
 ```php
-// Correct way - use = app(ProductRepositoryInterface::class);
-$products = $repository repository
-$repository->all();
+// Correct way - inject the repository and let the container resolve it.
+public function __construct(
+    protected ProductRepository $productRepository,
+) {}
 
-# Avoid raw queries
-$products = Product::all(); # Less preferred
+$products = $this->productRepository->all();
+
+// Outside a constructor, resolve it from the container.
+$products = app(ProductRepository::class)->all();
+
+// Avoid reaching for the model directly.
+$products = Product::all(); // Less preferred
 ```
 
 ### Service Providers
@@ -305,37 +311,30 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 - If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `npm run build` or ask the user to run `npm run dev` or `composer run dev`.
 
-=== laravel/v11 rules ===
+=== laravel/v12 rules ===
 
-# Laravel 11
+# Laravel 12
 
 - CRITICAL: ALWAYS use `search-docs` tool for version-specific Laravel documentation and updated code examples.
-- Laravel 11 brought a new streamlined file structure which this project now uses.
+- Since Laravel 11, Laravel has a new streamlined file structure which this project uses.
 
-## Laravel 11 Structure
+## Laravel 12 Structure
 
-- In Laravel 11, middleware are no longer registered in `app/Http/Kernel.php`.
+- In Laravel 12, middleware are no longer registered in `app/Http/Kernel.php`.
 - Middleware are configured declaratively in `bootstrap/app.php` using `Application::configure()->withMiddleware()`.
 - `bootstrap/app.php` is the file to register middleware, exceptions, and routing files.
 - `bootstrap/providers.php` contains application specific service providers.
-- No app\Console\Kernel.php - use `bootstrap/app.php` or `routes/console.php` for console configuration.
-- Commands auto-register - files in `app/Console/Commands/` are automatically available and do not require manual registration.
+- The `app/Console/Kernel.php` file no longer exists; use `bootstrap/app.php` or `routes/console.php` for console configuration.
+- Console commands in `app/Console/Commands/` are automatically available and do not require manual registration.
 
 ## Database
 
 - When modifying a column, the migration must include all of the attributes that were previously defined on the column. Otherwise, they will be dropped and lost.
-- Laravel 11 allows limiting eagerly loaded records natively: `$query->latest()->limit(10);`.
+- Laravel 12 allows limiting eagerly loaded records natively, without external packages: `$query->latest()->limit(10);`.
 
 ### Models
 
-- Casts can and likely should be set in a `casts()` method on a model rather than the `$casts` property.
-
-## New Artisan Commands
-
-- List Artisan commands using Boost's MCP tool, if available:
-    - `php artisan make:enum`
-    - `php artisan make:class`
-    - `php artisan make:interface`
+- Casts can and likely should be set in a `casts()` method on a model rather than the `$casts` property. Follow existing conventions from other models.
 
 === boost/core rules ===
 
@@ -420,6 +419,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Package structure must follow the standardized layout in `packages/Webkul/`.
 - Service providers must be registered in `bootstrap/providers.php`.
 - Always run `composer dump-autoload` after adding new packages.
+- Break a condition with more than one clause (`&&` / `||`) across lines, operator leading each line; keep single-clause conditions inline. Pint does not enforce this — see the skill's PHP Code Style section.
 - Use references: @core for structure/service providers, @data for models/migrations, @ui for routes/controllers/views, @features for localization/DataGrid/menus/ACL/config.
 
 #### @core - Core

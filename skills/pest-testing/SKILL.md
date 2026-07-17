@@ -68,9 +68,17 @@ Bagisto has the following test suites configured in `phpunit.xml`:
 |------------|----------|---------|
 | Admin Feature Test | `packages/Webkul/Admin/tests/Feature` | `php artisan test --testsuite="Admin Feature Test"` |
 | Core Unit Test | `packages/Webkul/Core/tests/Unit` | `php artisan test --testsuite="Core Unit Test"` |
+| Customer Unit Test | `packages/Webkul/Customer/tests/Unit` | `php artisan test --testsuite="Customer Unit Test"` |
 | DataGrid Unit Test | `packages/Webkul/DataGrid/tests/Unit` | `php artisan test --testsuite="DataGrid Unit Test"` |
+| EUWithdrawal Feature Test | `packages/Webkul/EUWithdrawal/tests/Feature` | `php artisan test --testsuite="EUWithdrawal Feature Test"` |
 | Installer Feature Test | `packages/Webkul/Installer/tests/Feature` | `php artisan test --testsuite="Installer Feature Test"` |
+| PayU Unit Test | `packages/Webkul/PayU/tests/Unit` | `php artisan test --testsuite="PayU Unit Test"` |
+| PayU Feature Test | `packages/Webkul/PayU/tests/Feature` | `php artisan test --testsuite="PayU Feature Test"` |
+| Razorpay Unit Test | `packages/Webkul/Razorpay/tests/Unit` | `php artisan test --testsuite="Razorpay Unit Test"` |
+| Razorpay Feature Test | `packages/Webkul/Razorpay/tests/Feature` | `php artisan test --testsuite="Razorpay Feature Test"` |
 | Shop Feature Test | `packages/Webkul/Shop/tests/Feature` | `php artisan test --testsuite="Shop Feature Test"` |
+| Stripe Unit Test | `packages/Webkul/Stripe/tests/Unit` | `php artisan test --testsuite="Stripe Unit Test"` |
+| Stripe Feature Test | `packages/Webkul/Stripe/tests/Feature` | `php artisan test --testsuite="Stripe Feature Test"` |
 
 ## Pest.php Configuration
 
@@ -81,9 +89,15 @@ Bagisto uses `tests/Pest.php` to register test cases for each package:
 
 uses(Webkul\Admin\Tests\AdminTestCase::class)->in('../packages/Webkul/Admin/tests');
 uses(Webkul\Core\Tests\CoreTestCase::class)->in('../packages/Webkul/Core/tests');
+uses(Webkul\Customer\Tests\CustomerTestCase::class)->in('../packages/Webkul/Customer/tests');
 uses(Webkul\DataGrid\Tests\DataGridTestCase::class)->in('../packages/Webkul/DataGrid/tests');
+uses(Webkul\EUWithdrawal\Tests\EUWithdrawalTestCase::class)->in('../packages/Webkul/EUWithdrawal/tests');
 uses(Webkul\Installer\Tests\InstallerTestCase::class)->in('../packages/Webkul/Installer/tests');
+uses(Webkul\Payment\Tests\PaymentTestCase::class)->in('../packages/Webkul/Payment/tests');
+uses(Webkul\PayU\Tests\PayUTestCase::class)->in('../packages/Webkul/PayU/tests');
+uses(Webkul\Razorpay\Tests\RazorpayTestCase::class)->in('../packages/Webkul/Razorpay/tests');
 uses(Webkul\Shop\Tests\ShopTestCase::class)->in('../packages/Webkul/Shop/tests');
+uses(Webkul\Stripe\Tests\StripeTestCase::class)->in('../packages/Webkul/Stripe/tests');
 ```
 
 ### Test Case Structure
