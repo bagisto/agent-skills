@@ -62,6 +62,14 @@ Tests applications using the Pest 3 PHP framework.
 
 ---
 
+### `blade-conventions`
+
+Blade template conventions for any Bagisto package — Admin, Shop, or a custom Webkul-style module.
+
+**Activates when:** creating or editing Blade views, building anonymous `@props` or Vue-backed `x-template` components, wiring forms, datagrids, modals, layouts, or slots — or when matching the project's markup, attribute-binding (`:` vs `::`), indentation, comment, and formatting style.
+
+---
+
 ## API Platform Skills
 
 These cover the **Bagisto API Platform** package — the REST + GraphQL API layer (storefront + admin). They're grouped under `skills/api-platform-development/`, and each ships a `reference/` tree of per-feature guides and checklists (the skills above are single `SKILL.md` files).
@@ -108,6 +116,7 @@ npx skills add bagisto/agent-skills --skill "product-type-development"
 npx skills add bagisto/agent-skills --skill "shop-theme-development"
 npx skills add bagisto/agent-skills --skill "admin-theme-development"
 npx skills add bagisto/agent-skills --skill "pest-testing"
+npx skills add bagisto/agent-skills --skill "blade-conventions"
 ```
 
 Install an API Platform skill (grouped under `skills/api-platform-development/`):
@@ -145,6 +154,8 @@ agent-skills/
 │   ├── admin-theme-development/
 │   │   └── SKILL.md
 │   ├── pest-testing/
+│   │   └── SKILL.md
+│   ├── blade-conventions/
 │   │   └── SKILL.md
 │   └── api-platform-development/        # REST + GraphQL API skills (grouped)
 │       ├── bagisto-api-develop/

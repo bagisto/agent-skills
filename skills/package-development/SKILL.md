@@ -42,8 +42,10 @@ Activate this skill when:
 does **not** enforce — they have to be written by hand, and they apply to every PHP file in a
 package (controllers, repositories, models, DataGrids, enums, listeners, jobs).
 
-These are PHP rules. Blade templates carry their own conventions and differ on some points —
-notably, arrays inside `.blade.php` hand-align their `=>`, while real PHP never does.
+These rules cover `.php` files, and they apply just as much to PHP written inside an `@php … @endphp`
+block in a Blade file — Pint cannot reach a `.blade.php`, so there you apply them by hand. Blade's own
+layer (`@props`, directive arguments, markup) has its own conventions: see the **blade-conventions**
+skill.
 
 ## Multi-clause conditions go multiline
 
@@ -851,6 +853,10 @@ class ReturnRequestController extends Controller
 ```
 
 ## Views
+
+> **Writing the Blade itself?** The **blade-conventions** skill carries the markup rules —
+> `:` vs `::` attribute binding, anonymous vs Vue-backed components, indentation, comment
+> style, and where translations and `view_render_event` hooks go.
 
 ### Admin Layout
 

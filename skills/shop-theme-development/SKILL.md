@@ -465,6 +465,10 @@ php artisan vendor:publish --provider="Webkul\CustomTheme\Providers\CustomThemeS
 
 ## Shop Layouts
 
+> **Writing the Blade itself?** The **blade-conventions** skill carries the markup rules —
+> `:` vs `::` attribute binding, anonymous vs Vue-backed components, indentation, comment
+> style, and where translations and `view_render_event` hooks go.
+
 ### Using Shop Layout
 
 ```blade

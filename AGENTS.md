@@ -68,6 +68,8 @@ This project has domain-specific skills available. You MUST activate the relevan
 
 - `pest-testing` — Tests applications using the Pest 3 PHP framework. Activates when writing tests, creating unit or feature tests, adding assertions, testing Livewire components, architecture testing, debugging test failures, working with datasets or mocking; or when the user mentions test, spec, TDD, expects, assertion, coverage, or needs to verify functionality works.
 
+- `blade-conventions` — Blade template conventions for any Bagisto package (Admin, Shop, or a custom Webkul-style module). Activates when creating or editing Blade views, building anonymous `@props` or Vue-backed `x-template` components, wiring forms, datagrids, modals, layouts, or slots; or when matching the project's markup, attribute-binding, indentation, comment, and formatting style.
+
 - `bagisto-api-develop` — Install / remove / extend the `bagisto-api` package (REST + GraphQL). Activates when installing or removing the package, or adding/changing an endpoint, resource, or admin menu's API; or when the user mentions `ApiResource`, `Provider`, `Processor`, `DTO`, "install the package", or "add an endpoint". Install/remove run only on explicit request.
 
 - `bagisto-api-shop` — Build a storefront app/UI on the Shop API (`/api/shop/*` + `/api/graphql`). Activates when building a customer-facing storefront, catalog/cart/checkout flow, customer account, or shopping app; or when the user mentions products, cart, checkout, coupons, wishlist, or customer login/account.
@@ -409,6 +411,22 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Always follow the existing code patterns and PHPDoc conventions when creating shipping methods.
 - Use `core()->convertPrice()` for multi-currency support when setting prices.
 - Check `$item->getTypeInstance()->isStockable()` for per-item shipping calculations.
+
+=== blade-conventions rules ===
+
+# Blade Conventions
+
+- CRITICAL: ALWAYS use the blade-conventions skill when creating or editing any `.blade.php` file.
+- Binding: `attr="text"` is a literal, `:attr="expr"` is a Blade/PHP expression, `::attr="expr"` escapes to a literal `:attr` for Vue. Getting `:` vs `::` wrong is the most common source of bugs.
+- Reuse the globally registered `x-admin::` / `x-shop::` components and layouts; prefix only your own new components with your package namespace.
+- Vue-backed components: `<v-name>` wrapper + `<script type="text/x-template" id="v-name-template">` + `app.component("v-name", ...)`, all inside `@pushOnce('scripts')` … `@endPushOnce`. Emit runtime values as `@{{ … }}`.
+- Formatting: 4 spaces; more than one attribute means one per line with the closing `>` on its own line; a single attribute stays inline; no blank lines between a tag's attributes; one blank line between sibling blocks.
+- Align the `=>` in Blade `@props`/arrays. Do NOT align them in real `.php` files — Pint single-spaces those.
+- Comments follow the layer they sit in: `{{-- --}}` for Blade/PHP notes, `<!-- -->` for markup section dividers, and `/** … */` JSDoc blocks inside `<script>` and `<style>` — never `//` or bare `/* */` there.
+- Comment casing: a sentence is capitalized and punctuated; a bare title/label is Title Case with no trailing period.
+- Never hardcode UI strings — use `@lang('<ns>::app…')`, and add new keys to every locale.
+- Gate admin actions with `@if (bouncer()->hasPermission('resource.action'))`.
+- Bracket meaningful content with `{!! view_render_event('bagisto.<area>.<path>.before') !!}` / `.after`.
 
 === package-development rules ===
 
