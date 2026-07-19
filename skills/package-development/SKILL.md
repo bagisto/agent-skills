@@ -145,10 +145,14 @@ packages/Webkul/{PackageName}/
 
 ## Using Package Generator
 
+The generator is a **convenience, not a requirement** — it only scaffolds the files described in
+"Manual Setup" below. Skip this section entirely if you would rather create the files yourself, or
+if adding a dev dependency to the project needs sign-off first.
+
 ### Installation
 
 ```bash
-composer require bagisto/bagisto-package-generator
+composer require --dev bagisto/bagisto-package-generator
 ```
 
 ### Creating a Package
@@ -404,6 +408,10 @@ return new class extends Migration
 ```
 
 ### Running Migrations
+
+Migrations alter the database, so run them against your local or staging database — never straight
+against production — and make sure the package's migrations are the only ones pending if you are
+unsure what else is queued (`php artisan migrate:status` lists them first).
 
 ```bash
 # Run all migrations
