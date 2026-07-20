@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "theme_code": "replace-with-discovered-theme-code",
+  "environment": "replace-with-isolated-environment-name",
+  "surfaces": [
+    {
+      "id": "home.hero",
+      "kind": "editorial",
+      "route": "/",
+      "selector": "[data-testid=home-hero]",
+      "merchant_editable": true,
+      "owner": {
+        "type": "theme_customization",
+        "admin_path": "replace-with-discovered-admin-path",
+        "record": "replace-with-record-id-or-code",
+        "scope": [
+          "theme",
+          "channel",
+          "locale"
+        ]
+      },
+      "evidence": {
+        "source_binding": "replace-with-view-and-input-contract",
+        "spec": "replace-with-project-relative-spec",
+        "test": "replace-with-exact-test-title",
+        "propagation": {
+          "save": false,
+          "storefront": false,
+          "scope_isolation": false,
+          "restore": false
+        },
+        "result": "not_run",
+        "artifacts": []
+      }
+    },
+    {
+      "id": "global.layout",
+      "kind": "structure",
+      "route": "/",
+      "selector": "body",
+      "merchant_editable": false,
+      "owner": {
+        "type": "code_structure",
+        "admin_path": null,
+        "record": null,
+        "scope": []
+      },
+      "evidence": {
+        "source_binding": "replace-with-layout-view",
+        "result": "not_run",
+        "artifacts": []
+      }
+    }
+  ],
+  "journeys": [
+    { "id": "home", "applicable": true, "result": "not_run", "spec": "", "test": "", "artifacts": [] },
+    { "id": "navigation", "applicable": true, "result": "not_run", "spec": "", "test": "", "artifacts": [] },
+    { "id": "search", "applicable": true, "result": "not_run", "spec": "", "test": "", "artifacts": [] },
+    { "id": "category", "applicable": true, "result": "not_run", "spec": "", "test": "", "artifacts": [] },
+    { "id": "filters-sort", "applicable": true, "result": "not_run", "spec": "", "test": "", "artifacts": [] },
+    { "id": "product-simple", "applicable": true, "result": "not_run", "spec": "", "test": "", "artifacts": [] },
+    { "id": "cart", "applicable": true, "result": "not_run", "spec": "", "test": "", "artifacts": [] },
+    { "id": "checkout-guest", "applicable": true, "result": "not_run", "spec": "", "test": "", "artifacts": [] },
+    { "id": "checkout-customer", "applicable": true, "result": "not_run", "spec": "", "test": "", "artifacts": [] },
+    { "id": "authentication", "applicable": true, "result": "not_run", "spec": "", "test": "", "artifacts": [] },
+    { "id": "customer-account", "applicable": true, "result": "not_run", "spec": "", "test": "", "artifacts": [] },
+    { "id": "wishlist", "applicable": true, "result": "not_run", "spec": "", "test": "", "artifacts": [] },
+    { "id": "compare", "applicable": true, "result": "not_run", "spec": "", "test": "", "artifacts": [] },
+    { "id": "review", "applicable": true, "result": "not_run", "spec": "", "test": "", "artifacts": [] },
+    { "id": "cms-404", "applicable": true, "result": "not_run", "spec": "", "test": "", "artifacts": [] },
+    { "id": "locale-currency", "applicable": true, "result": "not_run", "spec": "", "test": "", "artifacts": [] },
+    { "id": "runtime-integrity", "applicable": true, "result": "not_run", "spec": "", "test": "", "artifacts": [] },
+    { "id": "responsive", "applicable": true, "result": "not_run", "spec": "", "test": "", "artifacts": [] },
+    { "id": "accessibility", "applicable": true, "result": "not_run", "spec": "", "test": "", "artifacts": [] }
+  ],
+  "cleanup": {
+    "result": "not_run",
+    "evidence": "",
+    "remaining_test_records": []
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "theme_code": "{{THEME_CODE}}",
+  "scaffold_mode": "{{SCAFFOLD_MODE}}",
+  "shop": {
+    "composer_name": "bagisto/laravel-shop",
+    "bagisto_version": "{{DISCOVERED_BAGISTO_VERSION}}",
+    "assets_directory": "{{DISCOVERED_SHOP_ASSETS_DIRECTORY}}",
+    "source_path": null
+  },
+  "theme": {
+    "package_assets_directory": "{{DISCOVERED_PACKAGE_ASSETS_DIRECTORY}}"
+  },
+  "views": {
+    "{{SHOP_RELATIVE_VIEW_PATH}}": "{{SHA256_OF_ORIGINAL_SHOP_VIEW}}"
+  },
+  "assets": {
+    "{{SHOP_RELATIVE_ASSET_PATH}}": "{{SHA256_OF_ORIGINAL_SHOP_ASSET}}"
+  },
+  "build_sources": {
+    "{{SOURCE_FILENAME}}": "{{SHA256_OF_ORIGINAL_SHOP_BUILD_FILE}}"
+  },
+  "shop_inventory": {
+    "views": {
+      "{{EVERY_SHOP_RELATIVE_VIEW_PATH}}": "{{SHA256_OF_SHOP_VIEW}}"
+    },
+    "assets": {
+      "{{EVERY_SHOP_RELATIVE_ASSET_PATH}}": "{{SHA256_OF_SHOP_ASSET}}"
+    },
+    "build_sources": {
+      "{{EVERY_SHOP_BUILD_SOURCE_FILENAME}}": "{{SHA256_OF_SHOP_BUILD_SOURCE}}"
+    }
+  }
+}
