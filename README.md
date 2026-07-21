@@ -46,6 +46,14 @@ Shop theme development in Bagisto.
 
 ---
 
+### `shop-advance-theme-development`
+
+Shop Advance Theme Development in Bagisto — an advanced, end-to-end storefront theme workflow that ships design references, scaffolding scripts, templates, and full Playwright commerce coverage.
+
+**Activates when:** creating, redesigning, extending, debugging, validating, packaging, testing, or upgrading production Bagisto storefront themes — UI/UX design direction, design tokens and commerce design systems, Shop theme registration and resource overlays, Blade/Vue components, Vite/Tailwind assets, dynamic admin-controlled and theme-customization content, channels, localization/RTL, accessibility, performance, distributable packages, or resolving theme inheritance and asset-manifest failures.
+
+---
+
 ### `admin-theme-development`
 
 Admin theme development in Bagisto.
@@ -114,6 +122,7 @@ npx skills add bagisto/agent-skills --skill "shipping-method-development"
 npx skills add bagisto/agent-skills --skill "payment-method-development"
 npx skills add bagisto/agent-skills --skill "product-type-development"
 npx skills add bagisto/agent-skills --skill "shop-theme-development"
+npx skills add bagisto/agent-skills --skill "shop-advance-theme-development"
 npx skills add bagisto/agent-skills --skill "admin-theme-development"
 npx skills add bagisto/agent-skills --skill "pest-testing"
 npx skills add bagisto/agent-skills --skill "blade-conventions"
@@ -151,6 +160,12 @@ agent-skills/
 │   │   └── SKILL.md
 │   ├── shop-theme-development/
 │   │   └── SKILL.md
+│   ├── shop-advance-theme-development/
+│   │   ├── SKILL.md
+│   │   ├── references/              # architecture, UI/UX, commerce, testing + bagisto-theme-testing/
+│   │   ├── scripts/                 # scaffold, inspect, validate, diff, snapshot (+ tests)
+│   │   ├── assets/                  # brief, baseline, smoke, contract templates
+│   │   └── data/                    # bagisto-ui-ux.json
 │   ├── admin-theme-development/
 │   │   └── SKILL.md
 │   ├── pest-testing/

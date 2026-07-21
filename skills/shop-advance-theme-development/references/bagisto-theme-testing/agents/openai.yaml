@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bagisto Theme Testing"
+  short_description: "Prove dynamic storefront behavior end to end"
+  default_prompt: "Use $bagisto-theme-testing to audit my Bagisto theme for admin-controlled content and complete Playwright commerce coverage."
