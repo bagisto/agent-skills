@@ -1,0 +1,250 @@
+{
+  "schema_version": 1,
+  "engine": "bagisto-ui-ux",
+  "provenance": "Original Bagisto-specific commerce design knowledge bundled with this skill; no external runtime source is required.",
+  "principles": [
+    "Make the brand recognizable through composition, type, imagery, and interaction rather than a logo alone.",
+    "Give each page one dominant customer task while keeping price, availability, options, and recovery states explicit.",
+    "Use expressive composition on discovery surfaces and progressively reduce variance and motion toward checkout.",
+    "Treat merchant content, catalog data, channel data, and extension output as separate authoritative systems.",
+    "Design mobile and RTL as intentional compositions, not compressed desktop layouts.",
+    "Use semantic tokens and complete component states before adding decorative effects.",
+    "Prefer server-rendered commerce truth with focused Vue enhancement.",
+    "Reject visual novelty that cannot pass accessibility, performance, licensing, and content-extreme checks."
+  ],
+  "archetypes": [
+    {
+      "id": "editorial-story-commerce",
+      "name": "Editorial Story Commerce",
+      "tags": ["fashion", "fragrance", "perfume", "beauty", "jewelry", "premium", "luxury", "artisan", "curated", "editorial", "sensory", "story"],
+      "dial_fit": {"variance": [5, 8], "motion": [2, 6], "density": [3, 6]},
+      "concept": "Use disciplined editorial rhythm to move customers from brand desire into precise product evidence.",
+      "composition": ["asymmetric campaign opening", "measured split narratives", "calm product grids", "evidence bands before recommendations"],
+      "signature": ["recurring editorial folio labels", "cropped macro imagery", "alternating narrow and wide text measures"],
+      "surface": "quiet canvas, fine borders, selective tactile accents",
+      "imagery": "art-directed product still life, macro material detail, restrained lifestyle context",
+      "avoid": ["full-store cinematic scrolling", "low-contrast luxury clichés", "campaign imagery hiding price and actions"]
+    },
+    {
+      "id": "playful-guided-discovery",
+      "name": "Playful Guided Discovery",
+      "tags": ["toy", "toys", "kids", "children", "baby", "family", "education", "educational", "stem", "gift", "playful", "colorful", "friendly"],
+      "dial_fit": {"variance": [5, 8], "motion": [3, 6], "density": [4, 7]},
+      "concept": "Turn a broad catalog into a joyful guided journey while preserving adult trust, safety, and comparison clarity.",
+      "composition": ["age and interest gateways", "modular discovery islands", "clear product grids", "trust and learning evidence near decisions"],
+      "signature": ["category shape markers", "controlled color blocking", "small cause-and-effect delight on discovery actions"],
+      "surface": "bright paper-like surfaces with strong ink and limited saturated accents",
+      "imagery": "inclusive play scenes, clear scale cues, product-in-use, safety detail",
+      "avoid": ["rainbow overload", "childish checkout", "motion that competes with product scanning"]
+    },
+    {
+      "id": "technical-confidence-retail",
+      "name": "Technical Confidence Retail",
+      "tags": ["electronics", "technology", "technical", "computer", "camera", "audio", "appliance", "equipment", "specification", "comparison", "professional"],
+      "dial_fit": {"variance": [3, 6], "motion": [1, 4], "density": [6, 9]},
+      "concept": "Make complex products feel comparable and trustworthy through structured evidence and precise interaction states.",
+      "composition": ["specification-forward cards", "comparison-ready grids", "sticky decision summaries", "service and compatibility proof"],
+      "signature": ["technical index labels", "tabular price and specification values", "diagram-like dividers"],
+      "surface": "crisp neutral layers, firm borders, restrained elevation",
+      "imagery": "clean product angles, detail crops, scale and compatibility diagrams",
+      "avoid": ["dashboard chrome", "decorative neon", "dense specifications before customer orientation"]
+    },
+    {
+      "id": "natural-evidence-commerce",
+      "name": "Natural Evidence Commerce",
+      "tags": ["wellness", "organic", "natural", "skincare", "health", "food", "sustainable", "eco", "ingredient", "botanical", "transparent"],
+      "dial_fit": {"variance": [3, 6], "motion": [1, 4], "density": [3, 6]},
+      "concept": "Pair calm discovery with ingredient, origin, and efficacy evidence at the exact point of customer doubt.",
+      "composition": ["benefit-led opening", "ingredient or origin modules", "calm product rhythm", "proof adjacent to claims"],
+      "signature": ["evidence annotations", "botanical or material macro crops", "soft section boundaries"],
+      "surface": "warm natural canvas, mineral borders, low elevation",
+      "imagery": "ingredient macro, process, origin, honest product texture",
+      "avoid": ["unverifiable wellness claims", "faint earth-tone text", "decorative nature imagery without product proof"]
+    },
+    {
+      "id": "heritage-craft-market",
+      "name": "Heritage Craft Market",
+      "tags": ["handmade", "craft", "heritage", "artisan", "regional", "furniture", "ceramic", "leather", "textile", "traditional", "provenance"],
+      "dial_fit": {"variance": [4, 7], "motion": [1, 4], "density": [3, 6]},
+      "concept": "Use provenance, material, and maker detail to make craftsmanship legible without sacrificing modern commerce speed.",
+      "composition": ["maker-led split hero", "material detail interludes", "collection-led merchandising", "care and provenance evidence"],
+      "signature": ["maker marks", "material swatch rhythm", "quiet archival captions"],
+      "surface": "tactile warm neutrals, honest borders, restrained texture",
+      "imagery": "hands, process, material detail, lived-in product context",
+      "avoid": ["fake vintage distress", "ornament around every control", "story content separating product from purchase"]
+    },
+    {
+      "id": "high-velocity-retail",
+      "name": "High-Velocity Retail",
+      "tags": ["grocery", "daily", "value", "discount", "large", "marketplace", "repeat", "fast", "convenience", "broad", "catalog"],
+      "dial_fit": {"variance": [2, 5], "motion": [1, 3], "density": [7, 10]},
+      "concept": "Optimize repeat discovery and comparison with compact, predictable modules and unmistakable value signals.",
+      "composition": ["search-led header", "dense category access", "repeatable merchandising bands", "compact comparison grid"],
+      "signature": ["consistent value markers", "compact category color keys", "fast reorder surfaces"],
+      "surface": "clean high-contrast panels with economical elevation",
+      "imagery": "consistent product crops, packaging clarity, useful quantity context",
+      "avoid": ["competing promotions", "ambiguous discount hierarchy", "large storytelling blocks interrupting repeat purchase"]
+    },
+    {
+      "id": "lifestyle-collection-retail",
+      "name": "Lifestyle Collection Retail",
+      "tags": ["home", "decor", "apparel", "fashion", "sports", "outdoor", "collection", "seasonal", "lifestyle", "room", "look"],
+      "dial_fit": {"variance": [4, 7], "motion": [2, 5], "density": [4, 7]},
+      "concept": "Connect products through coordinated use, collection, and context while keeping individual items easy to compare.",
+      "composition": ["collection-led opening", "shop-the-context modules", "balanced product grids", "seasonal editorial breaks"],
+      "signature": ["collection color chapters", "context-to-product callouts", "repeating scene and detail pairs"],
+      "surface": "neutral gallery surfaces with collection-specific accents",
+      "imagery": "contextual lifestyle scenes paired with consistent catalog crops",
+      "avoid": ["lookbook without product paths", "inconsistent image ratios", "collection labels replacing useful categories"]
+    },
+    {
+      "id": "precision-minimal-commerce",
+      "name": "Precision Minimal Commerce",
+      "tags": ["minimal", "modern", "premium", "design", "furniture", "watch", "object", "curated", "small", "architecture", "monochrome"],
+      "dial_fit": {"variance": [3, 6], "motion": [1, 4], "density": [2, 5]},
+      "concept": "Use exact proportions, typography, and product detail to create distinction without decorative excess.",
+      "composition": ["single-purpose opening", "generous but bounded whitespace", "object-focused grids", "precise purchase column"],
+      "signature": ["measured rule lines", "consistent object scale", "quiet index numerals"],
+      "surface": "flat architectural planes, exact borders, almost no shadow",
+      "imagery": "controlled object studies, close construction detail, neutral context",
+      "avoid": ["empty pages mistaken for luxury", "tiny labels", "hidden navigation and weak actions"]
+    },
+    {
+      "id": "celebration-gift-commerce",
+      "name": "Celebration Gift Commerce",
+      "tags": ["gift", "gifting", "occasion", "birthday", "wedding", "festival", "holiday", "personalized", "flowers", "chocolate", "celebration"],
+      "dial_fit": {"variance": [4, 7], "motion": [2, 5], "density": [4, 7]},
+      "concept": "Reduce gift anxiety with occasion-led discovery, delivery confidence, and a warm reveal moment.",
+      "composition": ["occasion gateway", "recipient and budget shortcuts", "delivery-confidence band", "personalization and bundle modules"],
+      "signature": ["occasion stamps", "gift-note motifs", "restrained reveal transitions"],
+      "surface": "warm light surfaces with celebratory accent moments",
+      "imagery": "gift-ready packaging, recipient context, scale and unboxing detail",
+      "avoid": ["seasonal decoration obscuring navigation", "forced personalization", "delivery promises detached from availability"]
+    }
+  ],
+  "palettes": [
+    {
+      "id": "joyful-learning",
+      "name": "Joyful Learning",
+      "tags": ["toy", "toys", "kids", "children", "education", "stem", "playful", "colorful", "family"],
+      "roles": {"canvas": "#FFFDF7", "surface": "#FFFFFF", "elevated": "#FFF7DB", "text": "#17213A", "muted": "#566078", "border": "#D9DEEA", "control_border": "#566078", "brand": "#2354D8", "on_brand": "#FFFFFF", "accent": "#C43D1D", "on_accent": "#FFFFFF", "focus": "#7047EB", "success": "#167447", "warning": "#8A4B00", "danger": "#B42318", "price": "#17213A", "sale": "#B42318", "stock": "#167447"}
+    },
+    {
+      "id": "ink-parchment-brass",
+      "name": "Ink, Parchment, and Brass",
+      "tags": ["fragrance", "perfume", "jewelry", "luxury", "editorial", "heritage", "premium", "craft"],
+      "roles": {"canvas": "#F7F3EA", "surface": "#FFFCF6", "elevated": "#EFE7D8", "text": "#191713", "muted": "#625D53", "border": "#D7CEBE", "control_border": "#625D53", "brand": "#343A2F", "on_brand": "#FFFFFF", "accent": "#9A5B13", "on_accent": "#FFFFFF", "focus": "#174EA6", "success": "#24704A", "warning": "#8A4B00", "danger": "#A52A2A", "price": "#191713", "sale": "#A52A2A", "stock": "#24704A"}
+    },
+    {
+      "id": "botanical-mineral",
+      "name": "Botanical Mineral",
+      "tags": ["natural", "organic", "wellness", "skincare", "botanical", "sustainable", "food", "eco"],
+      "roles": {"canvas": "#F4F5EF", "surface": "#FCFDF9", "elevated": "#E7ECE0", "text": "#1D281E", "muted": "#5B665B", "border": "#CDD5C9", "control_border": "#5B665B", "brand": "#28583B", "on_brand": "#FFFFFF", "accent": "#A54524", "on_accent": "#FFFFFF", "focus": "#165D9C", "success": "#1E6B43", "warning": "#805300", "danger": "#A32929", "price": "#1D281E", "sale": "#A32929", "stock": "#1E6B43"}
+    },
+    {
+      "id": "precision-blueprint",
+      "name": "Precision Blueprint",
+      "tags": ["electronics", "technology", "technical", "equipment", "professional", "comparison", "modern"],
+      "roles": {"canvas": "#F5F7FA", "surface": "#FFFFFF", "elevated": "#EAF0F7", "text": "#111827", "muted": "#566173", "border": "#CBD5E1", "control_border": "#566173", "brand": "#174EA6", "on_brand": "#FFFFFF", "accent": "#C2410C", "on_accent": "#FFFFFF", "focus": "#6D28D9", "success": "#167447", "warning": "#8A4B00", "danger": "#B42318", "price": "#111827", "sale": "#B42318", "stock": "#167447"}
+    },
+    {
+      "id": "clay-and-fiber",
+      "name": "Clay and Fiber",
+      "tags": ["handmade", "artisan", "heritage", "craft", "ceramic", "leather", "textile", "regional"],
+      "roles": {"canvas": "#F6F0E7", "surface": "#FFFDF8", "elevated": "#EADCCC", "text": "#2B201B", "muted": "#675A52", "border": "#D6C6B8", "control_border": "#675A52", "brand": "#6E3B27", "on_brand": "#FFFFFF", "accent": "#9B4D27", "on_accent": "#FFFFFF", "focus": "#185F8D", "success": "#376B42", "warning": "#805300", "danger": "#A32929", "price": "#2B201B", "sale": "#A32929", "stock": "#376B42"}
+    },
+    {
+      "id": "clean-retail-signal",
+      "name": "Clean Retail Signal",
+      "tags": ["value", "discount", "grocery", "marketplace", "large", "fast", "broad", "catalog"],
+      "roles": {"canvas": "#F6F7F9", "surface": "#FFFFFF", "elevated": "#EDF1F5", "text": "#17202A", "muted": "#596574", "border": "#D3DAE3", "control_border": "#596574", "brand": "#075985", "on_brand": "#FFFFFF", "accent": "#B93815", "on_accent": "#FFFFFF", "focus": "#5B21B6", "success": "#187347", "warning": "#805300", "danger": "#B42318", "price": "#17202A", "sale": "#B42318", "stock": "#187347"}
+    },
+    {
+      "id": "gallery-terracotta",
+      "name": "Gallery Terracotta",
+      "tags": ["home", "decor", "fashion", "apparel", "lifestyle", "collection", "seasonal", "furniture"],
+      "roles": {"canvas": "#F7F5F1", "surface": "#FFFFFF", "elevated": "#EEEAE3", "text": "#211F1C", "muted": "#625F59", "border": "#D5D0C7", "control_border": "#625F59", "brand": "#37443A", "on_brand": "#FFFFFF", "accent": "#A33F28", "on_accent": "#FFFFFF", "focus": "#2855A6", "success": "#2B6B45", "warning": "#805300", "danger": "#A32929", "price": "#211F1C", "sale": "#A32929", "stock": "#2B6B45"}
+    },
+    {
+      "id": "celebration-paper",
+      "name": "Celebration Paper",
+      "tags": ["gift", "gifting", "birthday", "wedding", "festival", "holiday", "flowers", "chocolate", "celebration"],
+      "roles": {"canvas": "#FFF9F5", "surface": "#FFFFFF", "elevated": "#FCECDD", "text": "#2A1E25", "muted": "#695B63", "border": "#E2D1D8", "control_border": "#695B63", "brand": "#7A284C", "on_brand": "#FFFFFF", "accent": "#B64B1C", "on_accent": "#FFFFFF", "focus": "#3159A6", "success": "#22714A", "warning": "#805300", "danger": "#A32929", "price": "#2A1E25", "sale": "#A32929", "stock": "#22714A"}
+    }
+  ],
+  "typography": [
+    {
+      "id": "friendly-structured",
+      "name": "Friendly Structured",
+      "tags": ["toy", "toys", "kids", "family", "education", "playful", "friendly"],
+      "display": "approved self-hosted rounded or humanist display face",
+      "body": "installed humanist sans or system sans fallback",
+      "fallback_display": "ui-rounded, system-ui, sans-serif",
+      "fallback_body": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      "rules": ["Use open counters and sturdy weights", "Keep price and safety copy highly legible", "Reserve expressive type for short headings"]
+    },
+    {
+      "id": "editorial-contrast",
+      "name": "Editorial Contrast",
+      "tags": ["fragrance", "perfume", "fashion", "jewelry", "editorial", "premium", "luxury", "heritage"],
+      "display": "approved self-hosted editorial serif",
+      "body": "installed neutral or humanist sans",
+      "fallback_display": "Georgia, 'Times New Roman', serif",
+      "fallback_body": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      "rules": ["Use display contrast only at large sizes", "Keep prices, options, and forms in the sans family", "Limit heading line length and avoid fragile thin weights"]
+    },
+    {
+      "id": "technical-grotesk",
+      "name": "Technical Grotesk",
+      "tags": ["electronics", "technology", "technical", "equipment", "professional", "comparison"],
+      "display": "installed geometric or technical sans",
+      "body": "installed system sans",
+      "fallback_display": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "fallback_body": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      "rules": ["Use tabular numerals for price and specifications", "Prefer weight and spacing over decorative display faces", "Keep labels distinct from values"]
+    },
+    {
+      "id": "warm-humanist",
+      "name": "Warm Humanist",
+      "tags": ["natural", "organic", "wellness", "artisan", "craft", "food", "home", "friendly"],
+      "display": "approved self-hosted humanist serif or sans",
+      "body": "installed humanist sans",
+      "fallback_display": "Georgia, ui-serif, serif",
+      "fallback_body": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      "rules": ["Use comfortable body leading", "Avoid rustic novelty fonts", "Keep evidence and ingredient copy scannable"]
+    },
+    {
+      "id": "retail-utility",
+      "name": "Retail Utility",
+      "tags": ["value", "discount", "marketplace", "large", "broad", "catalog", "grocery", "fast"],
+      "display": "installed sturdy sans",
+      "body": "installed system sans",
+      "fallback_display": "Arial, system-ui, sans-serif",
+      "fallback_body": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      "rules": ["Use tabular numerals for prices", "Protect a 16px mobile body minimum", "Create hierarchy with size and weight, not many typefaces"]
+    },
+    {
+      "id": "architectural-neutral",
+      "name": "Architectural Neutral",
+      "tags": ["minimal", "modern", "design", "furniture", "object", "architecture", "monochrome"],
+      "display": "approved self-hosted neo-grotesk or restrained serif",
+      "body": "installed neutral sans",
+      "fallback_display": "Helvetica, Arial, system-ui, sans-serif",
+      "fallback_body": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      "rules": ["Use a disciplined modular scale", "Never reduce size to manufacture sophistication", "Use spacing and rules to carry structure"]
+    }
+  ],
+  "page_blueprints": {
+    "home": ["brand promise and one primary route", "audience-relevant discovery gateway", "authoritative product or collection proof", "decision-support content", "secondary merchandising", "service and trust", "restrained retention action"],
+    "listing": ["orientation and result count", "query/category context", "filter and sort controls", "comparable product grid", "pagination or installed loading pattern", "recoverable empty state"],
+    "product": ["media and purchase decision pair", "title, price, tax, review, stock, options, quantity, primary action", "shipping or service confidence", "product-specific evidence", "details and policies", "reviews and related products"],
+    "cart": ["editable line items", "option and availability clarity", "coupon and estimate feedback", "authoritative totals", "single checkout action", "recovery paths"],
+    "checkout": ["progress and identity", "address", "shipping", "payment", "persistent order summary", "validation and retry", "review and success"],
+    "account": ["stable navigation", "page title and status", "primary record or task", "empty and permission states", "extension-owned output"]
+  },
+  "stack_guidance": {
+    "laravel": ["Keep meaningful commerce content server rendered", "Preserve route, CSRF, validation, session, event, and controller contracts", "Use repositories and existing API endpoints for authoritative data"],
+    "vue": ["Use focused progressive-enhancement islands", "Preserve existing app registration, emitter, refs, validation, and component contracts", "Synchronize ARIA state and restore focus for drawers, dialogs, tabs, and errors"],
+    "html-tailwind": ["Map design roles to CSS custom properties or a centralized Tailwind extension", "Preserve installed content globs and compatibility tokens", "Use logical properties, visible focus, reduced motion, reserved media ratios, and content-driven breakpoints"]
+  }
+}

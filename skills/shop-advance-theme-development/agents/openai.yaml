@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shop Advance Theme Development"
+  short_description: "Design and build ultra-polished Bagisto stores"
+  default_prompt: "Use $shop-advance-theme-development to generate a self-contained Bagisto UI/UX direction and build a distinctive, dynamic, production-ready storefront theme."
