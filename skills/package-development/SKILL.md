@@ -102,6 +102,240 @@ return is_null($value)
 Guard clauses that merely negate one call (`if (! $this->cart) {`) are single-clause and stay
 inline, as do single-clause returns, ternaries, and arrow functions.
 
+## Every method gets a docblock
+
+No exceptions, and regardless of visibility — `public`, `protected`, and `private` alike. A method
+without one is incomplete, even when its name seems to say everything.
+
+The description is a **sentence**: capitalised, ending in a full stop. One line is the norm; write a
+second only when the first cannot carry it.
+
+```php
+/**
+ * Reindex all products.
+ */
+public function reIndexAll()
+
+/**
+ * Source documents from the core product index for the given ids, keyed by product id.
+ */
+protected function fetchSourceDocuments($channel, $locale, array $productIds): array
+```
+
+```php
+/**
+ * reindex all products      ← no capital, no full stop
+ */
+
+/**
+ * Reindexes all of the products
+ */                          ← no full stop
+```
+
+Type information belongs in the signature. Add `@param` / `@return` only for what a native type
+cannot express — the shape of an array, or a mixed return:
+
+```php
+/**
+ * Products grouped by seller id.
+ *
+ * @return array<int, list<Product>>
+ */
+protected function groupBySeller(array $products): array
+```
+
+## Every property gets a docblock too
+
+The same rule extends to **class constants and properties** — `const`, `static`, typed, untyped,
+whatever the visibility. Bagisto's own models document `$table`, `$fillable` and `$casts`, and a new
+property that skips one stands out.
+
+```php
+/**
+ * The table associated with the model.
+ *
+ * @var string
+ */
+protected $table = 'marketplace_pickups';
+
+/**
+ * The attributes that should be cast.
+ *
+ * @var array
+ */
+protected $casts = [
+    'scheduled_from' => 'datetime',
+];
+
+/**
+ * The courier is booked and has not yet called.
+ */
+public const STATUS_SCHEDULED = 'scheduled';
+```
+
+Keep `@var` on untyped properties, where it is the only type information there is. Drop it when the
+property is already typed in the declaration — repeating it adds nothing:
+
+```php
+/**
+ * Unique carrier code, matching the key under `marketplace_carriers.carriers`.
+ */
+protected string $code;
+```
+
+**Constructor-promoted properties are the exception.** They are parameters, and the constructor's own
+docblock covers them — do not document each one:
+
+```php
+/**
+ * Create a new repository instance.
+ */
+public function __construct(
+    protected PickupRepository $pickupRepository,
+    protected ShippingLabelRepository $labelRepository
+) {}
+```
+
+## A class docblock defines; it does not narrate
+
+Describe what the class **is**, in a sentence or two. Do not write the history of how it came to
+exist, what it replaced, or why a past approach was wrong — that belongs in the commit message.
+
+```php
+/**
+ * Drives a carrier for a saved shipment: buys the label, books the collection, and returns the
+ * values to write back onto the shipment.
+ */
+class FulfilmentBooker
+```
+
+```php
+/**
+ * Turns a saved shipment into a real, carried parcel.
+ *
+ * This is the step the package was missing. A marketplace seller does not invent a tracking
+ * number — they pick a carrier and a collection slot, and the carrier hands back the tracking
+ * number, the label and the booking. So the carrier is driven here, straight after the shipment
+ * row exists, and whatever it returns is written back onto that row.
+ */                              ← history and justification, not a definition
+class FulfilmentBooker
+```
+
+A genuine constraint still deserves a comment — put it **where it applies**, inside the method,
+under "Comment only what the code cannot say" above. A reader looking for the rule about
+re-delivered jobs wants it next to the guard, not in a preamble they scrolled past.
+
+A plain `Class ProductRepository` restates the declaration and is worse than nothing.
+
+## Comment only what the code cannot say
+
+The rule above is about **docblocks**. This one is about **explanation inside a method body**, which
+is where over-commenting accumulates.
+
+Bagisto's own packages are sparsely commented, and generated code that is not will stand out
+immediately. Inside a method the default is **no comment**. Earn one.
+
+A comment is warranted when a reader who understands the code would still act wrongly without it —
+almost always because the code encodes a **constraint that is invisible locally**:
+
+- A line that looks removable or simplifiable but is load-bearing (a join deliberately kept out of
+  a base query, a filter written as a negation for a reason).
+- A non-obvious ordering, compatibility, or migration concern.
+- A workaround for behaviour in core, Laravel, or a third-party service.
+
+```php
+/**
+ * Joined only for these filters. Kept out of the base query because the `or` in its condition is
+ * not indexable — MySQL scans the whole products table per candidate row.
+ */
+$qb->leftJoin('products as variants', function ($join) {
+    $join->on('variants.parent_id', '=', 'products.id')
+        ->orOn('variants.id', '=', 'products.id');
+});
+```
+
+Do **not** explain code that already reads clearly. These are all noise:
+
+```php
+/**
+ * Loop through the products.        ← narrates the obvious
+ */
+foreach ($products as $product) { ... }
+
+/**
+ * Set the total.                    ← labels an assignment
+ */
+$total = $invoice->sub_total - $invoice->discount_amount;
+
+/**
+ * Dispatch the event.               ← restates the call
+ */
+Event::dispatch('marketplace.product.update.after', $sellerProduct);
+```
+
+Keep the ones you do write **short** — two or three lines. A paragraph explaining a symptom in
+detail belongs in the commit message or the PR, not above the statement. State the constraint, not
+the war story.
+
+---
+
+# Data Access
+
+## Go through the repository, never the query builder
+
+Every read and write goes through a repository. Reaching for `DB::table(...)` or the model's query
+builder from a controller, listener, job, or service bypasses the layer the whole codebase is built
+on — and makes the operation impossible to reuse or override.
+
+```php
+// Good — the operation lives on the repository, named for what it does.
+$this->pickupRepository->attachShipment($pickup, $shipment->id);
+```
+
+```php
+// Bad — a service reaching past the repository into the table.
+DB::table('marketplace_pickups')
+    ->where('id', $pickup->id)
+    ->update(['package_count' => $pickup->shipments()->count()]);
+```
+
+If the repository has no method for what you need, **add one**. That is the extension point:
+
+```php
+/**
+ * Attach a shipment to a collection and refresh its package count.
+ */
+public function attachShipment(Pickup $pickup, int $shipmentId): void
+{
+    $pickup->shipments()->syncWithoutDetaching([$shipmentId]);
+
+    $this->update(['package_count' => $pickup->shipments()->count()], $pickup->id);
+}
+```
+
+**The one place `DB` is expected is a DataGrid's `prepareQueryBuilder()`**, which is built on the
+query builder by design and returns a `Builder` for the grid to paginate. `DB::transaction()` and
+`DB::raw()` inside a repository are also fine — the objection is to querying *tables* from outside
+the data layer, not to the facade itself.
+
+### Scope every seller-facing query in the repository
+
+On a marketplace, a repository method that touches seller-owned data takes the seller id as its
+first argument and filters on it. Then there is no call shape that can reach another seller's rows:
+
+```php
+/**
+ * One of a seller's collections, or null when it is not theirs.
+ */
+public function findForSeller(int $sellerId, int $pickupId): ?Pickup
+{
+    return $this->model
+        ->where('marketplace_seller_id', $sellerId)
+        ->where('id', $pickupId)
+        ->first();
+}
+```
+
 ---
 
 # @core: Package Development - Core

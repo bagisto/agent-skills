@@ -73,6 +73,16 @@ Three distinct attribute forms — pick deliberately:
 
 The `::` (double colon) is Blade escaping a single `:` so the rendered HTML contains `:attr="expr"` for Vue to bind at runtime. Getting `:` vs `::` right is the single most common source of bugs.
 
+**`::` only works on a Blade component tag** — `<x-admin::…>`, `<x-shop::…>`, `<x-marketplace::…>`. Blade unescapes it while compiling the component. A plain custom element (`<v-quantity-changer>`, `<v-field>`, any `<v-…>` you wrote yourself) is passed through as literal HTML, so `::attr` reaches the browser **with both colons**, Vue does not recognise it as a binding, and the prop silently never arrives. On a plain `<v-…>` element write a single colon:
+
+```blade
+<x-admin::quantity-changer ::value="item.qty" />   {{-- component  → renders :value  --}}
+
+<v-quantity-changer :value="item.qty"></v-quantity-changer>   {{-- plain element → write : --}}
+```
+
+The failure is silent and easy to misread: the prop is `undefined`, so any computed that walks it throws during render and the component freezes on whatever it last drew — typically its loading shimmer. If a `<v-…>` component renders its placeholder forever, check the colons first.
+
 Named slots use `<x-slot:name> … </x-slot>`:
 
 ```blade
@@ -287,6 +297,13 @@ own layer and keeps the Blade rules on this page.
 
 **Comments**
 
+Two rules from the **package-development** skill govern Blade too, and they pull in opposite directions — apply both:
+
+- **"Every method gets a docblock"** — a Vue `method` or `computed` in a `<script>` block is a method. It gets a `/** … */` describing what it does, as a capitalised sentence ending in a full stop. Same for any function inside an `@php` block.
+- **"Comment only what the code cannot say"** — *inside* a method body, and in the markup, the default is no comment. Explain a constraint that is invisible locally, a workaround, or a line that looks removable but is load-bearing; skip anything that merely restates the markup or the call.
+
+What follows is the syntax to use for each layer.
+
 Each comment syntax belongs to its own layer — pick by *where* the comment sits, then follow the casing/punctuation rule for that layer.
 
 - **Blade `{{-- --}}`** — for Blade/PHP-level notes (file headers, `@php` logic, control-flow explanations). Never ships to the browser.
@@ -314,7 +331,7 @@ Each comment syntax belongs to its own layer — pick by *where* the comment sit
   <!-- SKU -->
   ```
 
-- **JS `/** … */` (JSDoc block)** — inside `<script>`. This is the **only** comment form used in the Vue layer — **no `//` line comments**. Put one block above every non-trivial `computed`/`method`, and above any non-obvious statement inside a method. Write full sentences, capitalized and punctuated:
+- **JS `/** … */` (JSDoc block)** — inside `<script>`. This is the **only** comment form used in the Vue layer — **no `//` line comments**. Every `computed`/`method` gets one, as a capitalized sentence ending in a full stop. Statements *inside* a method get one only when genuinely non-obvious:
   ```js
   /**
    * The axis checkboxes only appear for a variable kind, once the seller has said "yes"
@@ -324,7 +341,7 @@ Each comment syntax belongs to its own layer — pick by *where* the comment sit
       return this.isVariable && this.hasVariations === true && !! this.familyId;
   }
   ```
-  A trivial one-liner (e.g. `warn()`) needs no comment — don't restate the code.
+  A trivial one-liner still gets its docblock — but keep it to the one sentence, and don't pile extra commentary onto statements that already read clearly.
 
 - **CSS `/** … */` (JSDoc block)** — inside `<style>`, same form as JS: describe *why* a rule exists (especially non-obvious ones like `:checked`-driven state or scrollbar hiding), as a punctuated sentence:
   ```css
