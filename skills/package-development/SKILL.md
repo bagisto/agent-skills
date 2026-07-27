@@ -148,7 +148,18 @@ protected function groupBySeller(array $products): array
 
 The same rule extends to **class constants and properties** — `const`, `static`, typed, untyped,
 whatever the visibility. Bagisto's own models document `$table`, `$fillable` and `$casts`, and a new
-property that skips one stands out.
+property that skips one stands out. **Each property carries its own docblock**, even when several sit
+together — one docblock describing two adjacent properties leaves the second undocumented:
+
+```php
+// Wrong — the second property has no docblock of its own.
+/**
+ * The table and columns the index covers.
+ */
+protected string $table = 'product_inventories';
+
+protected array $columns = ['vendor_id', 'product_id', 'qty'];
+```
 
 ```php
 /**
@@ -226,6 +237,55 @@ under "Comment only what the code cannot say" above. A reader looking for the ru
 re-delivered jobs wants it next to the guard, not in a preamble they scrolled past.
 
 A plain `Class ProductRepository` restates the declaration and is worse than nothing.
+
+## Order members by visibility
+
+Lay a class out in the order Bagisto's own classes use, so a new member lands where a reader expects
+it rather than wherever the diff was easiest:
+
+1. Constants
+2. Properties
+3. The constructor
+4. Abstract method declarations (the contract a trait or base class requires)
+5. Public methods
+6. Protected methods
+7. Private methods
+
+The visibility order is the one that matters most, and it cuts **both ways** — a `protected` or
+`private` helper never sits above or between the public methods, and a `public` method never sits
+buried among the protected ones. Each visibility forms one contiguous block.
+
+When you add a helper that an existing public method calls, resist dropping it right after that caller
+— that leaves a protected method in the middle of the public ones. Put it in the protected block at
+the bottom.
+
+```php
+class Reporting
+{
+    public function countLowStock($seller): int
+    {
+        return $this->lowStockQuery($seller)->count();   // caller stays up top…
+    }
+
+    public function getTopProducts($seller) { /* … */ }
+
+    // …every other public method…
+
+    protected function lowStockQuery($seller)            // …the helper lives down here
+    {
+        // …
+    }
+}
+```
+
+**Check the whole file, not just your own lines.** Whenever you edit a class, scan its full member
+order and fix any member that is already out of place — a public helper wedged among protected
+methods, a property with no docblock, a private method sitting up in the public block. Leaving a
+pre-existing violation in a file you just touched is the same defect as introducing one.
+
+Within a visibility group, keep related methods together (a getter beside the query it wraps), but do
+not reorder existing members to achieve it — the grouping is a tie-breaker, not a mandate to churn a
+file.
 
 ## Comment only what the code cannot say
 
