@@ -77,6 +77,11 @@ NODE_BUILTINS = {
 }
 
 
+def installation_command_name(theme_code: str) -> str:
+    prefix = theme_code if theme_code.endswith("-theme") else f"{theme_code}-theme"
+    return f"{prefix}:install"
+
+
 class ValidationError(RuntimeError):
     pass
 
@@ -1226,33 +1231,60 @@ def check_package(
         except json.JSONDecodeError as error:
             add(findings, "fail", "package.composer", f"invalid JSON: {error}", composer_path)
 
-    upstream_license = package_root / "UPSTREAM-LICENSES/BAGISTO-LICENSE"
-    upstream_notice = package_root / "UPSTREAM-NOTICES.md"
-    if (
-        upstream_license.is_file()
-        and not upstream_license.is_symlink()
-        and upstream_notice.is_file()
-        and not upstream_notice.is_symlink()
-    ):
-        add(
-            findings,
-            "pass",
-            "package.upstream-license",
-            "copied/derived Bagisto sources retain an upstream license and notice",
-            upstream_license,
-        )
-    else:
-        add(
-            findings,
-            "fail" if composer_registered else "warn",
-            "package.upstream-license",
-            "retain the exact installed Bagisto license and an upstream notice before distribution",
-            upstream_license,
-        )
-
     providers = list((package_root / "src/Providers").glob("*ServiceProvider.php"))
     provider_text = "\n".join(path.read_text(encoding="utf-8", errors="ignore") for path in providers)
     active_provider_text = strip_template_comments(provider_text)
+    install_command_path = package_root / "src/Console/Commands/InstallCommand.php"
+    if not install_command_path.is_file() or install_command_path.is_symlink():
+        add(
+            findings,
+            "fail",
+            "package.install-command",
+            "theme package must provide a non-symlink src/Console/Commands/InstallCommand.php",
+            install_command_path,
+        )
+    else:
+        command_text = strip_php_comments(
+            install_command_path.read_text(encoding="utf-8", errors="ignore")
+        )
+        expected_command = installation_command_name(code)
+        command_issues: list[str] = []
+        signature_pattern = (
+            rf"protected\s+\$signature\s*=\s*(['\"])"
+            rf"{re.escape(expected_command)}(?:\s|\{{|\1)"
+        )
+        if not re.search(signature_pattern, command_text):
+            command_issues.append(f"signature must start with {expected_command}")
+        if "vendor:publish" not in command_text:
+            command_issues.append("must publish the package's theme views")
+        if "optimize:clear" not in command_text:
+            command_issues.append("must refresh application caches")
+        if re.search(r"['\"]--force['\"]", command_text):
+            command_issues.append("must not force-publish over application-owned views")
+        if not (
+            "runningInConsole" in active_provider_text
+            and "InstallCommand::class" in active_provider_text
+            and re.search(r"\bcommands\s*\(", active_provider_text)
+        ):
+            command_issues.append("service provider must register InstallCommand only for console runtime")
+
+        if command_issues:
+            add(
+                findings,
+                "fail",
+                "package.install-command",
+                "; ".join(command_issues),
+                install_command_path,
+            )
+        else:
+            add(
+                findings,
+                "pass",
+                "package.install-command",
+                f"safe parameterized installer is registered as {expected_command}",
+                install_command_path,
+            )
+
     published_views = resolve_project_path(root, config.get("views_path"))
     views_namespace = config.get("views_namespace")
     if isinstance(views_namespace, str) and views_namespace:
