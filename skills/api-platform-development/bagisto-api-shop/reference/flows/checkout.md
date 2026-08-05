@@ -97,7 +97,7 @@ Each step: the endpoints (REST + the GraphQL field), what it does, and the UX. *
 ### Step 1 — Addresses
 - **REST:** `GET /api/shop/checkout-addresses` (address applied to the session) · `POST /api/shop/checkout-addresses` (save)
 - **GraphQL:** query `collectionGetCheckoutAddresses` · mutation `createCheckoutAddress`
-- **Send:** billing fields (`billingFirstName/LastName/Email/Address/City/Country/State/Postcode/PhoneNumber`) + `useForShipping`. When `useForShipping=false`, also send the `shipping*` equivalents.
+- **Send:** the input is **flat scalar fields**, not nested `{ billing{}, shipping{} }` (nested is rejected). Billing (all required): `billingFirstName`, `billingLastName`, `billingEmail`, `billingAddress`, `billingCity`, `billingCountry`, `billingState`, `billingPostcode`, `billingPhoneNumber`, plus `useForShipping` (Boolean). When `useForShipping=false`, also send the `shipping*` equivalents (`shippingFirstName` … `shippingPhoneNumber`).
 - **Returns:** the saved checkout address (+ `success`/`message`; GraphQL also echoes `cartToken`).
 - **UX:** email first (guest), then country **early** — country/region constrains shipping and the available states. Validate on blur. Docs: [set address](https://api-docs.bagisto.com/api/graphql-api/shop/mutations/set-billing-address), [get addresses](https://api-docs.bagisto.com/api/graphql-api/shop/queries/get-addresses).
 

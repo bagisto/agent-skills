@@ -27,6 +27,7 @@ This prevents silent failures from a wrong path or field name.
 | Logged-in customer (account, their cart, orders) | `X-STOREFRONT-KEY` **+** `Authorization: Bearer <customerToken>` |
 
 - **Customer register:** `POST /api/shop/customers`. **Login:** `POST /api/shop/customer/login` → top-level `token` (format `<id>|<secret>`). **Logout:** `POST /api/shop/customer/logout`. See `flows/authentication.md`.
+- **Token model:** `token` is the Bearer for **both** REST and GraphQL. The login response also returns `apiToken` — a **legacy** field, **not** a Bearer (using it returns `Unauthenticated`); always authenticate with `token`. Tokens do **not** expire by default and there is **no refresh endpoint** — re-login to rotate. There is no session/status endpoint; validate a token by calling `POST /api/shop/verify-tokens` or any protected endpoint.
 - **Guest cart token:** `POST /api/shop/cart-tokens` (GraphQL `createCartToken`) → `cartToken`; send it as the Bearer on every cart/checkout call until the order is placed (then discard it).
 - **Guest→customer merge:** on login, merge the guest cart (`POST /api/shop/merge-carts`, guest cart `_id` as `cartId`, customer Bearer) or the items are lost.
 - Document auth once; don't re-prompt the user per screen.
@@ -43,7 +44,7 @@ This prevents silent failures from a wrong path or field name.
 | Status | Meaning | UX |
 |--------|---------|----|
 | 200 / 201 | Success | — |
-| 401 | Unauthenticated (missing key/token) | Mint/refresh token; for guest cart, create a new cart token |
+| 401 / 403 | Missing / invalid / expired token (`401`, message `Unauthenticated…`) or not-your-resource / no auth (`403`/`Invalid or expired…`) | Treat **both** as "re-authenticate": re-login for a new customer token (no refresh exists); for guest cart, mint a new cart token |
 | 403 | Forbidden (not your resource) | Block / redirect to login |
 | 400 | Bad input | Fix the request; surface a friendly message |
 | 404 | Not found (or invalid coupon code) | Inline "not found" / "invalid code" |
