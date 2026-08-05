@@ -59,7 +59,7 @@ Order history is a **list → detail** drill-down with branch actions off the de
 ## 3. Order detail
 
 - **REST:** `GET /api/shop/customer-orders/{id}`
-- **GraphQL:** query `customerOrder`
+- **GraphQL:** query `customerOrder(id:)` — the `id` is the **IRI** (`/api/shop/customer-orders/{id}`), **not** `incrementId`. Read a row's `id` from the `customerOrders` list (it returns both `id` and `incrementId`) and pass that IRI here.
 - **Returns:** the full order with **embedded** sub-objects — `items` (with product info, qty, line totals, and type-specific extras), `addresses` (billing + shipping), `payment` (method + title), and `shipments` (with their items). No follow-up calls needed for the core view.
 - **Docs:** [get customer order](https://api-docs.bagisto.com/api/graphql-api/shop/queries/get-customer-order), [REST](https://api-docs.bagisto.com/api/rest-api/shop/customer-orders/get-customer-order).
 - **UX (the order page):**

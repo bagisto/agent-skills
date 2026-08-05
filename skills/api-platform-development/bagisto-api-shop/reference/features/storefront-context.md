@@ -46,6 +46,17 @@ Render these as compact header dropdowns (often grouped in a "region/language" m
 
 `GET /api/shop/theme-customizations` returns the configurable homepage/storefront blocks (image carousels, product carousels, static-content snippets, footer link sets, etc.), filterable by `?type=`. Each entry carries its type + per-locale options. Build the homepage by iterating the returned blocks in order and rendering a component per `type` — so merchants can re-arrange the homepage from the admin without a code change.
 
+`translation.options` is a **JSON-encoded string** — `JSON.parse` it client-side. Shape per `type`:
+
+- `image_carousel` → `{ images: [{ image, link, title }] }` — render inline
+- `product_carousel` → `{ title, filters: { new, featured, limit, sort } }` — forward `filters` to the products listing, render the returned products
+- `category_carousel` → `{ title, filters: { parent_id, limit, sort } }` — `parent_id` → `treeCategories(parentId:)`, render the returned categories
+- `static_content` → `{ html, css }` — inject inline (images use `data-src`, not `src`)
+- `footer_links` → `{ column_1: [{ url, title, sort_order }], … }`
+- `services_content` → `{ services: [{ service_icon, title, description }] }`
+
+Image/static/footer/services blocks are self-contained; `product_carousel` and `category_carousel` are only config — their `filters` point at the products / categories endpoints you must call. Content is locale-specific: pass `X-Locale` to select the `translation` locale (else store default); `translations[]` carries every locale.
+
 - Render an unknown/unsupported `type` as a no-op (don't crash the homepage on a new block type).
 - Static-content blocks carry HTML — same sanitise note as CMS pages.
 

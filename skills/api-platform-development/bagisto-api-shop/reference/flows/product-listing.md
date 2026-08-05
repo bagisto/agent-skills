@@ -50,7 +50,7 @@ Two endpoints, two jobs:
 | Need | REST | GraphQL field | Returns |
 |------|------|---------------|---------|
 | Nested menu / mega-nav / sidebar tree | `GET /api/shop/category-trees` | `treeCategories(parentId:)` | An **array of nested category nodes** with `children[]` — not paginated. Pass `parentId` to scope to one branch; omit for roots. |
-| Flat, paginated category index | `GET /api/shop/categories` | `categories` (cursor) | A paged flat list; pass `?parent_id=`/`parentId` to get direct children of one category. |
+| Flat, paginated category index | `GET /api/shop/categories` | `categories` (cursor) | A paged flat list. **Children-by-parent:** REST accepts `?parent_id=N`; the GraphQL `categories` field has **no** `parentId` argument — use `treeCategories(parentId:)` (row above) for children. |
 | Single category (banner, SEO copy) | `GET /api/shop/categories/{id}` | `category(id:)` | One category with its translations. |
 
 - The **tree** is what you render in the header mega-menu and the listing-page sidebar. The **flat list** is for an "all categories" index or a typed filter.
