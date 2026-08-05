@@ -345,6 +345,11 @@ def php_quote(value: str) -> str:
     return "'" + value.replace("\\", "\\\\").replace("'", "\\'") + "'"
 
 
+def installation_command_name(theme_code: str) -> str:
+    prefix = theme_code if theme_code.endswith("-theme") else f"{theme_code}-theme"
+    return f"{prefix}:install"
+
+
 def safe_relative_path(value: str, field: str) -> str:
     if not value or any(ord(char) < 32 for char in value) or "\\" in value:
         raise ScaffoldError(f"selected base theme has an unsafe {field}")
@@ -542,38 +547,81 @@ def resolve_project_file(root: Path, value: Path, label: str) -> Path:
     return resolved
 
 
-def find_bagisto_license(
-    root: Path,
-    shop_root: Path,
-    root_composer: dict[str, Any],
-) -> Path:
-    names = ("LICENSE", "LICENSE.md", "LICENSE.txt", "COPYING")
-    candidates = [shop_root / name for name in names]
-    if root_composer.get("name") == "bagisto/bagisto":
-        candidates.extend(root / name for name in names)
-    for candidate in candidates:
-        if candidate.is_file() and not candidate.is_symlink() and candidate.stat().st_size:
-            return candidate.resolve()
-    raise ScaffoldError(
-        "the exact installed Bagisto license notice was not found; supply it in the Shop package "
-        "or use a checkout that retains the upstream notice before copying sources"
-    )
-
-
 def translation_namespace(args: argparse.Namespace) -> str:
     return f"{kebab(args.vendor)}-{kebab(args.package)}"
 
 
-def upstream_notice_source() -> str:
-    return """# Upstream notices
+def install_command_source(args: argparse.Namespace) -> str:
+    namespace = f"{args.vendor}\\{args.package}"
+    command = installation_command_name(args.theme_code)
+    publish_tag = f"{args.theme_code}-theme-views"
+    display_name = args.display_name.strip()
 
-This scaffold contains files copied from or derived from the installed Composer package
-`bagisto/laravel-shop`. The exact license notice discovered in the target checkout is
-retained at `UPSTREAM-LICENSES/BAGISTO-LICENSE`.
+    return f"""<?php
 
-This notice does not declare the theme author's license. Audit every bundled font, image,
-icon, script, stylesheet, and later-added asset for its own attribution and redistribution
-requirements before distribution.
+namespace {namespace}\\Console\\Commands;
+
+use Illuminate\\Console\\Command;
+
+class InstallCommand extends Command
+{{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = {php_quote(command)};
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = {php_quote(f'Install the {display_name} shop theme views and refresh application caches')};
+
+    /**
+     * Execute the console command.
+     */
+    public function handle(): int
+    {{
+        $theme = config({php_quote(f'themes.shop.{args.theme_code}')});
+
+        if (! is_array($theme)) {{
+            $this->components->error({php_quote(f'Theme [{args.theme_code}] is not registered in config/themes.php.')});
+            $this->line('Merge the scaffolded theme entry and clear cached configuration before installing.');
+
+            return self::FAILURE;
+        }}
+
+        $this->components->info({php_quote(f'Installing the {display_name} shop theme...')});
+
+        if ($this->call('vendor:publish', [
+            '--tag' => {php_quote(publish_tag)},
+        ]) !== self::SUCCESS) {{
+            $this->components->error('Theme views could not be published.');
+
+            return self::FAILURE;
+        }}
+
+        if ($this->call('optimize:clear') !== self::SUCCESS) {{
+            $this->components->error('Application caches could not be cleared.');
+
+            return self::FAILURE;
+        }}
+
+        $buildDirectory = $theme['vite']['build_directory'] ?? null;
+
+        if (is_string($buildDirectory) && ! is_file(public_path(trim($buildDirectory, '/').'/manifest.json'))) {{
+            $this->warn('The production asset manifest is missing. Build and validate the theme before activation.');
+        }}
+
+        $this->newLine();
+        $this->components->info({php_quote(f'{display_name} installed without changing the active channel.')});
+        $this->line({php_quote(f'After validation, select [{args.theme_code}] only on the intended channel.')});
+
+        return self::SUCCESS;
+    }}
+}}
 """
 
 
@@ -588,6 +636,7 @@ namespace {namespace}\\Providers;
 
 use Illuminate\\Support\\Facades\\Blade;
 use Illuminate\\Support\\ServiceProvider;
+use {namespace}\\Console\\Commands\\InstallCommand;
 
 class {provider} extends ServiceProvider
 {{
@@ -595,6 +644,12 @@ class {provider} extends ServiceProvider
     {{
         $viewsPath = __DIR__.'/../Resources/views';
         $translationsPath = __DIR__.'/../Resources/lang';
+
+        if ($this->app->runningInConsole()) {{
+            $this->commands([
+                InstallCommand::class,
+            ]);
+        }}
 
         $this->loadViewsFrom($viewsPath, '{args.theme_code}');
 
@@ -604,9 +659,13 @@ class {provider} extends ServiceProvider
 
         Blade::anonymousComponentPath($viewsPath.'/components', '{args.theme_code}');
 
-        $this->publishes([
-            $viewsPath => base_path({php_quote(published_views_path)}),
-        ], '{tag}');
+        $publishedViewsPath = base_path({php_quote(published_views_path)});
+
+        if (realpath($publishedViewsPath) !== realpath($viewsPath)) {{
+            $this->publishes([
+                $viewsPath => $publishedViewsPath,
+            ], '{tag}');
+        }}
     }}
 }}
 """
@@ -790,6 +849,11 @@ def build_actions(
         actions.extend(
             [
                 FileAction(None, provider_path, provider_source(args, str(theme_values["views_path"]))),
+                FileAction(
+                    None,
+                    package_root / "src/Console/Commands/InstallCommand.php",
+                    install_command_source(args),
+                ),
                 FileAction(None, package_root / "composer.json", composer_source(args, root_composer)),
                 FileAction(None, package_root / ".gitignore", "node_modules/\n*.hot\n"),
             ]
@@ -892,21 +956,6 @@ def build_actions(
             package_root / str(theme_values["package_assets_directory"]),
         )
 
-    notice_root = package_root if package_root else target.parent
-    bagisto_license = find_bagisto_license(root, shop_root, root_composer)
-    actions.extend(
-        [
-            FileAction(
-                bagisto_license,
-                notice_root / "UPSTREAM-LICENSES/BAGISTO-LICENSE",
-            ),
-            FileAction(
-                None,
-                notice_root / "UPSTREAM-NOTICES.md",
-                upstream_notice_source(),
-            ),
-        ]
-    )
     if args.theme_license_file:
         if package_root is None:  # rejected by argument validation; defensive for future modes
             raise ScaffoldError("a theme license file requires a package mode")
@@ -1094,10 +1143,6 @@ def integration_payload(
         "themes_php_entry": theme_config_snippet(args, base_code, base, features),
         "activation": "Build and validate first, then select the theme on only the intended channel.",
         "global_default_changed": False,
-        "upstream_license_notice": str(
-            ((package_location(args, root) if args.mode != "overlay" else target.parent)
-            / "UPSTREAM-LICENSES/BAGISTO-LICENSE").relative_to(root)
-        ),
     }
     registry = vite_registry_snippet(args, values)
     if registry:
@@ -1109,6 +1154,7 @@ def integration_payload(
             "package_directory": str(package_location(args, root).relative_to(root)),
             "public_build_directory": str(PurePosixPath("public") / str(values["build_directory"])),
             "translation_namespace": translation_namespace(args),
+            "installation_command": f"php artisan {installation_command_name(args.theme_code)}",
             "theme_license": args.theme_license,
             "theme_license_file": "LICENSE" if args.theme_license_file else None,
         })
@@ -1132,7 +1178,6 @@ def render_human(payload: dict[str, Any], states: dict[str, int], applied: bool)
     print(f"Scaffold: {payload['scaffold_path']}")
     print(f"Files: {states['create']} create, {states['unchanged']} unchanged, {states['conflict']} conflict")
     print("Status: applied" if applied else "Status: dry-run (pass --apply to write)")
-    print(f"Upstream license notice: {payload['upstream_license_notice']}")
     print("\nPlanned file actions")
     for action in payload["planned_actions"]:
         source = action["source"] or "generated content"
@@ -1150,6 +1195,7 @@ def render_human(payload: dict[str, Any], states: dict[str, int], applied: bool)
         else:
             print("\nRegistration: Composer distribution. Install the generated package and rely only on Laravel discovery.")
         print(f"\nTranslation namespace: {payload['translation_namespace']}")
+        print(f"Installation command: {payload['installation_command']}")
         if payload.get("theme_license"):
             print(f"Theme package license: {payload['theme_license']} (full text copied to LICENSE)")
         else:

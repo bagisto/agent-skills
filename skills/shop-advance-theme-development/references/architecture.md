@@ -6,6 +6,8 @@
 - [Separate view and asset resolution](#separate-view-and-asset-resolution)
 - [Choose a scaffold mode](#choose-a-scaffold-mode)
 - [Build each mode](#build-each-mode)
+- [Design the package installer](#design-the-package-installer)
+- [Self-register theme configuration from the package](#self-register-theme-configuration-from-the-package)
 - [Parameterize and merge safely](#parameterize-and-merge-safely)
 - [Validate the architecture](#validate-the-architecture)
 
@@ -139,8 +141,9 @@ Use a shape such as:
 4. Keep the package namespace as the authoritative source. Publish views only when editable application copies or unnamespaced view resolution require it; never force-publish.
 5. Preserve installed package, Vite, Tailwind, PostCSS, entry-point, and dependency contracts.
 6. Choose exactly one registration strategy: checkout-local PSR-4/provider wiring or Composer installation/discovery.
-7. Record original Shop hashes for copied views, assets, and build configuration, plus the complete Shop view/asset/discovered-build-contract inventory that detects upstream additions and removals.
-8. Preserve the exact installed Bagisto license notice for copied/derived files and audit third-party asset/font licenses.
+7. Add `src/Console/Commands/InstallCommand.php` and register it from the service provider only while the application runs in console.
+8. Record original Shop hashes for copied views, assets, and build configuration, plus the complete Shop view/asset/discovered-build-contract inventory that detects upstream additions and removals.
+9. Preserve the exact installed Bagisto license notice for copied/derived files and audit third-party asset/font licenses.
 
 ### Build a full fork
 
@@ -174,6 +177,44 @@ Use a shape such as:
 
 Do not call a package self-contained when it requires undocumented root-file edits or leaves its runtime assets outside the package without an installation step.
 
+## Design the package installer
+
+Use this package shape for every generated package or full fork:
+
+```text
+<package-root>/
+└── src/
+    ├── Config/
+    │   ├── themes.php          # theme entry, self-registered (see below)
+    │   ├── bagisto-vite.php    # Vite registry entry — only with namespaced asset calls
+    │   └── imagecache.php      # image-cache templates — only with theme-owned filters
+    ├── CacheFilters/           # only when shipping a theme-owned imagecache.php
+    │   ├── Small.php
+    │   ├── Medium.php
+    │   └── Large.php
+    ├── Console/
+    │   └── Commands/
+    │       └── InstallCommand.php
+    ├── Providers/
+    │   └── <DerivedPackage>ServiceProvider.php
+    └── Resources/
+        └── views/
+```
+
+Derive the PHP namespace, class import, theme code, display name, publish tag, configured paths, and Artisan signature from validated scaffold inputs. Use `<theme-code>-theme:install`, without duplicating the `-theme` suffix when the theme code already ends with it.
+
+Keep the default installer deliberately narrow:
+
+- Register `InstallCommand` only inside the provider's console-runtime guard.
+- Require the derived theme entry to be present before installation.
+- Publish only the derived theme-view tag and never pass `--force`.
+- Clear application caches after publishing.
+- Warn when the configured production manifest is absent.
+- Never select a channel, change `shop-default`, seed catalog data, rebuild indexes, create storage links, install dependencies, or run a frontend build.
+- Return a failure status when publishing or cache clearing fails.
+
+Treat an existing package command as a structural reference, not a template. Do not copy its namespace, signature, brand messages, seeders, demo options, product assumptions, or deployment tasks. Extend the generated installer only when the target package owns the corresponding migrations, seeders, publish groups, and rollback behavior, and the requested installation contract explicitly includes them.
+
 ### Preserve source and asset licenses
 
 Treat licensing as a release gate, not a generated afterthought.
@@ -185,6 +226,60 @@ Treat licensing as a release gate, not a generated afterthought.
 - For a distributable package, declare the chosen package license in Composer metadata and include all required license/notice files in the release artifact.
 - Stop and request a licensing decision when ownership or redistribution permission is unknown.
 
+## Self-register theme configuration from the package
+
+A distributable theme should register its own theme entry, Vite registry, and — when it ships image filters — image-cache templates from files **inside the package**, so a fresh install needs no hand edits to the application root `config/`. Ship these under `<package-root>/src/Config/`, keyed by theme code, and wire them from the provider's `register()`:
+
+- `src/Config/themes.php` — the theme block (`name`, `assets_path`, `views_path`, `vite`).
+- `src/Config/bagisto-vite.php` — the Vite registry entry (`hot_file`, `build_directory`, `package_assets_directory`), only when the theme makes namespaced `bagisto_asset()` / `bagisto_vite()` calls.
+- `src/Config/imagecache.php` — image-cache `route` / `paths` / `templates` / `lifetime` / `cache_driver`, only when the theme ships its own `src/CacheFilters/` classes.
+
+Keep every file keyed by the derived theme code (`'<theme-code>' => [ ... ]`) and every namespace derived from scaffold inputs — never hard-code a specific theme's code, class namespace, or paths.
+
+**Match the installed config shape, not another package's.** Inspect the checkout before writing the provider: some Bagisto builds nest shop themes under `config('themes.shop.<code>')` and Vite registries under `config('bagisto-vite.viters.<code>')`, while some stock theme packages ship top-level-keyed files. Register into whatever the installed `Webkul\Theme` / `Webkul\ImageCache` code actually reads:
+
+```bash
+rg -n "config\('themes|config\('bagisto-vite|config\('imagecache" <shop-root> packages/
+```
+
+**Know your framework's `mergeConfigFrom` depth before relying on it.** Laravel's `ServiceProvider::mergeConfigFrom()` is a shallow `array_merge($packageConfig, $existingConfig)` — package values first, existing app config second — so the application wins every key collision. Consequences:
+
+- It safely ADDS a brand-new top-level key (a theme code not present yet).
+- It CANNOT insert a child into an already-populated nested array (e.g. `themes.shop`, `bagisto-vite.viters`): the existing array wins and the theme's entry is silently dropped.
+- It appends to numeric-indexed lists (e.g. the `core` system-config groups), which is why `system.php` merges cleanly.
+
+Choose the registration call by target. For a child inside an existing nested array, use a deterministic deep set that preserves siblings instead of `mergeConfigFrom`:
+
+```php
+public function register(): void
+{
+    $config = $this->app['config'];
+
+    // Nested child keys → config()->set() (deep, sibling-preserving).
+    foreach (require __DIR__.'/../Config/themes.php' as $code => $theme) {
+        $config->set("themes.shop.{$code}", $theme);
+    }
+
+    foreach (require __DIR__.'/../Config/bagisto-vite.php' as $name => $viter) {
+        $config->set("bagisto-vite.viters.{$name}", $viter);
+    }
+
+    // Global, theme-owned image cache (only when shipping CacheFilters).
+    $config->set('imagecache', require __DIR__.'/../Config/imagecache.php');
+
+    // Numeric-indexed / append-only groups → shallow merge is correct.
+    $this->mergeConfigFrom(__DIR__.'/../Config/system.php', 'core');
+}
+```
+
+Rules:
+
+- Do the wiring in `register()` so the values are captured when the app builds `config:cache`. Verify each survives `php artisan config:cache` and clears cleanly.
+- Own image dimensions in `src/CacheFilters/{Small,Medium,Large}.php` under the theme namespace. Mirror the installed filters' `applyFilter()` logic (URL-context branches, admin-config dimensions) so rendered sizes are unchanged unless a size change is an explicit requirement.
+- `imagecache` is a single GLOBAL config; setting it makes the theme's filters authoritative app-wide. Acceptable for a single-theme storefront — flag it when multiple shop themes must coexist, and prefer leaving the installed filters in place there.
+- Merge-only always: never wipe sibling themes, viters, or unrelated `imagecache` keys. When the application root config already hard-codes the theme, move that block into the package and replace the root block with a pointer comment — do not leave two sources of truth.
+- Verify after wiring: the theme code resolves on its channel with siblings intact, the Vite manifest still loads the theme build, and the image-cache route returns `image/*` for `<route>/small|medium|large/<path>`.
+
 ## Parameterize and merge safely
 
 Collect these values once:
@@ -193,6 +288,7 @@ Collect these values once:
 - Composer package name;
 - PHP namespace;
 - theme code;
+- installation command signature and publish tag;
 - package path;
 - view namespace;
 - view path;
@@ -216,8 +312,9 @@ Apply edits idempotently:
 
 - Insert one PSR-4 entry without replacing the autoload map.
 - Insert one provider without reordering unrelated providers.
-- Insert one theme without replacing sibling themes.
-- Insert one Vite registry only when explicit namespace resolution needs it.
+- Insert one theme without replacing sibling themes. Prefer self-registering it from the package's `src/Config/themes.php` (see "Self-register theme configuration from the package") over editing the application root config.
+- Insert one Vite registry only when explicit namespace resolution needs it; ship it from the package's `src/Config/bagisto-vite.php` when so.
+- Register nested config children with a deep `config()->set()`, not shallow `mergeConfigFrom`, so siblings survive.
 - Preserve comments and user formatting where practical.
 - Show the planned diff before deleting or overwriting files.
 - Avoid `rm -rf` in the normal development path.
@@ -237,6 +334,7 @@ Verify all of the following before styling:
 - Confirm that no existing theme entry disappeared.
 - Confirm that the global fallback changed only when requested.
 - Run Composer autoload validation for package classes.
+- Confirm the derived installation command is discoverable, collision-safe, and console-only.
 - Run PHP formatting checks on generated providers.
 - Run the production frontend build.
 - Clear cached configuration and compiled views.

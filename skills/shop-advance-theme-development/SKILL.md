@@ -1,6 +1,6 @@
 ---
 name: shop-advance-theme-development
-description: Create, redesign, extend, debug, validate, package, test, and upgrade distinctive production Bagisto storefront themes. Use for self-contained Bagisto UI/UX direction, ultra-polished brand and commerce design systems, design tokens, responsive storefront UX, guided beginner implementation, Shop theme registration, resource overlays, distributable packages, Blade layouts/components, inline Vue, Vite/Tailwind assets, dynamic admin-controlled content, channel and theme-customization content, localization/RTL, accessibility, performance, complete Playwright commerce coverage, deployment, or resolving theme inheritance and asset-manifest failures. Derive every identity, path, version, component, locale, and command from the target checkout.
+description: Create, redesign, extend, debug, validate, package, install, test, and upgrade distinctive production Bagisto storefront themes. Use for self-contained Bagisto UI/UX direction, ultra-polished brand and commerce design systems, design tokens, responsive storefront UX, guided beginner implementation, Shop theme registration, resource overlays, distributable packages, parameterized Artisan installation commands, Blade layouts/components, inline Vue, Vite/Tailwind assets, dynamic admin-controlled content, channel and theme-customization content, localization/RTL, accessibility, performance, complete Playwright commerce coverage, deployment, or resolving theme inheritance and asset-manifest failures. Derive every identity, path, version, component, locale, and command from the target checkout.
 ---
 
 # Shop Advance Theme Development
@@ -14,10 +14,14 @@ Build a distinctive storefront while preserving the installed Bagisto commerce, 
 - Parameterize or discover every theme code, display name, namespace, package path, channel, locale, build path, tool version, and command.
 - Never edit Bagisto Shop source, `vendor/`, generated build output, dependencies, lockfiles, or live channel state unless the user and repository policy authorize it.
 - Prefer a sparse view overlay/package. Create a full fork only after the user accepts its upgrade surface.
+- A view/component fork is a presentation-layer change only; it never removes the runtime dependency on the Shop package. Routes, controllers, the cart/checkout API, repositories, events, per-request theme activation, and the `shop` view/component/translation namespace registration all remain Shop-owned. Never describe copying views into a theme as "decoupling from Shop" or "removing the Shop dependency" — the theme is a presentation layer over Shop's live runtime, exactly like a Magento theme over its modules.
+- Keep a forked view's namespace self-consistent with what the theme actually owns. Inside views the theme owns, reference the theme's own component/include namespace (`x-<theme>::`, `<theme>::…`), not `x-shop::`/`shop::…` — relying on Shop-namespace theme-first fallback works but leaves ownership implicit and silently coupled to Shop's namespace registration. Leave `@lang('shop::…')` translation KEYS unchanged (they resolve through the translation namespace, not the view finder); when the theme must own the strings, override them at the app path `lang/vendor/shop/<locale>`, never by rehoming keys into a theme namespace. Re-run the override baseline snapshot after any bulk fork or namespace migration.
+- Keep custom CSS in the theme stylesheet, never inline in Blade. Author static styling as design-token Tailwind utilities or `@layer components` classes in the theme's CSS entry (e.g. `app.css`); do not add `style="…"` attributes or `<style>` blocks carrying static custom CSS to templates. Legitimately inline (do NOT move these): data-driven values (`style="width: {{ $pct }}%"`, Vue `:style`), merchant-configured CSS fields rendered from admin/theme-customization content, and PDF/mail templates rendered outside the Vite pipeline (dompdf/admin do not load the storefront bundle, so their CSS must be inline). A class in the theme's `<head>` stylesheet also applies to partials injected deep in `<body>` — prefer it over an inline `<style>` that exists only to work around `@push('styles')` firing after the head stacks. When lifting inline CSS into the sheet, copy the declarations verbatim and re-verify the rendered result is pixel-unchanged. Do not rewrite inline styles inside pristine inherited Shop views you have not intentionally redesigned.
 - Derive the complete asset runtime from the installed Shop package; view fallback does not imply Vite/JavaScript/CSS inheritance.
 - Preserve layout runtime responsibilities, render events, controller variables, routes, form fields, API shapes, product-type behavior, and enabled extensions.
 - Make configuration edits merge-only. Never erase sibling themes/providers/autoload mappings or silently change `shop-default`.
 - Use dry runs and collision checks. Never force-publish, delete, replace a directory with a symlink, seed destructive data, or overwrite a conflict automatically.
+- Generate package installation commands from the validated theme identity. Keep the default installer collision-safe and non-activating; never copy another theme's brand, seeders, catalog tasks, or asset assumptions.
 - Preserve the exact installed Bagisto license notice for copied/derived sources, choose the theme's own license explicitly before distribution, and verify every bundled asset's redistribution terms.
 - Treat generated design recommendations as candidates, not authority. Reject any suggestion that weakens commerce clarity, accessibility, performance, licensing, merchant control, installed dependencies, or Bagisto runtime contracts.
 - Use only this skill's bundled `bagisto-ui-ux` knowledge and generator for design intelligence. Do not require, discover, import, or call another design skill at runtime.
@@ -113,9 +117,9 @@ python3 <skill-dir>/scripts/scaffold_theme.py \
   --override <shop-relative-blade-path>
 ```
 
-Review every identity and integration snippet plus every `planned_actions` source, destination, state, and checksum. Run again with `--apply` only when the plan matches the requested mode. The script creates new files, accepts byte-identical reruns, and rejects conflicts; it does not edit host configuration or activate a channel.
+Review every identity and integration snippet plus every `planned_actions` source, destination, state, and checksum. For package modes, confirm the plan contains `src/Console/Commands/InstallCommand.php`, console-only provider registration, and the derived `installation_command`. Run again with `--apply` only when the plan matches the requested mode. The script creates new files, accepts byte-identical reruns, and rejects conflicts; it does not edit host configuration or activate a channel.
 
-Use `--registration composer --bagisto-constraint <supported-range> --theme-license <spdx-expression> --theme-license-file <project-relative-license-file>` only for a distributable package with an explicitly tested Bagisto range and an approved theme license. The scaffold retains the discovered Bagisto notice separately. Never Composer-install and locally register the same provider.
+Use `--registration composer --bagisto-constraint <supported-range> --theme-license <spdx-expression> --theme-license-file <project-relative-license-file>` only for a distributable package with an explicitly tested Bagisto range and an approved theme license. Never Composer-install and locally register the same provider.
 
 For an existing theme, do not scaffold. Inspect it, then compare the actual source tree (not a merely configured publish destination):
 
@@ -134,6 +138,10 @@ If an existing theme has no baseline, treat the nonzero result as “not yet aud
 ### 4. Integrate using installed conventions
 
 Merge only the required theme entry and one chosen package-registration strategy. Preserve all current configuration. Keep active-theme Vite settings synchronized with Vite output; add a named Vite registry only for explicit namespaced asset calls or an installed requirement.
+
+Prefer letting the package self-register its theme entry, Vite registry, and (only when it ships image filters) image-cache templates from `src/Config/{themes,bagisto-vite,imagecache}.php` rather than editing the application root config. Match the installed config shape and register nested children (`themes.shop.<code>`, `bagisto-vite.viters.<code>`, `imagecache`) with a deep `config()->set()` from `register()` — Laravel's `mergeConfigFrom` is a shallow merge and will let the existing nested array win and drop the theme's entry. See [architecture.md](references/architecture.md) → "Self-register theme configuration from the package".
+
+Keep the generated installer generic: publish only its derived view tag without `--force`, clear application caches, report a missing production manifest, and leave channel activation to the validated activation workflow. Treat an existing theme installer only as structural evidence. Add seeders, indexing, storage links, or demo-data options solely when the new package owns those resources and the user explicitly requires them.
 
 Do not register models/Concord for a view-and-asset-only theme. Do not activate the theme yet.
 
@@ -164,6 +172,8 @@ python3 <skill-dir>/scripts/validate_theme.py \
 ```
 
 Resolve failures; explain warnings. Re-run `validate_theme_brief.py` when the approved direction changes. Read [testing-deployment.md](references/testing-deployment.md) and run its applicable storefront matrix with console, page-error, failed-request, mobile, RTL, accessibility, and performance evidence. Adapt `assets/storefront-smoke.template.spec.ts` only when the checkout lacks equivalent coverage.
+
+After merging the reported theme/provider configuration and building assets, run the reported `installation_command`. Verify that it publishes views without overwriting application-owned files, clears caches, finds the production manifest, and does not change any channel's selected theme.
 
 For every new/redesigned theme, every activation/release decision, or any request to prove dynamic/admin-controlled content or complete storefront functionality, read and follow the embedded [bagisto-theme-testing skill](references/bagisto-theme-testing/SKILL.md). Use its folder resources to:
 
@@ -201,7 +211,7 @@ After every required gate passes:
 4. Clear/rebuild relevant caches and reload long-running processes when needed.
 5. Run production smoke tests and roll back source/assets/channel selection together on failure.
 
-Report changed files, discovered baseline, scaffold mode, integration strategy, license/notice and asset-provenance decisions, build/manifest results, tests and browsers/locales/product types/extensions covered, accessibility/performance evidence, activation state, rollback, override diff, and every skipped check with risk.
+Report changed files, discovered baseline, scaffold mode, integration strategy, installer signature/result, license/notice and asset-provenance decisions, build/manifest results, tests and browsers/locales/product types/extensions covered, accessibility/performance evidence, activation state, rollback, override diff, and every skipped check with risk.
 
 ## Definition of done
 
