@@ -54,39 +54,39 @@ Bagisto uses a modular package structure in `packages/Webkul/`:
 
 This project has domain-specific skills available. You MUST activate the relevant skill whenever you work in that domain—don't wait until you're stuck.
 
-- `coding-standards` — Use when writing, changing or reviewing any Bagisto PHP or Blade — the conventions this codebase holds to, covering Laravel idiom, code style, comments and docblocks, database access, Blade, security and localization. Trigger phrases include "standards", "conventions", "code style", "docblock", "comments", "repository pattern", "blade", "component", "binding", "event", "migration", "security", "XSS", "authorization", "escaping", "is this safe", "best practice".
-- `package-development` — Use when creating or changing a Bagisto package — service providers, migrations, models, contracts, proxies, repositories, routes, controllers, Blade views, localization, admin menus, ACL or system configuration. Trigger phrases include "new package", "service provider", "migration", "model", "repository", "controller", "route", "ACL", "admin menu", "system config", "concord".
+- `bagisto-coding-standards` — Use when writing, changing or reviewing any Bagisto PHP or Blade — the conventions this codebase holds to, covering Laravel idiom, code style, comments and docblocks, database access, Blade, security and localization. Trigger phrases include "standards", "conventions", "code style", "docblock", "comments", "repository pattern", "blade", "component", "binding", "event", "migration", "security", "XSS", "authorization", "escaping", "is this safe", "best practice".
+- `bagisto-package-development` — Use when creating or changing a Bagisto package — service providers, migrations, models, contracts, proxies, repositories, routes, controllers, Blade views, localization, admin menus, ACL or system configuration. Trigger phrases include "new package", "service provider", "migration", "model", "repository", "controller", "route", "ACL", "admin menu", "system config", "concord".
 
-- `shipping-method-development` — Use when creating or changing a Bagisto shipping method — a carrier class, shipping rates, the carriers config, or integrating a courier such as FedEx, UPS or DHL. Trigger phrases include "shipping", "shipping method", "carrier", "delivery", "shipping rate", "FedEx", "UPS", "DHL", "free shipping", "flat rate".
+- `bagisto-shipping-method-development` — Use when creating or changing a Bagisto shipping method — a carrier class, shipping rates, the carriers config, or integrating a courier such as FedEx, UPS or DHL. Trigger phrases include "shipping", "shipping method", "carrier", "delivery", "shipping rate", "FedEx", "UPS", "DHL", "free shipping", "flat rate".
 
-- `payment-method-development` — Use when creating or changing a Bagisto payment method — a payment class, the payment methods config, the checkout redirect and callback flow, or integrating a gateway such as Stripe or PayPal. Trigger phrases include "payment", "payment method", "payment gateway", "Stripe", "PayPal", "Razorpay", "checkout payment", "redirect", "webhook".
+- `bagisto-payment-method-development` — Use when creating or changing a Bagisto payment method — a payment class, the payment methods config, the checkout redirect and callback flow, or integrating a gateway such as Stripe or PayPal. Trigger phrases include "payment", "payment method", "payment gateway", "Stripe", "PayPal", "Razorpay", "checkout payment", "redirect", "webhook".
 
-- `product-type-development` — Use when creating or changing a Bagisto product type — the product_types config, an AbstractType subclass, or type-specific cart, pricing and inventory behaviour. Trigger phrases include "product type", "AbstractType", "configurable", "bundle", "grouped", "downloadable", "virtual product", "subscription product", "prepareForCart".
+- `bagisto-product-type-development` — Use when creating or changing a Bagisto product type — the product_types config, an AbstractType subclass, or type-specific cart, pricing and inventory behaviour. Trigger phrases include "product type", "AbstractType", "configurable", "bundle", "grouped", "downloadable", "virtual product", "subscription product", "prepareForCart".
 
-- `shop-theme-development` — Use when creating or changing a Bagisto storefront theme — a theme package, shop layouts, Blade component overrides, or the Vite asset pipeline for the customer-facing side. Trigger phrases include "shop theme", "storefront theme", "shop layout", "theme package", "vite", "tailwind", "publish views", "custom layout".
+- `bagisto-shop-theme-development` — Use when creating or changing a Bagisto storefront theme — a theme package, shop layouts, Blade component overrides, or the Vite asset pipeline for the customer-facing side. Trigger phrases include "shop theme", "storefront theme", "shop layout", "theme package", "vite", "tailwind", "publish views", "custom layout".
 
-- `shop-advance-theme-development` — Use when building a storefront feature against the advanced shop theme workflow — the non-negotiable rules and the end-to-end procedure for delivering one. Trigger phrases include "shop advance theme", "advanced theme", "storefront feature", "theme workflow", "definition of done".
+- `bagisto-shop-advance-theme-development` — Use when building a storefront feature against the advanced shop theme workflow — the non-negotiable rules and the end-to-end procedure for delivering one. Trigger phrases include "shop advance theme", "advanced theme", "storefront feature", "theme workflow", "definition of done".
 
-- `admin-theme-development` — Use when creating or changing a Bagisto admin theme — a theme package, admin layouts, Blade component overrides, or the Vite asset pipeline for the admin panel. Trigger phrases include "admin theme", "admin layout", "admin panel styling", "theme package", "vite", "tailwind", "publish views", "custom layout".
+- `bagisto-admin-theme-development` — Use when creating or changing a Bagisto admin theme — a theme package, admin layouts, Blade component overrides, or the Vite asset pipeline for the admin panel. Trigger phrases include "admin theme", "admin layout", "admin panel styling", "theme package", "vite", "tailwind", "publish views", "custom layout".
 
-- `pest-testing` — Use when writing or changing a Bagisto Pest test — feature or unit tests, assertions, datasets, mocking, architecture tests, or registering a new package's suite. Trigger phrases include "pest", "test", "unit test", "feature test", "assertion", "dataset", "mock", "testsuite", "TDD", "coverage".
+- `bagisto-pest-testing` — Use when writing or changing a Bagisto Pest test — feature or unit tests, assertions, datasets, mocking, architecture tests, or registering a new package's suite. Trigger phrases include "pest", "test", "unit test", "feature test", "assertion", "dataset", "mock", "testsuite", "TDD", "coverage".
 
-- `data-transfer` — Use when adding or changing a Bagisto import — an Importer class, a file source, the importers registry, the queued import pipeline, or a stuck or failing import job. Trigger phrases include "import", "importer", "data transfer", "CSV", "XLSX", "XML", "bulk upload", "import batch", "queued import", "validate rows".
-- `theme-sections` — Use when working on the Bagisto Appearance area — theme sections, the section editor and its storefront preview, draft and publish behaviour, section media, or the theme gallery. Trigger phrases include "section", "theme section", "appearance", "preview", "draft", "publish", "unsaved changes", "storefront layout", "theme gallery", "customize theme".
-- `attribute-development` — Use when working with Bagisto's EAV attribute system — adding or changing an attribute, attribute family or group, reading or writing a product attribute value, or debugging a value that reads back empty or from the wrong locale or channel. Trigger phrases include "attribute", "EAV", "attribute family", "attribute group", "attribute option", "custom attribute", "value_per_locale", "value_per_channel", "product_flat", "swatch".
-- `datagrid-development` — Use when building or changing a Bagisto admin listing page — a DataGrid class with columns, search, filters, sorting, row actions, mass actions or export, and the controller and Blade view that render it. Trigger phrases include "datagrid", "admin listing", "add a column", "mass action", "prepareQueryBuilder", "listing page", "grid filter", "export grid".
-- `playwright-testing` — Use when writing, changing or debugging a Bagisto end-to-end test — Playwright specs, page objects, ACL role coverage, fixtures, or a failing E2E run in CI. Trigger phrases include "playwright", "e2e", "end to end", "spec.ts", "page object", "browser test", "flaky test", "shard".
+- `bagisto-data-transfer` — Use when adding or changing a Bagisto import — an Importer class, a file source, the importers registry, the queued import pipeline, or a stuck or failing import job. Trigger phrases include "import", "importer", "data transfer", "CSV", "XLSX", "XML", "bulk upload", "import batch", "queued import", "validate rows".
+- `bagisto-theme-sections` — Use when working on the Bagisto Appearance area — theme sections, the section editor and its storefront preview, draft and publish behaviour, section media, or the theme gallery. Trigger phrases include "section", "theme section", "appearance", "preview", "draft", "publish", "unsaved changes", "storefront layout", "theme gallery", "customize theme".
+- `bagisto-attribute-development` — Use when working with Bagisto's EAV attribute system — adding or changing an attribute, attribute family or group, reading or writing a product attribute value, or debugging a value that reads back empty or from the wrong locale or channel. Trigger phrases include "attribute", "EAV", "attribute family", "attribute group", "attribute option", "custom attribute", "value_per_locale", "value_per_channel", "product_flat", "swatch".
+- `bagisto-datagrid-development` — Use when building or changing a Bagisto admin listing page — a DataGrid class with columns, search, filters, sorting, row actions, mass actions or export, and the controller and Blade view that render it. Trigger phrases include "datagrid", "admin listing", "add a column", "mass action", "prepareQueryBuilder", "listing page", "grid filter", "export grid".
+- `bagisto-playwright-testing` — Use when writing, changing or debugging a Bagisto end-to-end test — Playwright specs, page objects, ACL role coverage, fixtures, or a failing E2E run in CI. Trigger phrases include "playwright", "e2e", "end to end", "spec.ts", "page object", "browser test", "flaky test", "shard".
 
-- `code-review` — Use when reviewing Bagisto code changes or a pull request for correctness, convention compliance or quality, or when asked whether a change is ready to merge. Trigger phrases include "review", "code review", "PR review", "is this correct", "conventions", "violations", "code quality", "ready to merge".
-- `git-workflow` — Use when branching, committing, writing a CHANGELOG entry or opening a pull request against a Bagisto repository. Trigger phrases include "branch", "commit", "commit message", "PR", "pull request", "changelog", "merge", "conventional commits", "release notes".
-- `change-verification` — Use when a Bagisto change is about to be called done, or when asked to run the verification gates — code style, tests, end-to-end tests and translation completeness. Trigger phrases include "verify", "is this done", "run the gates", "pint", "pest", "playwright", "translations check", "ready to commit".
+- `bagisto-code-review` — Use when reviewing Bagisto code changes or a pull request for correctness, convention compliance or quality, or when asked whether a change is ready to merge. Trigger phrases include "review", "code review", "PR review", "is this correct", "conventions", "violations", "code quality", "ready to merge".
+- `bagisto-git-workflow` — Use when branching, committing, writing a CHANGELOG entry or opening a pull request against a Bagisto repository. Trigger phrases include "branch", "commit", "commit message", "PR", "pull request", "changelog", "merge", "conventional commits", "release notes".
+- `bagisto-change-verification` — Use when a Bagisto change is about to be called done, or when asked to run the verification gates — code style, tests, end-to-end tests and translation completeness. Trigger phrases include "verify", "is this done", "run the gates", "pint", "pest", "playwright", "translations check", "ready to commit".
 
 
-- `bagisto-api-develop` — Install / remove / extend the `bagisto-api` package (REST + GraphQL). Activates when installing or removing the package, or adding/changing an endpoint, resource, or admin menu's API; or when the user mentions `ApiResource`, `Provider`, `Processor`, `DTO`, "install the package", or "add an endpoint". Install/remove run only on explicit request.
+- `bagisto-api-develop` — Use when working inside the bagisto-api package — installing or removing it, adding or changing a REST or GraphQL endpoint or resource, building an admin menu's API, or fixing package behaviour. Install and removal happen only on explicit request, never automatically. Trigger phrases include "ApiResource", "Provider", "Processor", "DTO", "resolver", "install the bagisto-api package", "remove the package", "add an endpoint", "extend an endpoint".
 
-- `bagisto-api-shop` — Build a storefront app/UI on the Shop API (`/api/shop/*` + `/api/graphql`). Activates when building a customer-facing storefront, catalog/cart/checkout flow, customer account, or shopping app; or when the user mentions products, cart, checkout, coupons, wishlist, or customer login/account.
+- `bagisto-api-shop` — Use when building a storefront app or UI on the Bagisto Shop API — a customer-facing storefront, catalog, cart, checkout, customer account, wishlist, compare, reviews, or any page or component of a shop on the API, whether web, mobile or custom. Ask the client's platform and stack first, and treat the api-docs as the source of truth for exact shapes. Trigger phrases include "products", "cart", "checkout", "coupons", "customer login", "customer account", "wishlist", "storefront on the API".
 
-- `bagisto-api-admin` — Build an admin app/UI on the Admin API (`/api/admin/*` + `/api/admin/graphql`). Activates when building an admin dashboard, back-office panel, or an order/catalog/customer/marketing/CMS/settings management screen; or when the user mentions admin orders, products, customers, reporting, or "admin panel on the API".
+- `bagisto-api-admin` — Use when building an admin app or UI on the Bagisto Admin API — a back-office dashboard, an order, catalog, customer, marketing, CMS or settings management screen, an admin mobile app, the Create-Order flow, or any admin panel page on the API. Ask the client's platform and stack first, and treat the api-docs as the source of truth for exact shapes. Trigger phrases include "admin orders", "admin products", "customers", "cart rules", "CMS", "settings", "reporting", "admin panel on the API".
 
 ## Bagisto Architecture
 
@@ -395,14 +395,14 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Run tests: `php artisan test --compact` or filter: `php artisan test --compact --filter=testName`.
 - Do NOT delete tests without approval.
 - CRITICAL: ALWAYS use `search-docs` tool for version-specific Pest documentation and updated code examples.
-- IMPORTANT: Activate `pest-testing` every time you're working with a Pest or testing-related task.
-- IMPORTANT: Activate `playwright-testing` for anything under `tests/e2e-pw/`, and `change-verification` before calling any change done.
+- IMPORTANT: Activate `bagisto-pest-testing` every time you're working with a Pest or testing-related task.
+- IMPORTANT: Activate `bagisto-playwright-testing` for anything under `tests/e2e-pw/`, and `bagisto-change-verification` before calling any change done.
 
-=== payment-method-development rules ===
+=== bagisto-payment-method-development rules ===
 
 # Payment Gateway Development
 
-- CRITICAL: ALWAYS use the payment-method-development skill when working with payment methods in Bagisto.
+- CRITICAL: ALWAYS use the bagisto-payment-method-development skill when working with payment methods in Bagisto.
 - Payment methods in Bagisto are located in `packages/Webkul/Payment/src/Payment/` and `packages/Webkul/Paypal/src/Payment/`.
 - All payment methods extend `Webkul\Payment\Payment\Payment` abstract class.
 - Payment configuration is defined in `Config/payment-methods.php` files.
@@ -411,11 +411,11 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Always follow the existing code patterns and PHPDoc conventions when creating payment methods.
 - For testing payment methods, refer to `packages/Webkul/Shop/tests/Feature/Checkout/CheckoutTest.php`.
 
-=== shipping-method-development rules ===
+=== bagisto-shipping-method-development rules ===
 
 # Shipping Method Development
 
-- CRITICAL: ALWAYS use the shipping-method-development skill when working with shipping methods in Bagisto.
+- CRITICAL: ALWAYS use the bagisto-shipping-method-development skill when working with shipping methods in Bagisto.
 - Shipping methods in Bagisto are located in `packages/Webkul/Shipping/src/Carriers/`.
 - All shipping methods extend `Webkul\Shipping\Carriers\AbstractShipping` abstract class.
 - Shipping carrier configuration is defined in `Config/carriers.php` files.
@@ -425,11 +425,11 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Use `core()->convertPrice()` for multi-currency support when setting prices.
 - Check `$item->getTypeInstance()->isStockable()` for per-item shipping calculations.
 
-=== coding-standards rules ===
+=== bagisto-coding-standards rules ===
 
 # Coding Standards
 
-- CRITICAL: ALWAYS use the coding-standards skill when writing or changing any Bagisto PHP or Blade. It owns code style, comments and docblocks, Laravel idiom, data access, Blade, security and localization; `vendor/bin/pint` owns everything mechanical.
+- CRITICAL: ALWAYS use the bagisto-coding-standards skill when writing or changing any Bagisto PHP or Blade. It owns code style, comments and docblocks, Laravel idiom, data access, Blade, security and localization; `vendor/bin/pint` owns everything mechanical.
 - Every method and property carries a docblock, whatever its visibility. Class members run constants → properties → constructor → public → protected → private.
 - No comments inside a method body, array literal, route group or markup — in PHP, Blade, JS or Vue alike. A non-obvious reason goes in the docblock or the commit message.
 - A condition with more than one clause goes multiline, the boolean operator leading each line.
@@ -452,11 +452,11 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Gate admin actions with `@if (bouncer()->hasPermission('resource.action'))`.
 - Bracket meaningful content with `{!! view_render_event('bagisto.<area>.<path>.before') !!}` / `.after`.
 
-=== package-development rules ===
+=== bagisto-package-development rules ===
 
 # Package Development
 
-- CRITICAL: ALWAYS use the package-development skill when creating packages in Bagisto.
+- CRITICAL: ALWAYS use the bagisto-package-development skill when creating packages in Bagisto.
 - Use the Bagisto Package Generator (`composer require bagisto/bagisto-package-generator`) for quick setup.
 - Package structure must follow the standardized layout in `packages/Webkul/`.
 - Service providers must be registered in `bootstrap/providers.php`.
@@ -488,19 +488,19 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - Views must be loaded with namespace prefix (e.g., `rma::admin.return-requests.index`).
 
 #### features.md — Features
-- Translation files go in `src/Resources/lang/{locale}/` and use namespace `rma::` — the rule is owned by the `coding-standards` skill (`localization.md`).
-- DataGrid classes extend `Webkul\DataGrid\DataGrid` and are placed in `src/DataGrids/Admin/` — see the `datagrid-development` skill.
+- Translation files go in `src/Resources/lang/{locale}/` and use namespace `rma::` — the rule is owned by the `bagisto-coding-standards` skill (`localization.md`).
+- DataGrid classes extend `Webkul\DataGrid\DataGrid` and are placed in `src/DataGrids/Admin/` — see the `bagisto-datagrid-development` skill.
 - Admin menu is configured in `src/Config/admin-menu.php` and merged to `menu.admin`.
 - ACL is configured in `src/Config/acl.php` and merged to `acl`.
 - System configuration is in `src/Config/system.php` and merged to `core`.
 - Use `core()->getConfigData('key.path')` to retrieve configuration values.
 - Use `bouncer()->hasPermission('key')` to check ACL permissions in controllers and views.
 
-=== product-type-development rules ===
+=== bagisto-product-type-development rules ===
 
 # Product Type Development
 
-- CRITICAL: ALWAYS use the product-type-development skill when working with product types in Bagisto.
+- CRITICAL: ALWAYS use the bagisto-product-type-development skill when working with product types in Bagisto.
 - Product types extend `Webkul\Product\Type\AbstractType` base class.
 - Product type configuration is defined in `Config/product-types.php` files.
 - Reference files: `configuration.md` (config structure), `abstract-type.md` (AbstractType methods), `building-a-type.md` (a complete implementation).

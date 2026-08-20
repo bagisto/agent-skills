@@ -1,6 +1,6 @@
 ---
 name: bagisto-api-admin
-description: "ALWAYS use when building an ADMIN app or UI on the Bagisto Admin API — a back-office dashboard, order/catalog/customer/marketing/CMS/settings management screen, an admin mobile app, the Create-Order flow, or ANY admin panel page on the API. Also when the user mentions admin orders, products, customers, cart rules, CMS, settings, reporting, or 'admin panel on the API'. Routes each menu to a reference page; asks the client's platform/stack first; treats the api-docs as the source of truth for exact shapes."
+description: Use when building an admin app or UI on the Bagisto Admin API — a back-office dashboard, an order, catalog, customer, marketing, CMS or settings management screen, an admin mobile app, the Create-Order flow, or any admin panel page on the API. Ask the client's platform and stack first, and treat the api-docs as the source of truth for exact shapes. Trigger phrases include "admin orders", "admin products", "customers", "cart rules", "CMS", "settings", "reporting", "admin panel on the API".
 license: MIT
 metadata:
   author: bagisto

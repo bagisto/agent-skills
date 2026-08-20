@@ -1,6 +1,6 @@
 ---
 name: bagisto-api-shop
-description: "ALWAYS use when building a STOREFRONT app or UI on the Bagisto Shop API — a customer-facing storefront, catalog, cart, checkout, customer account, wishlist, compare, reviews, or ANY page/component of a shop on the API (web, mobile, or custom). Also when the user mentions products, cart, checkout, coupons, customer login/account, wishlist, or 'storefront on the API'. Routes each task to a reference page; asks the client's platform/stack first; treats the api-docs as the source of truth for exact shapes."
+description: Use when building a storefront app or UI on the Bagisto Shop API — a customer-facing storefront, catalog, cart, checkout, customer account, wishlist, compare, reviews, or any page or component of a shop on the API, whether web, mobile or custom. Ask the client's platform and stack first, and treat the api-docs as the source of truth for exact shapes. Trigger phrases include "products", "cart", "checkout", "coupons", "customer login", "customer account", "wishlist", "storefront on the API".
 license: MIT
 metadata:
   author: bagisto

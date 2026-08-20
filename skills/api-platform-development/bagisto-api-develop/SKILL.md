@@ -1,6 +1,6 @@
 ---
 name: bagisto-api-develop
-description: "Use when working INSIDE the bagisto-api package — installing or removing it, adding/changing a REST or GraphQL endpoint or resource, building an admin menu's API, or fixing package behaviour. Also when the user mentions ApiResource, Provider, Processor, DTO, resolver, 'install/remove the bagisto-api package', or 'add/extend an endpoint'. Install/remove happen only on explicit request, never automatically. Reference files live in reference/: install, uninstall, structure, api-structure, conventions, precautions, limitations, testing."
+description: Use when working inside the bagisto-api package — installing or removing it, adding or changing a REST or GraphQL endpoint or resource, building an admin menu's API, or fixing package behaviour. Install and removal happen only on explicit request, never automatically. Trigger phrases include "ApiResource", "Provider", "Processor", "DTO", "resolver", "install the bagisto-api package", "remove the package", "add an endpoint", "extend an endpoint".
 license: MIT
 metadata:
   author: bagisto

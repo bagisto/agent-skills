@@ -158,6 +158,33 @@ run_case_allowlisted() {
 
 run_case_allowlisted
 
+# A grouping folder holds skills that must be linted too — they were silently
+# exempt until the linter learned to descend.
+run_case_nested() {
+    local workspace
+    workspace="$(mktemp -d)"
+
+    mkdir -p "$workspace/bin" "$workspace/skills/group/nested-skill"
+    cp "$LINTER" "$workspace/bin/lint-skills.sh"
+    printf -- '---\nname: wrong-name\ndescription: Activates when nested. \n---\n' \
+        > "$workspace/skills/group/nested-skill/SKILL.md"
+
+    local output
+    output="$(bash "$workspace/bin/lint-skills.sh" 2>&1)"
+
+    if printf '%s' "$output" | grep -q NAME_MISMATCH; then
+        printf '  ok    %-24s a nested skill is linted\n' 'nested skill'
+        passed=$((passed + 1))
+    else
+        printf '  FAIL  %-24s nested skill escaped the linter:\n%s\n' 'nested skill' "$output"
+        failed=$((failed + 1))
+    fi
+
+    rm -rf "$workspace"
+}
+
+run_case_nested
+
 printf '\n%s passed, %s failed\n' "$passed" "$failed"
 
 [ "$failed" -eq 0 ]

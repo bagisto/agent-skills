@@ -26,9 +26,9 @@ Every `SKILL.md` opens on line 1 with a `---` delimited YAML block:
 
 ```yaml
 ---
-name: datagrid-development
+name: bagisto-datagrid-development
 description: Use when building or changing a Bagisto admin listing page — … Trigger phrases include "datagrid", "admin listing", "mass action".
-requires: coding-standards
+requires: bagisto-coding-standards
 license: MIT
 ---
 ```
@@ -47,10 +47,10 @@ catches the wording a user actually types.
 ### What `requires` means
 
 `requires` declares that a skill **cannot be applied correctly on its own** —
-`datagrid-development` without `coding-standards` produces a grid that fails
+`bagisto-datagrid-development` without `bagisto-coding-standards` produces a grid that fails
 review — wrong docblocks, an unescaped closure, a query outside a repository.
 
-It is not a reading list. In particular, **do not list `change-verification`**:
+It is not a reading list. In particular, **do not list `bagisto-change-verification`**:
 every skill ends with a `REQUIRED SUB-SKILL` line pointing at it, and a
 dependency true of every skill carries no information.
 
@@ -75,8 +75,8 @@ references, which load only when the task reaches them.
 The cap exists because a `SKILL.md` loads in full every time the skill
 activates. This repository's skills were once 5,604 lines of always-loaded text
 across ten skills; the same material plus everything added since is now
-1,369 lines of router across 17 skills, with 7,245 lines of reference loaded only
-when a task reaches them.
+1,572 lines of router across 20 skills, with 14,866 lines of reference in
+101 files loaded only when a task reaches them.
 
 If a skill genuinely cannot be split — it is one long rule table — add its
 directory name to `skills/.lint-allow`, one per line, with a comment saying why.
@@ -122,7 +122,7 @@ batches.
 ## 8. Naming
 
 Directory and `name` match, lowercase and hyphenated, named for the **domain**
-rather than the activity — `datagrid-development`, not `how-to-build-grids`.
+rather than the activity — `bagisto-datagrid-development`, not `how-to-build-grids`.
 
 ## 9. Before the pull request
 

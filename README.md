@@ -6,7 +6,7 @@ These skills provide domain-specific, reusable context for AI agents (Claude Cod
 
 ## Available Skills
 
-### `coding-standards`
+### `bagisto-coding-standards`
 
 The conventions this codebase holds to — Laravel idiom, code style, comments, data access, Blade, security, localization.
 
@@ -14,7 +14,7 @@ The conventions this codebase holds to — Laravel idiom, code style, comments, 
 
 ---
 
-### `package-development`
+### `bagisto-package-development`
 
 Package development in Bagisto.
 
@@ -22,7 +22,7 @@ Package development in Bagisto.
 
 ---
 
-### `shipping-method-development`
+### `bagisto-shipping-method-development`
 
 Shipping method development in Bagisto.
 
@@ -30,7 +30,7 @@ Shipping method development in Bagisto.
 
 ---
 
-### `payment-method-development`
+### `bagisto-payment-method-development`
 
 Payment gateway development in Bagisto.
 
@@ -38,7 +38,7 @@ Payment gateway development in Bagisto.
 
 ---
 
-### `product-type-development`
+### `bagisto-product-type-development`
 
 Product type development in Bagisto.
 
@@ -46,7 +46,7 @@ Product type development in Bagisto.
 
 ---
 
-### `shop-theme-development`
+### `bagisto-shop-theme-development`
 
 Shop theme development in Bagisto.
 
@@ -54,7 +54,7 @@ Shop theme development in Bagisto.
 
 ---
 
-### `shop-advance-theme-development`
+### `bagisto-shop-advance-theme-development`
 
 Shop Advance Theme Development in Bagisto — an advanced, end-to-end storefront theme workflow that ships design references, scaffolding scripts, templates, and full Playwright commerce coverage.
 
@@ -62,7 +62,7 @@ Shop Advance Theme Development in Bagisto — an advanced, end-to-end storefront
 
 ---
 
-### `admin-theme-development`
+### `bagisto-admin-theme-development`
 
 Admin theme development in Bagisto.
 
@@ -70,7 +70,7 @@ Admin theme development in Bagisto.
 
 ---
 
-### `pest-testing`
+### `bagisto-pest-testing`
 
 Tests applications using the Pest 3 PHP framework.
 
@@ -78,7 +78,7 @@ Tests applications using the Pest 3 PHP framework.
 
 ---
 
-### `data-transfer`
+### `bagisto-data-transfer`
 
 Bulk imports — Importer classes, file sources, and the queued import pipeline.
 
@@ -86,7 +86,7 @@ Bulk imports — Importer classes, file sources, and the queued import pipeline.
 
 ---
 
-### `theme-sections`
+### `bagisto-theme-sections`
 
 The Appearance area — theme sections, the editor and its preview, drafts and publishing.
 
@@ -94,7 +94,7 @@ The Appearance area — theme sections, the editor and its preview, drafts and p
 
 ---
 
-### `attribute-development`
+### `bagisto-attribute-development`
 
 The EAV attribute system — attributes, families, groups, options, and how values are stored.
 
@@ -102,7 +102,7 @@ The EAV attribute system — attributes, families, groups, options, and how valu
 
 ---
 
-### `datagrid-development`
+### `bagisto-datagrid-development`
 
 Admin listing pages — DataGrid classes, columns, filters, actions and export.
 
@@ -110,7 +110,7 @@ Admin listing pages — DataGrid classes, columns, filters, actions and export.
 
 ---
 
-### `playwright-testing`
+### `bagisto-playwright-testing`
 
 End-to-end testing with Playwright — specs, page objects, ACL role coverage and failing runs.
 
@@ -118,7 +118,7 @@ End-to-end testing with Playwright — specs, page objects, ACL role coverage an
 
 ---
 
-### `code-review`
+### `bagisto-code-review`
 
 Reviewing a change or PR — correctness, security, architecture, conventions.
 
@@ -126,7 +126,7 @@ Reviewing a change or PR — correctness, security, architecture, conventions.
 
 ---
 
-### `git-workflow`
+### `bagisto-git-workflow`
 
 Branches, commit messages, CHANGELOG entries and pull requests.
 
@@ -134,7 +134,7 @@ Branches, commit messages, CHANGELOG entries and pull requests.
 
 ---
 
-### `change-verification`
+### `bagisto-change-verification`
 
 The completion gate — code style, tests, end-to-end tests and translation completeness.
 
@@ -177,23 +177,23 @@ npx skills add bagisto/agent-skills
 Install a specific skill only:
 
 ```bash
-npx skills add bagisto/agent-skills --skill "admin-theme-development"
-npx skills add bagisto/agent-skills --skill "attribute-development"
-npx skills add bagisto/agent-skills --skill "change-verification"
-npx skills add bagisto/agent-skills --skill "code-review"
-npx skills add bagisto/agent-skills --skill "coding-standards"
-npx skills add bagisto/agent-skills --skill "data-transfer"
-npx skills add bagisto/agent-skills --skill "datagrid-development"
-npx skills add bagisto/agent-skills --skill "git-workflow"
-npx skills add bagisto/agent-skills --skill "package-development"
-npx skills add bagisto/agent-skills --skill "payment-method-development"
-npx skills add bagisto/agent-skills --skill "pest-testing"
-npx skills add bagisto/agent-skills --skill "playwright-testing"
-npx skills add bagisto/agent-skills --skill "product-type-development"
-npx skills add bagisto/agent-skills --skill "shipping-method-development"
-npx skills add bagisto/agent-skills --skill "shop-advance-theme-development"
-npx skills add bagisto/agent-skills --skill "shop-theme-development"
-npx skills add bagisto/agent-skills --skill "theme-sections"
+npx skills add bagisto/agent-skills --skill "bagisto-admin-theme-development"
+npx skills add bagisto/agent-skills --skill "bagisto-attribute-development"
+npx skills add bagisto/agent-skills --skill "bagisto-change-verification"
+npx skills add bagisto/agent-skills --skill "bagisto-code-review"
+npx skills add bagisto/agent-skills --skill "bagisto-coding-standards"
+npx skills add bagisto/agent-skills --skill "bagisto-data-transfer"
+npx skills add bagisto/agent-skills --skill "bagisto-datagrid-development"
+npx skills add bagisto/agent-skills --skill "bagisto-git-workflow"
+npx skills add bagisto/agent-skills --skill "bagisto-package-development"
+npx skills add bagisto/agent-skills --skill "bagisto-payment-method-development"
+npx skills add bagisto/agent-skills --skill "bagisto-pest-testing"
+npx skills add bagisto/agent-skills --skill "bagisto-playwright-testing"
+npx skills add bagisto/agent-skills --skill "bagisto-product-type-development"
+npx skills add bagisto/agent-skills --skill "bagisto-shipping-method-development"
+npx skills add bagisto/agent-skills --skill "bagisto-shop-advance-theme-development"
+npx skills add bagisto/agent-skills --skill "bagisto-shop-theme-development"
+npx skills add bagisto/agent-skills --skill "bagisto-theme-sections"
 npx skills add bagisto/agent-skills --skill "bagisto-api-develop"
 npx skills add bagisto/agent-skills --skill "bagisto-api-shop"
 npx skills add bagisto/agent-skills --skill "bagisto-api-admin"
@@ -204,39 +204,37 @@ npx skills add bagisto/agent-skills --skill "bagisto-api-admin"
 ```
 agent-skills/
 ├── bin/
-│   └── lint-skills.sh                      # the authoring standard, enforced
-├── .github/workflows/skills-tests.yml      # runs the linter and its tests on every push
+│   └── lint-skills.sh                          # the authoring standard, enforced
+├── .github/workflows/skills-tests.yml          # runs the linter and its tests on every push
 ├── skills/
-│   ├── CONTRIBUTING.md                     # the authoring standard, written down
-│   ├── .lint-allow                         # skills exempted from the size cap, with a reason
+│   ├── CONTRIBUTING.md                         # the authoring standard, written down
+│   ├── .lint-allow                             # skills exempted from the size cap, with a reason
 │   ├── tests/
-│   │   └── lint-skills.test.sh             # proves every lint rule fires
-│   ├── admin-theme-development/         # SKILL.md + assets, creating-a-theme, layouts, reference
-│   ├── api-platform-development/        # REST + GraphQL API skills (grouped)
-│   │   ├── bagisto-api-develop/         # SKILL.md + reference/
-│   │   ├── bagisto-api-shop/            # SKILL.md + reference/
-│   │   └── bagisto-api-admin/           # SKILL.md + reference/
-│   ├── attribute-development/           # SKILL.md + attributes, eav
-│   ├── change-verification/             # SKILL.md
-│   ├── code-review/                     # SKILL.md
-│   ├── coding-standards/                # SKILL.md + 9 references
-│   ├── data-transfer/                   # SKILL.md + importers, pipeline
-│   ├── datagrid-development/            # SKILL.md + actions, columns
-│   ├── git-workflow/                    # SKILL.md
-│   ├── package-development/             # SKILL.md + core, data-layer, features, ui
-│   ├── payment-method-development/      # SKILL.md + implementation, payment-api, reference
-│   ├── pest-testing/                    # SKILL.md + new-package, suite-layout, writing-tests
-│   ├── playwright-testing/              # SKILL.md + authoring, troubleshooting
-│   ├── product-type-development/        # SKILL.md + abstract-type, building-a-type, configuration
-│   ├── shipping-method-development/     # SKILL.md + carrier-api, implementation, reference
-│   ├── shop-advance-theme-development/  # SKILL.md + workflow
-│   ├── shop-theme-development/          # SKILL.md + assets, creating-a-theme, layouts, reference
-│   └── theme-sections/                  # SKILL.md + drafts, sections
+│   │   └── lint-skills.test.sh                 # proves every lint rule fires
+│   ├── api-platform-development/            # grouping folder; its skills are already prefixed
+│   │   ├── bagisto-api-develop/             # SKILL.md + reference/
+│   │   ├── bagisto-api-shop/                # SKILL.md + reference/
+│   │   └── bagisto-api-admin/               # SKILL.md + reference/
+│   ├── bagisto-admin-theme-development/     # SKILL.md + assets, creating-a-theme, layouts, reference
+│   ├── bagisto-attribute-development/       # SKILL.md + attributes, eav
+│   ├── bagisto-change-verification/         # SKILL.md
+│   ├── bagisto-code-review/                 # SKILL.md
+│   ├── bagisto-coding-standards/            # SKILL.md + 9 references
+│   ├── bagisto-data-transfer/               # SKILL.md + importers, pipeline
+│   ├── bagisto-datagrid-development/        # SKILL.md + actions, columns
+│   ├── bagisto-git-workflow/                # SKILL.md
+│   ├── bagisto-package-development/         # SKILL.md + core, data-layer, features, ui
+│   ├── bagisto-payment-method-development/  # SKILL.md + implementation, payment-api, reference
+│   ├── bagisto-pest-testing/                # SKILL.md + new-package, suite-layout, writing-tests
+│   ├── bagisto-playwright-testing/          # SKILL.md + authoring, troubleshooting
+│   ├── bagisto-product-type-development/    # SKILL.md + abstract-type, building-a-type, configuration
+│   ├── bagisto-shipping-method-development/ # SKILL.md + carrier-api, implementation, reference
+│   ├── bagisto-shop-advance-theme-development/   # SKILL.md + workflow
+│   ├── bagisto-shop-theme-development/      # SKILL.md + assets, creating-a-theme, layouts, reference
+│   └── bagisto-theme-sections/              # SKILL.md + drafts, sections
 ├── AGENTS.md
 └── README.md
 ```
-
-
 
 ## Contributing
 

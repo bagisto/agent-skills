@@ -44,29 +44,24 @@ is_allowlisted() {
     [ -f "$ALLOW_FILE" ] && grep -qxF "$1" "$ALLOW_FILE"
 }
 
-for skill_dir in "$SKILLS_DIR"/*/; do
+# Lint one skill directory. Called for a top-level skill and for each child of a
+# grouping folder, so a nested skill is held to the same standard.
+lint_skill() {
+    local skill_dir="$1" rel_dir="$2"
+    local name skill_md rel declared_name description requires lines
+
     name="$(basename "$skill_dir")"
     skill_md="${skill_dir}SKILL.md"
+    rel="$rel_dir/SKILL.md"
 
-    # The suite that tests this linter is not itself a skill.
-    [ "$name" = "tests" ] && continue
-
-    # A folder of nested skills (api-platform-development) carries no SKILL.md of
-    # its own; lint the children instead.
     if [ ! -f "$skill_md" ]; then
-        if compgen -G "$skill_dir*/SKILL.md" > /dev/null; then
-            continue
-        fi
-
-        fail "skills/$name" SKILL_MISSING "a skill directory must contain a SKILL.md"
-        continue
+        fail "$rel_dir" SKILL_MISSING "a skill directory must contain a SKILL.md"
+        return
     fi
-
-    rel="skills/$name/SKILL.md"
 
     if [ "$(head -n 1 "$skill_md")" != "---" ]; then
         fail "$rel" FRONTMATTER_MISSING "file must open with a --- delimited YAML block"
-        continue
+        return
     fi
 
     declared_name="$(frontmatter "$skill_md" name)"
@@ -117,17 +112,42 @@ for skill_dir in "$SKILLS_DIR"/*/; do
         fail "$rel" SIZE_SKILL "$lines lines; a SKILL.md must be $SKILL_MAX_LINES or fewer — move depth into a reference file, or allowlist in skills/.lint-allow"
     fi
 
-    for reference in "$skill_dir"*.md; do
+    while IFS= read -r reference; do
+        [ -z "$reference" ] && continue
         [ "$reference" = "$skill_md" ] && continue
-        [ -e "$reference" ] || continue
 
         reference_lines="$(wc -l < "$reference" | tr -d '[:space:]')"
 
         if [ "$reference_lines" -gt "$REFERENCE_MAX_LINES" ]; then
-            fail "skills/$name/$(basename "$reference")" SIZE_REFERENCE \
+            fail "$rel_dir/${reference#"$skill_dir"}" SIZE_REFERENCE \
                 "$reference_lines lines; a reference file must be $REFERENCE_MAX_LINES or fewer — split it"
         fi
-    done
+    done < <(find "$skill_dir" -name '*.md' | sort)
+}
+
+for skill_dir in "$SKILLS_DIR"/*/; do
+    name="$(basename "$skill_dir")"
+
+    # The suite that tests this linter is not itself a skill.
+    [ "$name" = "tests" ] && continue
+
+    # A grouping folder carries no SKILL.md of its own — lint each child instead,
+    # so a nested skill is never silently exempt.
+    if [ ! -f "${skill_dir}SKILL.md" ]; then
+        if compgen -G "$skill_dir*/SKILL.md" > /dev/null; then
+            for nested in "$skill_dir"*/; do
+                [ -f "${nested}SKILL.md" ] || continue
+                lint_skill "$nested" "skills/$name/$(basename "$nested")"
+            done
+
+            continue
+        fi
+
+        fail "skills/$name" SKILL_MISSING "a skill directory must contain a SKILL.md"
+        continue
+    fi
+
+    lint_skill "$skill_dir" "skills/$name"
 done
 
 # Every relative markdown link must resolve, so a split never leaves a dead pointer.
