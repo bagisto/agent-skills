@@ -35,7 +35,7 @@ license: MIT
 
 | Field | Rule | Lint code |
 |---|---|---|
-| `name` | Required. Must equal the directory name, lowercase letters, numbers and hyphens | `NAME_MISSING`, `NAME_MISMATCH`, `NAME_FORMAT` |
+| `name` | Required. Must equal the directory name, begin `bagisto-`, and be lowercase letters, numbers and hyphens | `NAME_MISSING`, `NAME_MISMATCH`, `NAME_FORMAT`, `NAME_PREFIX` |
 | `description` | Required. Must begin `Use when` and end with a `Trigger phrases include "…"` sentence. Under 1024 chars | `DESCRIPTION_*` |
 | `requires` | Optional. Skills this one is **incomplete without** — see below | `REQUIRES_UNRESOLVED` |
 | `license` | Optional | — |
@@ -123,6 +123,17 @@ batches.
 
 Directory and `name` match, lowercase and hyphenated, named for the **domain**
 rather than the activity — `bagisto-datagrid-development`, not `how-to-build-grids`.
+
+**Every skill begins `bagisto-`.** These skills are installed into an agent
+directory that may already hold another project's — the UnoPim set, for one,
+which prefixes `unopim-`. Without a prefix, `coding-standards` from two projects
+collide, and the agent has no way to tell which it loaded. `NAME_PREFIX` enforces
+this.
+
+The one exception is a **grouping folder** such as `api-platform-development`,
+which has no `SKILL.md` of its own. It is not a skill, so the rule does not apply
+to it — but every skill inside it does have to carry the prefix, and the linter
+checks them individually.
 
 ## 9. Before the pull request
 

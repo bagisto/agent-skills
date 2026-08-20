@@ -48,48 +48,55 @@ valid_frontmatter() {
     printf -- '---\nname: %s\ndescription: Use when testing the linter. Trigger phrases include "test".\n---\n\n# Test\n' "$1"
 }
 
-run_case 'no frontmatter'  FRONTMATTER_MISSING  good-skill \
+run_case 'no frontmatter'  FRONTMATTER_MISSING  bagisto-good-skill \
     '# Just a heading, no frontmatter
 '
 
-run_case 'name mismatch'   NAME_MISMATCH        good-skill \
+run_case 'name mismatch'   NAME_MISMATCH        bagisto-good-skill \
     '---
 name: some-other-name
 description: Use when testing. Trigger phrases include "test".
 ---
 '
 
-run_case 'no description'  DESCRIPTION_MISSING  good-skill \
+run_case 'no description'  DESCRIPTION_MISSING  bagisto-good-skill \
     '---
-name: good-skill
+name: bagisto-good-skill
 ---
 '
 
-run_case 'bad description' DESCRIPTION_PREFIX   good-skill \
+run_case 'bad description' DESCRIPTION_PREFIX   bagisto-good-skill \
     '---
-name: good-skill
+name: bagisto-good-skill
 description: Activates when doing things. Trigger phrases include "test".
 ---
 '
 
-run_case 'no triggers'     DESCRIPTION_TRIGGERS good-skill \
+run_case 'no triggers'     DESCRIPTION_TRIGGERS bagisto-good-skill \
     '---
-name: good-skill
+name: bagisto-good-skill
 description: Use when doing things, with no trigger sentence at all.
 ---
 '
 
-run_case 'bad requires'    REQUIRES_UNRESOLVED  good-skill \
+run_case 'bad requires'    REQUIRES_UNRESOLVED  bagisto-good-skill \
     '---
-name: good-skill
+name: bagisto-good-skill
 description: Use when testing. Trigger phrases include "test".
 requires: a-skill-that-does-not-exist
 ---
 '
 
-run_case 'dangling link'   LINK_DANGLING        good-skill \
+run_case 'missing prefix'  NAME_PREFIX          some-random-skill \
     '---
-name: good-skill
+name: some-random-skill
+description: Use when testing. Trigger phrases include "test".
+---
+'
+
+run_case 'dangling link'   LINK_DANGLING        bagisto-good-skill \
+    '---
+name: bagisto-good-skill
 description: Use when testing. Trigger phrases include "test".
 ---
 
@@ -97,21 +104,21 @@ See [missing.md](missing.md).
 '
 
 # An oversized SKILL.md: frontmatter plus enough body to pass 150 lines.
-oversized="$(valid_frontmatter good-skill)"
+oversized="$(valid_frontmatter bagisto-good-skill)"
 for _ in $(seq 1 160); do
     oversized+='padding
 '
 done
-run_case 'oversized skill' SIZE_SKILL good-skill "$oversized"
+run_case 'oversized skill' SIZE_SKILL bagisto-good-skill "$oversized"
 
 # A valid skill must lint clean, or every case above proves nothing.
 run_case_clean() {
     local workspace
     workspace="$(mktemp -d)"
 
-    mkdir -p "$workspace/bin" "$workspace/skills/good-skill"
+    mkdir -p "$workspace/bin" "$workspace/skills/bagisto-good-skill"
     cp "$LINTER" "$workspace/bin/lint-skills.sh"
-    valid_frontmatter good-skill > "$workspace/skills/good-skill/SKILL.md"
+    valid_frontmatter bagisto-good-skill > "$workspace/skills/bagisto-good-skill/SKILL.md"
 
     if bash "$workspace/bin/lint-skills.sh" > /dev/null 2>&1; then
         printf '  ok    %-24s passes\n' 'valid skill'
@@ -133,14 +140,14 @@ run_case_allowlisted() {
     local workspace
     workspace="$(mktemp -d)"
 
-    mkdir -p "$workspace/bin" "$workspace/skills/good-skill"
+    mkdir -p "$workspace/bin" "$workspace/skills/bagisto-good-skill"
     cp "$LINTER" "$workspace/bin/lint-skills.sh"
-    printf 'good-skill\n' > "$workspace/skills/.lint-allow"
+    printf 'bagisto-good-skill\n' > "$workspace/skills/.lint-allow"
 
     {
-        valid_frontmatter good-skill
+        valid_frontmatter bagisto-good-skill
         for _ in $(seq 1 200); do printf 'padding\n'; done
-    } > "$workspace/skills/good-skill/SKILL.md"
+    } > "$workspace/skills/bagisto-good-skill/SKILL.md"
 
     local output
     output="$(bash "$workspace/bin/lint-skills.sh" 2>&1)"

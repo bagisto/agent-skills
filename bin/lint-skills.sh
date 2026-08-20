@@ -15,6 +15,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SKILLS_DIR="$ROOT/skills"
 ALLOW_FILE="$SKILLS_DIR/.lint-allow"
 
+SKILL_NAME_PREFIX='bagisto-'
 SKILL_MAX_LINES=150
 REFERENCE_MAX_LINES=500
 DESCRIPTION_MAX_CHARS=1024
@@ -77,6 +78,11 @@ lint_skill() {
     if ! printf '%s' "$declared_name" | grep -qE '^[a-z0-9-]+$'; then
         fail "$rel" NAME_FORMAT "name must be lowercase letters, numbers and hyphens only"
     fi
+
+    case "$declared_name" in
+        "$SKILL_NAME_PREFIX"*) ;;
+        *) fail "$rel" NAME_PREFIX "name must begin with '$SKILL_NAME_PREFIX' — rename the directory and the name field together, so the skill stays distinct when installed beside another project's" ;;
+    esac
 
     if [ -z "$description" ]; then
         fail "$rel" DESCRIPTION_MISSING "frontmatter needs a description field"
