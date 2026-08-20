@@ -6,6 +6,14 @@ These skills provide domain-specific, reusable context for AI agents (Claude Cod
 
 ## Available Skills
 
+### `coding-standards`
+
+The conventions this codebase holds to — Laravel idiom, code style, comments, data access, Blade, security, localization.
+
+**Activates when:** writing, changing or reviewing any Bagisto PHP or Blade — or when the user mentions `standards`, `conventions`, `code style`, `docblock`, `comments`, `repository pattern`, `blade`, `binding`, `event`, `migration`, `security`, `XSS`, `authorization`, `escaping`.
+
+---
+
 ### `package-development`
 
 Package development in Bagisto.
@@ -70,17 +78,69 @@ Tests applications using the Pest 3 PHP framework.
 
 ---
 
-### `blade-conventions`
+### `data-transfer`
 
-Blade template conventions for any Bagisto package — Admin, Shop, or a custom Webkul-style module.
+Bulk imports — Importer classes, file sources, and the queued import pipeline.
 
-**Activates when:** creating or editing Blade views, building anonymous `@props` or Vue-backed `x-template` components, wiring forms, datagrids, modals, layouts, or slots — or when matching the project's markup, attribute-binding (`:` vs `::`), indentation, comment, and formatting style.
+**Activates when:** adding or changing a Bagisto import — an Importer class, a file source, the importers registry, the queued import pipeline, or a stuck or failing import job — or when the user mentions `import`, `importer`, `data transfer`, `CSV`, `XLSX`, `XML`, `bulk upload`, `import batch`, `queued import`.
 
 ---
 
-## API Platform Skills
+### `theme-sections`
 
-These cover the **Bagisto API Platform** package — the REST + GraphQL API layer (storefront + admin). They're grouped under `skills/api-platform-development/`, and each ships a `reference/` tree of per-feature guides and checklists (the skills above are single `SKILL.md` files).
+The Appearance area — theme sections, the editor and its preview, drafts and publishing.
+
+**Activates when:** working on the Bagisto Appearance area — theme sections, the section editor and its storefront preview, draft and publish behaviour, section media, or the theme gallery — or when the user mentions `section`, `theme section`, `appearance`, `preview`, `draft`, `publish`, `unsaved changes`, `theme gallery`.
+
+---
+
+### `attribute-development`
+
+The EAV attribute system — attributes, families, groups, options, and how values are stored.
+
+**Activates when:** working with Bagisto's EAV attribute system — adding or changing an attribute, family or group, reading or writing a product attribute value, or debugging a value that reads back empty or from the wrong locale or channel — or when the user mentions `attribute`, `EAV`, `attribute family`, `attribute option`, `value_per_locale`, `value_per_channel`, `product_flat`, `swatch`.
+
+---
+
+### `datagrid-development`
+
+Admin listing pages — DataGrid classes, columns, filters, actions and export.
+
+**Activates when:** building or changing a Bagisto admin listing page — a DataGrid class with columns, search, filters, sorting, row actions, mass actions or export, and the controller and Blade view that render it — or when the user mentions `datagrid`, `admin listing`, `add a column`, `mass action`, `prepareQueryBuilder`, `listing page`, `grid filter`, `export grid`.
+
+---
+
+### `playwright-testing`
+
+End-to-end testing with Playwright — specs, page objects, ACL role coverage and failing runs.
+
+**Activates when:** writing, changing or debugging a Bagisto end-to-end test — Playwright specs, page objects, ACL role coverage, fixtures, or a failing E2E run in CI — or when the user mentions `playwright`, `e2e`, `end to end`, `spec.ts`, `page object`, `browser test`, `flaky test`, `shard`.
+
+---
+
+### `code-review`
+
+Reviewing a change or PR — correctness, security, architecture, conventions.
+
+**Activates when:** reviewing Bagisto code changes or a pull request for correctness, convention compliance or quality, or when asked whether a change is ready to merge — or when the user mentions `review`, `code review`, `PR review`, `conventions`, `violations`, `code quality`, `ready to merge`.
+
+---
+
+### `git-workflow`
+
+Branches, commit messages, CHANGELOG entries and pull requests.
+
+**Activates when:** branching, committing, writing a CHANGELOG entry or opening a pull request against a Bagisto repository — or when the user mentions `branch`, `commit`, `commit message`, `PR`, `pull request`, `changelog`, `merge`, `release notes`.
+
+---
+
+### `change-verification`
+
+The completion gate — code style, tests, end-to-end tests and translation completeness.
+
+**Activates when:** a change is about to be called done, or when asked to run the verification gates — or when the user mentions `verify`, `is this done`, `run the gates`, `pint`, `pest`, `playwright`, `translations check`, `ready to commit`.
+
+---
 
 ### `bagisto-api-develop`
 
@@ -117,73 +177,76 @@ npx skills add bagisto/agent-skills
 Install a specific skill only:
 
 ```bash
-npx skills add bagisto/agent-skills --skill "package-development"
-npx skills add bagisto/agent-skills --skill "shipping-method-development"
-npx skills add bagisto/agent-skills --skill "payment-method-development"
-npx skills add bagisto/agent-skills --skill "product-type-development"
-npx skills add bagisto/agent-skills --skill "shop-theme-development"
-npx skills add bagisto/agent-skills --skill "shop-advance-theme-development"
 npx skills add bagisto/agent-skills --skill "admin-theme-development"
+npx skills add bagisto/agent-skills --skill "attribute-development"
+npx skills add bagisto/agent-skills --skill "change-verification"
+npx skills add bagisto/agent-skills --skill "code-review"
+npx skills add bagisto/agent-skills --skill "coding-standards"
+npx skills add bagisto/agent-skills --skill "data-transfer"
+npx skills add bagisto/agent-skills --skill "datagrid-development"
+npx skills add bagisto/agent-skills --skill "git-workflow"
+npx skills add bagisto/agent-skills --skill "package-development"
+npx skills add bagisto/agent-skills --skill "payment-method-development"
 npx skills add bagisto/agent-skills --skill "pest-testing"
-npx skills add bagisto/agent-skills --skill "blade-conventions"
-```
-
-Install an API Platform skill (grouped under `skills/api-platform-development/`):
-
-```bash
+npx skills add bagisto/agent-skills --skill "playwright-testing"
+npx skills add bagisto/agent-skills --skill "product-type-development"
+npx skills add bagisto/agent-skills --skill "shipping-method-development"
+npx skills add bagisto/agent-skills --skill "shop-advance-theme-development"
+npx skills add bagisto/agent-skills --skill "shop-theme-development"
+npx skills add bagisto/agent-skills --skill "theme-sections"
 npx skills add bagisto/agent-skills --skill "bagisto-api-develop"
 npx skills add bagisto/agent-skills --skill "bagisto-api-shop"
 npx skills add bagisto/agent-skills --skill "bagisto-api-admin"
-```
-
-> The API skills are grouped under `skills/api-platform-development/` and carry `reference/` subfolders. The `skills` CLI discovers grouped skills automatically (it walks subfolders under `skills/`), so `npx skills add bagisto/agent-skills` and the `--skill <name>` commands pick them up. To install one manually instead, copy it in: `cp -r skills/api-platform-development/bagisto-api-shop ~/.claude/skills/` (user-wide) or into a project's `.claude/skills/`.
-
-Install for a specific agent:
-
-```bash
-npx skills add bagisto/agent-skills -a claude-code
-npx skills add bagisto/agent-skills -a cursor
 ```
 
 ## Repository Structure
 
 ```
 agent-skills/
+├── bin/
+│   └── lint-skills.sh                      # the authoring standard, enforced
+├── .github/workflows/skills-tests.yml      # runs the linter and its tests on every push
 ├── skills/
-│   ├── package-development/
-│   │   └── SKILL.md
-│   ├── shipping-method-development/
-│   │   └── SKILL.md
-│   ├── payment-method-development/
-│   │   └── SKILL.md
-│   ├── product-type-development/
-│   │   └── SKILL.md
-│   ├── shop-theme-development/
-│   │   └── SKILL.md
-│   ├── shop-advance-theme-development/
-│   │   ├── SKILL.md
-│   │   ├── references/              # architecture, UI/UX, commerce, testing + bagisto-theme-testing/
-│   │   ├── scripts/                 # scaffold, inspect, validate, diff, snapshot (+ tests)
-│   │   ├── assets/                  # brief, baseline, smoke, contract templates
-│   │   └── data/                    # bagisto-ui-ux.json
-│   ├── admin-theme-development/
-│   │   └── SKILL.md
-│   ├── pest-testing/
-│   │   └── SKILL.md
-│   ├── blade-conventions/
-│   │   └── SKILL.md
-│   └── api-platform-development/        # REST + GraphQL API skills (grouped)
-│       ├── bagisto-api-develop/
-│       │   ├── SKILL.md
-│       │   └── reference/               # install, structure, conventions, …
-│       ├── bagisto-api-shop/
-│       │   ├── SKILL.md
-│       │   └── reference/               # flows/, features/
-│       └── bagisto-api-admin/
-│           ├── SKILL.md
-│           └── reference/               # flows/, menus/
+│   ├── CONTRIBUTING.md                     # the authoring standard, written down
+│   ├── .lint-allow                         # skills exempted from the size cap, with a reason
+│   ├── tests/
+│   │   └── lint-skills.test.sh             # proves every lint rule fires
+│   ├── admin-theme-development/         # SKILL.md + assets, creating-a-theme, layouts, reference
+│   ├── api-platform-development/        # REST + GraphQL API skills (grouped)
+│   │   ├── bagisto-api-develop/         # SKILL.md + reference/
+│   │   ├── bagisto-api-shop/            # SKILL.md + reference/
+│   │   └── bagisto-api-admin/           # SKILL.md + reference/
+│   ├── attribute-development/           # SKILL.md + attributes, eav
+│   ├── change-verification/             # SKILL.md
+│   ├── code-review/                     # SKILL.md
+│   ├── coding-standards/                # SKILL.md + 9 references
+│   ├── data-transfer/                   # SKILL.md + importers, pipeline
+│   ├── datagrid-development/            # SKILL.md + actions, columns
+│   ├── git-workflow/                    # SKILL.md
+│   ├── package-development/             # SKILL.md + core, data-layer, features, ui
+│   ├── payment-method-development/      # SKILL.md + implementation, payment-api, reference
+│   ├── pest-testing/                    # SKILL.md + new-package, suite-layout, writing-tests
+│   ├── playwright-testing/              # SKILL.md + authoring, troubleshooting
+│   ├── product-type-development/        # SKILL.md + abstract-type, building-a-type, configuration
+│   ├── shipping-method-development/     # SKILL.md + carrier-api, implementation, reference
+│   ├── shop-advance-theme-development/  # SKILL.md + workflow
+│   ├── shop-theme-development/          # SKILL.md + assets, creating-a-theme, layouts, reference
+│   └── theme-sections/                  # SKILL.md + drafts, sections
 ├── AGENTS.md
 └── README.md
 ```
 
-Each skill folder contains a `SKILL.md` with agent-readable instructions and a YAML frontmatter block that defines when the skill activates. The API Platform skills additionally carry a `reference/` folder of per-feature guides and checklists that their `SKILL.md` links to.
+
+
+## Contributing
+
+The authoring standard is [skills/CONTRIBUTING.md](skills/CONTRIBUTING.md). Its
+mechanical rules are enforced:
+
+```bash
+bin/lint-skills.sh                      # frontmatter, size caps, requires, dangling links
+bash skills/tests/lint-skills.test.sh   # proves each rule actually fires
+```
+
+A `SKILL.md` is a router of at most 150 lines; depth lives in reference files
+beside it, capped at 500 lines each, loaded only when a task needs them.
