@@ -166,6 +166,14 @@ Build an admin app or UI on the **Admin API** (`/api/admin/*` + `/api/admin/grap
 
 ---
 
+### `bagisto-documentation`
+
+Write and maintain any Bagisto documentation site — developer documentation, the merchant user guide, or another guide. Judges the audience first, then covers page content, code samples, screenshots, the sidebar and redirects.
+
+**Activates when:** writing or updating a documentation page, capturing or replacing a screenshot, or moving and deleting pages — or when the user mentions docs, the user guide, developer documentation, or a doc redirect.
+
+---
+
 ## Install
 
 Install all skills from this repo into your AI agent:
@@ -184,6 +192,7 @@ npx skills add bagisto/agent-skills --skill "bagisto-code-review"
 npx skills add bagisto/agent-skills --skill "bagisto-coding-standards"
 npx skills add bagisto/agent-skills --skill "bagisto-data-transfer"
 npx skills add bagisto/agent-skills --skill "bagisto-datagrid-development"
+npx skills add bagisto/agent-skills --skill "bagisto-documentation"
 npx skills add bagisto/agent-skills --skill "bagisto-git-workflow"
 npx skills add bagisto/agent-skills --skill "bagisto-package-development"
 npx skills add bagisto/agent-skills --skill "bagisto-payment-method-development"
@@ -222,6 +231,7 @@ agent-skills/
 │   ├── bagisto-coding-standards/            # SKILL.md + 9 references
 │   ├── bagisto-data-transfer/               # SKILL.md + importers, pipeline
 │   ├── bagisto-datagrid-development/        # SKILL.md + actions, columns
+│   ├── bagisto-documentation/              # SKILL.md + developer-docs, user-guide, screenshots, publishing
 │   ├── bagisto-git-workflow/                # SKILL.md
 │   ├── bagisto-package-development/         # SKILL.md + core, data-layer, features, ui
 │   ├── bagisto-payment-method-development/  # SKILL.md + implementation, payment-api, reference

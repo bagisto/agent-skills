@@ -81,6 +81,8 @@ This project has domain-specific skills available. You MUST activate the relevan
 - `bagisto-git-workflow` — Use when branching, committing, writing a CHANGELOG entry or opening a pull request against a Bagisto repository. Trigger phrases include "branch", "commit", "commit message", "PR", "pull request", "changelog", "merge", "conventional commits", "release notes".
 - `bagisto-change-verification` — Use when a Bagisto change is about to be called done, or when asked to run the verification gates — code style, tests, end-to-end tests and translation completeness. Trigger phrases include "verify", "is this done", "run the gates", "pint", "pest", "playwright", "translations check", "ready to commit".
 
+- `bagisto-documentation` — Use when writing or updating any Bagisto documentation site — the developer documentation, the merchant user guide, or any other Bagisto docs repository — covering page content, code samples, screenshots, the sidebar, image naming, and moving or deleting pages. Trigger phrases include "docs", "documentation", "user guide", "developer documentation", "dev docs", "merchant documentation", "marketplace docs", "document this", "update the docs", "add a doc page", "screenshot", "ImagePopup", "redirect a doc page".
+
 
 - `bagisto-api-develop` — Use when working inside the bagisto-api package — installing or removing it, adding or changing a REST or GraphQL endpoint or resource, building an admin menu's API, or fixing package behaviour. Install and removal happen only on explicit request, never automatically. Trigger phrases include "ApiResource", "Provider", "Processor", "DTO", "resolver", "install the bagisto-api package", "remove the package", "add an endpoint", "extend an endpoint".
 
