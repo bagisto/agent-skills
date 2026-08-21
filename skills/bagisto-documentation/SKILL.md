@@ -32,6 +32,30 @@ When a new documentation repository appears — a marketplace guide, a
 self-hosting guide — it is one of these two readers under a new name. Run the
 same test and use the same reference.
 
+## Step 2: find the repository, do not guess it
+
+Each site is a **separate repository, not a folder inside the Bagisto app**, so
+locate it before editing anything:
+
+```bash
+find . ~ -maxdepth 6 -type d -path '*/src' -path '*doc*' 2>/dev/null | head
+```
+
+If it is not cloned, ask the user for the path or to clone it. **Never invent a
+location** and never write a page into the Bagisto app by mistake — the app has
+no `src/` docs tree, so a page created there is silently lost.
+
+## Read the neighbours before writing
+
+Open two or three existing pages in the section you are adding to and match
+their depth, heading rhythm and tone. A page that reads differently from its
+neighbours is a defect even when every fact in it is right.
+
+Check for duplication at the same time: if the topic is already half-covered
+somewhere, **extend that page or cross-link to it** rather than forking a second
+source of truth. Two pages that partly answer the same question age into two
+pages that contradict each other.
+
 ## Reference files
 
 | File | Load when |

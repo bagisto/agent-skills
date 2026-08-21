@@ -103,7 +103,15 @@ grep -rn "Event::dispatch('section" packages/Webkul/Theme/src/
 
 # Is that config key real?
 grep -rn "'key' => 'catalog.products" packages/Webkul/*/src/Config/system.php
+
+# Is that route name and URI real?
+php artisan route:list --path=<area>
 ```
+
+Read the package's `Config/`, `Routes/`, migrations and `Providers/` directly.
+Every route, artisan command, config key, class name, method signature, table
+column and file path on the page has to come from one of those, read **this
+session** — not from recall.
 
 Bagisto's events are **dot-delimited strings**, not event classes, so a page
 that shows `Event::listen(ProductUpdated::class, …)` is wrong in a way that

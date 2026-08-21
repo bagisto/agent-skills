@@ -67,6 +67,11 @@ php artisan bagisto:translations:check
 A key must exist in all 22 locales under `Resources/lang/`. One missing locale
 fails the workflow.
 
+**This checker only scans `packages/Webkul`.** For a package installed from
+anywhere else — a symlinked extension clone, for instance — it reports success
+without reading one of its lang files. See [translations.md](translations.md)
+for how to verify those, and how to source wording rather than invent it.
+
 ## The security checkpoint
 
 Not a gate — there is no command that returns "secure". It is a question the
@@ -127,5 +132,8 @@ not evidence of anything.
 - **Claiming the translation gate passed after editing only `en`.** The checker
   compares all 22 locales; editing one and running nothing is the usual path to
   a red pipeline.
+- **Treating a green translation gate as covering an extension.** It only scans
+  `packages/Webkul`. For a symlinked extension it reports success without having
+  read a single one of its lang files — see gate 4.
 - **Skipping E2E because "it is only a Blade change".** Views are exactly what
   the E2E gate covers.
