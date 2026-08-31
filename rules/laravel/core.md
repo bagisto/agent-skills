@@ -52,3 +52,17 @@
 ## Vite Error
 
 - If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `npm run build` or ask the user to run `npm run dev` or `composer run dev`.
+
+## Application Structure (Laravel 11+)
+
+- Middleware are no longer registered in `app/Http/Kernel.php` — that file does not exist.
+- Middleware, exceptions and routing are configured declaratively in `bootstrap/app.php` via `Application::configure()->withMiddleware()`.
+- `bootstrap/providers.php` holds application service providers.
+- `app/Console/Kernel.php` no longer exists; use `bootstrap/app.php` or `routes/console.php` for console configuration.
+- Console commands in `app/Console/Commands/` are registered automatically.
+
+## Schema and Models
+
+- When modifying a column, the migration must repeat every attribute previously defined on it. Anything omitted is dropped.
+- Eagerly loaded records can be limited natively, without a package: `$query->latest()->limit(10);`.
+- **Casts go in the `protected $casts` property, not a `casts()` method.** Laravel supports both, but Bagisto uses the property in every model that casts — follow the codebase, not the framework default.

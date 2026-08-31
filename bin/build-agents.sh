@@ -25,7 +25,7 @@ ORDER=(
     php
     tests
     laravel/core
-    laravel/v12
+    laravel/LARAVEL
     boost/core
     pint/core
     pest/core
@@ -77,11 +77,40 @@ if [ ! -f "$RULES_DIR/bagisto/v$version.md" ]; then
     exit 1
 fi
 
+# The Laravel major each Bagisto line ships on. Read from the checkout when one
+# was given, so the fragment can never disagree with composer.json.
+laravel_major() {
+    if [ -n "$app" ] && [ -f "$app/composer.json" ]; then
+        local from_composer
+        from_composer="$(sed -n 's/.*"laravel\/framework"[^0-9]*\([0-9]\{1,\}\).*/\1/p' "$app/composer.json" | head -1)"
+
+        if [ -n "$from_composer" ]; then
+            echo "$from_composer"
+            return
+        fi
+    fi
+
+    case "$1" in
+        2.4) echo 12 ;;
+        2.5) echo 13 ;;
+        *)   echo "" ;;
+    esac
+}
+
+laravel="$(laravel_major "$version")"
+
+if [ -z "$laravel" ] || [ ! -f "$RULES_DIR/laravel/v$laravel.md" ]; then
+    echo "no Laravel fragment for Bagisto $version — expected rules/laravel/v$laravel.md" >&2
+    echo "add the fragment, or extend laravel_major() in $(basename "${BASH_SOURCE[0]}")" >&2
+    exit 1
+fi
+
 build() {
     echo "<bagisto-guidelines>"
 
     for name in "${ORDER[@]}"; do
         name="${name/VERSION/v$version}"
+        name="${name/LARAVEL/v$laravel}"
 
         local path="$RULES_DIR/$name.md"
 

@@ -355,30 +355,29 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 - If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `npm run build` or ask the user to run `npm run dev` or `composer run dev`.
 
-=== laravel/v12 rules ===
+## Application Structure (Laravel 11+)
 
-# Laravel 12
+- Middleware are no longer registered in `app/Http/Kernel.php` — that file does not exist.
+- Middleware, exceptions and routing are configured declaratively in `bootstrap/app.php` via `Application::configure()->withMiddleware()`.
+- `bootstrap/providers.php` holds application service providers.
+- `app/Console/Kernel.php` no longer exists; use `bootstrap/app.php` or `routes/console.php` for console configuration.
+- Console commands in `app/Console/Commands/` are registered automatically.
 
-- CRITICAL: ALWAYS use `search-docs` tool for version-specific Laravel documentation and updated code examples.
-- Since Laravel 11, Laravel has a new streamlined file structure which this project uses.
+## Schema and Models
 
-## Laravel 12 Structure
+- When modifying a column, the migration must repeat every attribute previously defined on it. Anything omitted is dropped.
+- Eagerly loaded records can be limited natively, without a package: `$query->latest()->limit(10);`.
+- **Casts go in the `protected $casts` property, not a `casts()` method.** Laravel supports both, but Bagisto uses the property in every model that casts — follow the codebase, not the framework default.
 
-- In Laravel 12, middleware are no longer registered in `app/Http/Kernel.php`.
-- Middleware are configured declaratively in `bootstrap/app.php` using `Application::configure()->withMiddleware()`.
-- `bootstrap/app.php` is the file to register middleware, exceptions, and routing files.
-- `bootstrap/providers.php` contains application specific service providers.
-- The `app/Console/Kernel.php` file no longer exists; use `bootstrap/app.php` or `routes/console.php` for console configuration.
-- Console commands in `app/Console/Commands/` are automatically available and do not require manual registration.
+=== laravel/v13 rules ===
 
-## Database
+# Laravel 13
 
-- When modifying a column, the migration must include all of the attributes that were previously defined on the column. Otherwise, they will be dropped and lost.
-- Laravel 12 allows limiting eagerly loaded records natively, without external packages: `$query->latest()->limit(10);`.
+Bagisto 2.5 runs on Laravel 13.
 
-### Models
-
-- Casts can and likely should be set in a `casts()` method on a model rather than the `$casts` property. Follow existing conventions from other models.
+- CRITICAL: ALWAYS use the `search-docs` tool for version-specific Laravel documentation and
+  up-to-date code examples rather than recalling an API.
+- The structural and schema rules that apply from Laravel 11 onward are in `laravel/core`.
 
 === boost/core rules ===
 
