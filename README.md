@@ -72,7 +72,7 @@ Admin theme development in Bagisto.
 
 ### `bagisto-pest-testing`
 
-Tests applications using the Pest 3 PHP framework.
+Tests applications using the Pest PHP framework — Pest 3 on Bagisto 2.4, Pest 5 on 2.5.
 
 **Activates when:** writing tests, creating unit or feature tests, adding assertions, testing Livewire components, architecture testing, debugging test failures, working with datasets or mocking — or when the user mentions `test`, `spec`, `TDD`, `expects`, `assertion`, `coverage`, or needs to verify functionality works.
 
@@ -176,37 +176,71 @@ Write and maintain any Bagisto documentation site — developer documentation, t
 
 ## Install
 
-Install all skills from this repo into your AI agent:
+These skills are distributed through [skills.sh](https://skills.sh). The `skills`
+CLI needs no global install — `npx` fetches it each time.
+
+### From this repository
 
 ```bash
-npx skills add bagisto/agent-skills
-```
+# everything, into every agent it detects, without prompting
+npx skills add bagisto/agent-skills --all
 
-Install a specific skill only:
-
-```bash
-npx skills add bagisto/agent-skills --skill "bagisto-admin-theme-development"
-npx skills add bagisto/agent-skills --skill "bagisto-attribute-development"
-npx skills add bagisto/agent-skills --skill "bagisto-change-verification"
-npx skills add bagisto/agent-skills --skill "bagisto-code-review"
+# just one skill
 npx skills add bagisto/agent-skills --skill "bagisto-coding-standards"
-npx skills add bagisto/agent-skills --skill "bagisto-data-transfer"
-npx skills add bagisto/agent-skills --skill "bagisto-datagrid-development"
-npx skills add bagisto/agent-skills --skill "bagisto-documentation"
-npx skills add bagisto/agent-skills --skill "bagisto-git-workflow"
-npx skills add bagisto/agent-skills --skill "bagisto-package-development"
-npx skills add bagisto/agent-skills --skill "bagisto-payment-method-development"
-npx skills add bagisto/agent-skills --skill "bagisto-pest-testing"
-npx skills add bagisto/agent-skills --skill "bagisto-playwright-testing"
-npx skills add bagisto/agent-skills --skill "bagisto-product-type-development"
-npx skills add bagisto/agent-skills --skill "bagisto-shipping-method-development"
-npx skills add bagisto/agent-skills --skill "bagisto-shop-advance-theme-development"
-npx skills add bagisto/agent-skills --skill "bagisto-shop-theme-development"
-npx skills add bagisto/agent-skills --skill "bagisto-theme-sections"
-npx skills add bagisto/agent-skills --skill "bagisto-api-develop"
-npx skills add bagisto/agent-skills --skill "bagisto-api-shop"
-npx skills add bagisto/agent-skills --skill "bagisto-api-admin"
+
+# see what a repo offers before committing to it
+npx skills add bagisto/agent-skills --list
 ```
+
+Run it **inside the project** so the skills install per-project and are recorded
+in that project's `skills-lock.json`. Add `--global` only for skills you want in
+every project on the machine — a per-project install is what lets a Bagisto 2.4
+checkout and a 2.5 checkout hold different sets.
+
+### From a fork or any other repository
+
+`add` takes either `owner/repo` or a full GitHub URL, so a fork, a company
+mirror or a private repo works the same way:
+
+```bash
+npx skills add your-org/agent-skills
+npx skills add https://github.com/your-org/agent-skills
+```
+
+Anything laid out like this repo — a `skills/` directory of folders each
+containing a `SKILL.md` — is installable. `--full-depth` makes it search nested
+directories even when a root `SKILL.md` exists.
+
+### Where the files land
+
+By default the installer **symlinks** each skill into every agent directory it
+finds (`.claude/skills/`, `.agents/skills/`, and so on), so one copy on disk
+serves them all. Pass `--copy` to write real files instead — at the cost of the
+copies drifting silently from their source.
+
+Target one agent with `--agent`, e.g. `--agent claude`, or `--agent '*'` for all.
+
+### Living with them
+
+```bash
+npx skills list                      # what is installed, and where from
+npx skills update                    # pull the latest version of every skill
+npx skills remove --skill "name"     # remove one
+npx skills experimental_install      # restore exactly what skills-lock.json records
+```
+
+Try a skill without installing it:
+
+```bash
+npx skills use bagisto/agent-skills@bagisto-datagrid-development
+```
+
+> **On versions:** `add` always takes the repository's default branch — there is
+> no `--ref`, `--branch` or `--tag`, and `skills-lock.json` records no version.
+> A Bagisto 2.4 project and a 2.5 project therefore receive identical skills, so
+> anything version-specific is labelled **2.4** / **2.5** inside the skill text.
+> `npx skills update` pulls the latest with no pin; the labels are what keep a
+> 2.4 project safe.
 
 ## Repository Structure
 
@@ -242,8 +276,25 @@ agent-skills/
 │   ├── bagisto-shop-advance-theme-development/   # SKILL.md + workflow
 │   ├── bagisto-shop-theme-development/      # SKILL.md + assets, creating-a-theme, layouts, reference
 │   └── bagisto-theme-sections/              # SKILL.md + drafts, sections
-├── AGENTS.md
+├── rules/                                   # fragments AGENTS.md is built from
+│   ├── bagisto/core.md                      #   every Bagisto line
+│   ├── bagisto/v2.4.md                      #   2.4 only
+│   ├── bagisto/v2.5.md                      #   2.5 only
+│   └── …                                    #   one per `=== <name> rules ===`
+├── bin/
+│   ├── build-agents.sh                      # assembles AGENTS.md for one line
+│   └── lint-skills.sh
+├── AGENTS.md                                # generated — edit rules/, not this
 └── README.md
+```
+
+`AGENTS.md` is assembled from `rules/`, the way Laravel Boost composes
+`laravel/core` with `laravel/v12`. Build it for a line, or let it detect one:
+
+```bash
+bin/build-agents.sh --version 2.4
+bin/build-agents.sh --app /path/to/bagisto   # reads Core::BAGISTO_VERSION
+bin/build-agents.sh --check                  # CI guard against hand-edits
 ```
 
 ## Contributing

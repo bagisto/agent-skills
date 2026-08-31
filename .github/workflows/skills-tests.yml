@@ -18,3 +18,6 @@ jobs:
 
       - name: Test The Linter
         run: bash skills/tests/lint-skills.test.sh
+
+      - name: Verify AGENTS.md Matches rules/
+        run: bin/build-agents.sh --check

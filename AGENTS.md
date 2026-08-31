@@ -1,5 +1,5 @@
 <bagisto-guidelines>
-=== foundation rules ===
+=== bagisto/core rules ===
 
 # Bagisto Guidelines
 
@@ -7,26 +7,22 @@ Bagisto is a Laravel-based e-commerce platform. These guidelines are specificall
 
 ## Foundational Context
 
-This application is a **Bagisto** e-commerce platform built on Laravel 12. You must be familiar with both Laravel and Bagisto's modular package architecture.
+This application is a **Bagisto** e-commerce platform built on Laravel. You must be familiar with both Laravel and Bagisto's modular package architecture.
 
 ### Technology Stack
 
-- **PHP**: 8.3+
-- **Laravel**: v12
-- **Vue.js**: For admin panel interactivity
-- **Tailwind CSS**: For styling
-- **Laravel Octane**: v2
-- **Laravel Sanctum**: v4
-- **Laravel Socialite**: v5
-- **Laravel Boost**: v2
-- **Laravel MCP**: v0
-- **Laravel Pint**: v1
-- **Pest**: v3
-- **PHPUnit**: v11
+Read the versions from the checkout rather than assuming them — `composer.json`
+for PHP, Laravel, Pest and PHPUnit, `packages/Webkul/Shop/package.json` for
+Tailwind and Vite, and `Webkul\Core\Core::BAGISTO_VERSION` for the Bagisto line
+itself.
+
+Common to every line: Vue.js for admin interactivity, Tailwind CSS for styling,
+Vite for bundling, Laravel Octane v2, Sanctum v4, Socialite v5, Boost v2, Pint
+v1, and Laravel MCP v0 pulled in transitively by Boost.
 
 ### Bagisto Core Packages
 
-Bagisto uses a modular package structure in `packages/Webkul/`:
+Bagisto uses a modular package structure in `packages/Webkul/`. The table names the ones you will touch most; run `ls packages/Webkul` for the full list rather than assuming a package is absent:
 
 | Package | Purpose |
 |---------|---------|
@@ -55,6 +51,7 @@ Bagisto uses a modular package structure in `packages/Webkul/`:
 This project has domain-specific skills available. You MUST activate the relevant skill whenever you work in that domain—don't wait until you're stuck.
 
 - `bagisto-coding-standards` — Use when writing, changing or reviewing any Bagisto PHP or Blade — the conventions this codebase holds to, covering Laravel idiom, code style, comments and docblocks, database access, Blade, security and localization. Trigger phrases include "standards", "conventions", "code style", "docblock", "comments", "repository pattern", "blade", "component", "binding", "event", "migration", "security", "XSS", "authorization", "escaping", "is this safe", "best practice".
+
 - `bagisto-package-development` — Use when creating or changing a Bagisto package — service providers, migrations, models, contracts, proxies, repositories, routes, controllers, Blade views, localization, admin menus, ACL or system configuration. Trigger phrases include "new package", "service provider", "migration", "model", "repository", "controller", "route", "ACL", "admin menu", "system config", "concord".
 
 - `bagisto-shipping-method-development` — Use when creating or changing a Bagisto shipping method — a carrier class, shipping rates, the carriers config, or integrating a courier such as FedEx, UPS or DHL. Trigger phrases include "shipping", "shipping method", "carrier", "delivery", "shipping rate", "FedEx", "UPS", "DHL", "free shipping", "flat rate".
@@ -72,17 +69,22 @@ This project has domain-specific skills available. You MUST activate the relevan
 - `bagisto-pest-testing` — Use when writing or changing a Bagisto Pest test — feature or unit tests, assertions, datasets, mocking, architecture tests, or registering a new package's suite. Trigger phrases include "pest", "test", "unit test", "feature test", "assertion", "dataset", "mock", "testsuite", "TDD", "coverage".
 
 - `bagisto-data-transfer` — Use when adding or changing a Bagisto import — an Importer class, a file source, the importers registry, the queued import pipeline, or a stuck or failing import job. Trigger phrases include "import", "importer", "data transfer", "CSV", "XLSX", "XML", "bulk upload", "import batch", "queued import", "validate rows".
+
 - `bagisto-theme-sections` — Use when working on the Bagisto Appearance area — theme sections, the section editor and its storefront preview, draft and publish behaviour, section media, or the theme gallery. Trigger phrases include "section", "theme section", "appearance", "preview", "draft", "publish", "unsaved changes", "storefront layout", "theme gallery", "customize theme".
+
 - `bagisto-attribute-development` — Use when working with Bagisto's EAV attribute system — adding or changing an attribute, attribute family or group, reading or writing a product attribute value, or debugging a value that reads back empty or from the wrong locale or channel. Trigger phrases include "attribute", "EAV", "attribute family", "attribute group", "attribute option", "custom attribute", "value_per_locale", "value_per_channel", "product_flat", "swatch".
+
 - `bagisto-datagrid-development` — Use when building or changing a Bagisto admin listing page — a DataGrid class with columns, search, filters, sorting, row actions, mass actions or export, and the controller and Blade view that render it. Trigger phrases include "datagrid", "admin listing", "add a column", "mass action", "prepareQueryBuilder", "listing page", "grid filter", "export grid".
+
 - `bagisto-playwright-testing` — Use when writing, changing or debugging a Bagisto end-to-end test — Playwright specs, page objects, ACL role coverage, fixtures, or a failing E2E run in CI. Trigger phrases include "playwright", "e2e", "end to end", "spec.ts", "page object", "browser test", "flaky test", "shard".
 
 - `bagisto-code-review` — Use when reviewing Bagisto code changes or a pull request for correctness, convention compliance or quality, or when asked whether a change is ready to merge. Trigger phrases include "review", "code review", "PR review", "is this correct", "conventions", "violations", "code quality", "ready to merge".
+
 - `bagisto-git-workflow` — Use when branching, committing, writing a CHANGELOG entry or opening a pull request against a Bagisto repository. Trigger phrases include "branch", "commit", "commit message", "PR", "pull request", "changelog", "merge", "conventional commits", "release notes".
+
 - `bagisto-change-verification` — Use when a Bagisto change is about to be called done, or when asked to run the verification gates — code style, tests, end-to-end tests and translation completeness. Trigger phrases include "verify", "is this done", "run the gates", "pint", "pest", "playwright", "translations check", "ready to commit".
 
 - `bagisto-documentation` — Use when writing or updating any Bagisto documentation site — the developer documentation, the merchant user guide, or any other Bagisto docs repository — covering page content, code samples, screenshots, the sidebar, image naming, and moving or deleting pages. Trigger phrases include "docs", "documentation", "user guide", "developer documentation", "dev docs", "merchant documentation", "marketplace docs", "document this", "update the docs", "add a doc page", "screenshot", "ImagePopup", "redirect a doc page".
-
 
 - `bagisto-api-develop` — Use when working inside the bagisto-api package — installing or removing it, adding or changing a REST or GraphQL endpoint or resource, building an admin menu's API, or fixing package behaviour. Install and removal happen only on explicit request, never automatically. Trigger phrases include "ApiResource", "Provider", "Processor", "DTO", "resolver", "install the bagisto-api package", "remove the package", "add an endpoint", "extend an endpoint".
 
@@ -94,7 +96,12 @@ This project has domain-specific skills available. You MUST activate the relevan
 
 ### Package Structure
 
-Every Bagisto package follows a standardized structure:
+A package draws from the layout below, but **most take only part of it**. Only
+`Providers/` is universal; roughly 25 of the core packages carry
+`Contracts/Models/Repositories`, 14 a `Config/`, 11 `Http/Controllers/` and 8
+`Routes/`. A domain package such as `Category`, `CartRule` or `Marketing` is a
+data layer only — its admin screens live in `Admin`, its storefront pages in
+`Shop`. Check the closest existing package before deciding what yours needs.
 
 ```
 packages/Webkul/{PackageName}/
@@ -184,6 +191,27 @@ Service providers must:
 ## Replies
 
 - Be concise in your explanations - focus on what's important rather than explaining obvious details.
+
+=== bagisto/v2.5 rules ===
+
+# Bagisto 2.5
+
+The development line.
+
+| | |
+|---|---|
+| PHP | ^8.4 |
+| Laravel | v13 |
+| Pest / PHPUnit | v5 / v13 |
+| Tailwind CSS | v4 |
+| Databases | MySQL, MariaDB, PostgreSQL |
+| Packages in `packages/Webkul/` | 42 |
+
+- Tailwind 4: sizes use the spacing scale (`h-9.5`, `w-25`), and configuration lives in each `app.css` under `@theme` rather than a JavaScript config. A class only exists once it has been built — rebuild before assuming one is inert.
+- PostgreSQL is supported and CI covers it. Never hardcode `'like'`; use `db_grammar()->caseInsensitiveLike()`, and reach for `db_grammar()` for `concat`, `groupConcat`, `findInSet`, `dateFormat` and `jsonExtract` too.
+- Image processing uses Laravel's first-party `Illuminate\Image`, configured in `config/images.php`; `intervention/image` remains only as the GD/Imagick backend.
+- The icon font was reworked as Tailwind utilities under `@theme`; number-named glyphs were renamed (`icon-cancel-1` → `icon-close`) and unused ones dropped.
+- The e2e suites expose package scripts — `npm run test:e2e`, `npm run install:browsers`, and `npm run test:e2e -- <flags>`. All configuration is validated once in `tests/e2e-pw/utils/env.ts` (`APP_URL` falling back to `BASE_URL`) and all paths live in `utils/paths.ts`.
 
 === boost rules ===
 
@@ -399,6 +427,22 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - CRITICAL: ALWAYS use `search-docs` tool for version-specific Pest documentation and updated code examples.
 - IMPORTANT: Activate `bagisto-pest-testing` every time you're working with a Pest or testing-related task.
 - IMPORTANT: Activate `bagisto-playwright-testing` for anything under `tests/e2e-pw/`, and `bagisto-change-verification` before calling any change done.
+
+=== bagisto-playwright-testing rules ===
+
+# Playwright End-to-End Testing
+
+- CRITICAL: ALWAYS use the bagisto-playwright-testing skill for anything under `tests/e2e-pw/`.
+- Three independent suites, one per package: `packages/Webkul/{Admin,Shop,Installer}/tests/e2e-pw/`. Run every command from the package directory, never the repo root.
+- **[2.5]** Use the package scripts: `npm run install:browsers`, `npm run test:e2e`, and `npm run test:e2e -- <flags>` for `-g`, `--shard=i/n` or a spec path. `test:e2e:headed`, `:ui`, `:debug`, `:report` mirror the Playwright flags.
+- **[2.4]** No package scripts exist; invoke Playwright directly — `npx playwright install --with-deps chromium` and `npx playwright test --config=tests/e2e-pw/playwright.config.ts`. Check `package.json` before assuming which form the checkout supports.
+- **[2.5]** All configuration is read and validated once in `utils/env.ts` — base URL from `APP_URL` falling back to `BASE_URL`, plus `BAGISTO_ADMIN_EMAIL`, `BAGISTO_ADMIN_PASSWORD` and `HEADED`. Never read `process.env` from a config, spec, page object or fixture, and never hardcode a host.
+- **[2.4]** `playwright.config.ts` loads the app `.env` itself and reads `APP_URL` only; `BASE_URL` is set by CI and ignored. To retarget a run, change `APP_URL`.
+- **[2.5]** All paths live in `utils/paths.ts`, which locates the application by searching upward for `artisan` instead of counting `../`. Never hardcode a parent-walk and never import a path from `playwright.config.ts`.
+- The suite shares one database and never rolls back. Assert on the record you created, never a global count or list position, and never rely on a hardcoded fixture value the run itself consumes — that spec passes once and fails on every rerun.
+- `workers: 1`, `retries: 0`, `fullyParallel: false`, and CI shards Admin and Shop 10 ways; a spec may not depend on another spec having run.
+- Admin auth is cached to `.state/admin-auth.json` by the `adminPage` fixture — never log in by hand in a spec, and keep `.state` gitignored.
+- Specs name the intent; page objects own every locator. Scope a locator to the row first — the same action markup repeats per row and an unscoped one fails strict mode.
 
 === bagisto-payment-method-development rules ===
 

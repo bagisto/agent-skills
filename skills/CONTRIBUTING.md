@@ -108,18 +108,68 @@ of truth.
 Verify claims before writing them. A skill that confidently states something the
 code does not do is worse than no skill, because it is believed.
 
-## 7. A skill should name the failure it prevents
+## 7. Two Bagisto lines, one skill
+
+2.4 and 2.5 are maintained together and their stacks differ — Laravel 12 vs 13,
+Tailwind 3 vs 4, Pest 3 vs 5, MySQL-only vs PostgreSQL too. Most of what a skill
+says holds for both; only a minority diverges.
+
+### `AGENTS.md` is generated — edit `rules/`, not the file
+
+The guidelines blob is assembled from fragments, the way Laravel Boost composes
+`laravel/core` with `laravel/v12`:
+
+```
+rules/
+├── bagisto/core.md    # every line
+├── bagisto/v2.4.md    # 2.4 only
+├── bagisto/v2.5.md    # 2.5 only
+└── …                  # one file per `=== <name> rules ===` section
+```
+
+```bash
+bin/build-agents.sh                  # newest line
+bin/build-agents.sh --version 2.4
+bin/build-agents.sh --app ../bagisto # detect from Core::BAGISTO_VERSION
+bin/build-agents.sh --check          # CI: fails if AGENTS.md drifted
+```
+
+A fragment named `<package>/v<version>` is version-specific; exactly one is
+selected per build. Everything else is always included. **Never hand-edit
+`AGENTS.md`** — CI runs `--check` and will fail.
+
+A version-invariant fact belongs in `bagisto/core.md`. Put a fact in a version
+fragment only when the other line genuinely does something else, and say what
+that something else is.
+
+Do not fork a skill per version. Write the shared rule once and mark only the
+delta, inline, with a bold **2.4** / **2.5** label so it is greppable:
+
+> **2.5** exposes `npm run test:e2e`. **2.4** has no such script — invoke
+> `npx playwright test --config=…` directly.
+
+Three rules for these:
+
+1. **State which line a version-specific fact belongs to.** An unmarked fact is
+   a claim about both, and will be read as one.
+2. **Never let a fact silently change line.** When a rule becomes true only on
+   2.5, mark it and say what 2.4 does instead — deleting the old behaviour
+   strands anyone on the maintained release.
+3. **Prefer a fact the checkout can answer** over a version label. "Read the
+   version from `composer.json`" survives a release; "Laravel v12" does not.
+
+## 8. A skill should name the failure it prevents
 
 Before adding one, be able to say what an agent gets wrong without it. If the
 answer is "nothing specific", it is documentation, not a skill.
 
 The strongest content is what cannot be inferred from the code in the time
-available: that `BASE_URL` is ignored because the Playwright config reads
+available: that on 2.4 `BASE_URL` is ignored because the Playwright config reads
 `APP_URL`, that a DataGrid cell renders through `v-html`, that
 `Bus::batch(...)->allowFailures()` lets an import reach `completed` with failed
 batches.
 
-## 8. Naming
+## 9. Naming
 
 Directory and `name` match, lowercase and hyphenated, named for the **domain**
 rather than the activity — `bagisto-datagrid-development`, not `how-to-build-grids`.
@@ -135,10 +185,12 @@ which has no `SKILL.md` of its own. It is not a skill, so the rule does not appl
 to it — but every skill inside it does have to carry the prefix, and the linter
 checks them individually.
 
-## 9. Before the pull request
+## 10. Before the pull request
 
 - [ ] `bin/lint-skills.sh` is clean.
 - [ ] `bash skills/tests/lint-skills.test.sh` passes.
 - [ ] A split is proved lossless (§4).
+- [ ] Every version-specific fact carries a **2.4** / **2.5** label (§7).
+- [ ] `bin/build-agents.sh --check` passes; `AGENTS.md` was not hand-edited (§7).
 - [ ] New or changed descriptions are synced into `README.md` and `AGENTS.md`.
 - [ ] Claims were checked against the codebase, not recalled.

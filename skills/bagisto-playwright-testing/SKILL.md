@@ -5,40 +5,67 @@ description: Use when writing, changing or debugging a Bagisto end-to-end test �
 
 # Playwright Testing
 
-Bagisto's end-to-end suites live in **two independent Playwright projects**, one
-per package, each with its own config, fixtures and page objects:
+Bagisto's end-to-end suites live in **three independent Playwright projects**,
+one per package, each with its own config, fixtures and page objects:
 
 ```
-packages/Webkul/{Admin,Shop}/tests/e2e-pw/
+packages/Webkul/{Admin,Shop,Installer}/tests/e2e-pw/
 ├── playwright.config.ts    # testDir ./tests, workers 1, retries 0
 ├── setup.ts                # adminPage / shopPage fixtures
+├── tsconfig.json           # 2.5 only — strict; `npm run typecheck`
 ├── pages/                  # page objects (BasePage subclasses)
 ├── tests/                  # *.spec.ts, grouped by admin menu section
-├── utils/                  # faker.ts, admin.ts (login)
+├── utils/
+│   ├── env.ts              # 2.5 only — the only place process.env is read
+│   ├── paths.ts            # 2.5 only — every path the suite knows
+│   └── faker.ts, admin.ts  # data helpers, login
 └── data/                   # fixture files for uploads
 ```
 
-Run from the package directory, never the repo root:
+On 2.4 the same three suites exist without `tsconfig.json`, `utils/env.ts` or
+`utils/paths.ts` — `playwright.config.ts` carries that work itself.
+
+Run from the package directory, never the repo root. **The two Bagisto lines are
+invoked differently — check `package.json` before choosing a form.**
+
+**2.5** exposes package scripts:
 
 ```bash
 cd packages/Webkul/Admin
-npm install && npx playwright install --with-deps chromium
+npm install && npm run install:browsers
+npm run test:e2e
+npm run test:e2e -- -g "create a category"
+npm run test:e2e -- --shard=1/10
+```
+
+`test:e2e:headed`, `:ui`, `:debug` and `:report` mirror the Playwright flags;
+`typecheck` and `format` are local tools, not CI gates, because neither is yet
+clean on the existing specs.
+
+**2.4** has no such scripts — invoke Playwright directly:
+
+```bash
+npx playwright install --with-deps chromium
 npx playwright test --config=tests/e2e-pw/playwright.config.ts
-npx playwright test --config=tests/e2e-pw/playwright.config.ts -g "create a category"
 ```
 
-## The base URL comes from `.env`, not `BASE_URL`
+## Where configuration comes from
 
-`playwright.config.ts` loads the app's `.env` and reads **`APP_URL`**:
+**2.5** reads and validates every value once in `utils/env.ts` — base URL from
+`APP_URL` falling back to `BASE_URL`, plus `BAGISTO_ADMIN_EMAIL`,
+`BAGISTO_ADMIN_PASSWORD` and `HEADED`. Set no URL and it fails immediately with
+a directed message rather than navigating to the string `"undefined/"`. Never
+read `process.env` from a config, spec, page object or fixture.
 
-```ts
-baseURL: `${process.env.APP_URL}/`.replace(/\/+$/, "/")
-```
+`utils/paths.ts` owns every path, including `ADMIN_AUTH_STATE_PATH` and
+`ensureStateDir()`. It finds the application by searching upward for `artisan`
+rather than counting `../`, and prefers a suite-local `tests/e2e-pw/.env` when
+one exists — so the folder keeps working if it moves. Never hardcode a
+parent-walk, and never import a path from `playwright.config.ts`.
 
-Nothing in either project reads `BASE_URL`. The CI workflows set a `BASE_URL`
-env var **and it is ignored** — they work because the same step rewrites
-`APP_URL` in `.env` with `sed`. Passing `BASE_URL=…` on the command line does
-nothing; to point a run at another host, change `APP_URL`.
+**2.4** has neither file: `playwright.config.ts` loads the app `.env` itself and
+reads `APP_URL` only. `BASE_URL` is set by CI and ignored — to retarget a run,
+change `APP_URL`.
 
 ## Reference files
 
@@ -87,6 +114,11 @@ contains a CSS selector belongs in a page object instead — see
 - **Asserting a global count.** `meta.total`, "the first row", "3 sections" —
   all break as soon as another spec adds a record. Assert on the named thing you
   created.
+- **A hardcoded fixture value that the run consumes.** A spec that subscribes
+  `guest@example.com` and asserts "successfully subscribed" passes once and
+  fails on every later run against the same database, because the record it
+  needs absent is the one it just created. Generate the value, or delete it
+  again. The symptom looks like a broken feature, not a broken test.
 - **An unscoped locator that matches many rows.** Every row of a list carries the
   same action markup, so `getByText("Delete")` resolves to N elements and fails
   strict mode. Scope to the row first.

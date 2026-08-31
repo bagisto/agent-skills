@@ -30,8 +30,9 @@ sections. Follow that, not the menu, for ACL.
 
 ## The page object
 
-Extend `BasePage`, which supplies `visit()` (relative to `APP_URL`) and
-`dataPath()` (files under `tests/e2e-pw/data`).
+Extend `BasePage`, which supplies `visit()` (relative to the configured base
+URL) and `dataPath()` (files under `tests/e2e-pw/data`). Resolve paths through
+`utils/paths.ts` rather than walking up from `__dirname`.
 
 ```ts
 import { expect, type Page } from "@playwright/test";

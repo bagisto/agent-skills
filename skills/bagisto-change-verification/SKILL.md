@@ -17,7 +17,7 @@ change that clears them locally is a change that clears the pipeline.
 |---|---|---|---|
 | 1 | Style | `vendor/bin/pint --test` | any `.php` changed |
 | 2 | Tests | `vendor/bin/pest` | any `.php` changed |
-| 3 | E2E | `npx playwright test --config=tests/e2e-pw/playwright.config.ts` | any view, JS, CSS or route changed |
+| 3 | E2E | `npm run test:e2e` on **2.5**, `npx playwright test --config=tests/e2e-pw/playwright.config.ts` on **2.4** | any view, JS, CSS or route changed |
 | 4 | Translations | `php artisan bagisto:translations:check` | any `Resources/lang/**` changed |
 
 Run them in that order — style is seconds, E2E is minutes, and a Pint failure
@@ -47,12 +47,15 @@ exist makes PHPUnit error.
 
 ### 3. End-to-end
 
-Admin and Shop are separate Playwright projects, each run from its own package
-directory. See the `bagisto-playwright-testing` skill before writing or debugging one.
+Admin, Shop and Installer are separate Playwright projects, each run from its own
+package directory. See the `bagisto-playwright-testing` skill before writing or
+debugging one.
 
 ```bash
 cd packages/Webkul/Admin   # or packages/Webkul/Shop
-npx playwright test --config=tests/e2e-pw/playwright.config.ts
+
+npm run test:e2e                                              # 2.5
+npx playwright test --config=tests/e2e-pw/playwright.config.ts # 2.4
 ```
 
 CI runs each project across **10 shards**. Locally, run the spec files your

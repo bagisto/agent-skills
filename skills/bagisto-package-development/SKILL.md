@@ -7,10 +7,9 @@ license: MIT
 
 # Package Development in Bagisto
 
-A Bagisto package is a self-contained Laravel module under `packages/Webkul/<Name>/`
-with its own models, controllers, routes, views, migrations and providers. All 41
-core packages follow one shape — copy the closest existing package rather than
-scaffolding a generic Laravel one.
+A Bagisto package is a self-contained Laravel module under `packages/Webkul/<Name>/`.
+Core packages draw from one shared layout but take only the parts they need —
+copy the closest existing package rather than scaffolding a generic Laravel one.
 
 ## Reference files — load only what the current task needs
 
@@ -36,6 +35,20 @@ packages/Webkul/<Name>/src/
 ├── Resources/        # views/, lang/{22 locales}/, assets/
 └── Routes/           # admin-routes.php, shop-routes.php
 ```
+
+**Most packages carry only part of this, and that is deliberate.** Only
+`Providers/` is universal. Of the core packages, roughly 25 have
+`Contracts/Models/Repositories`, 14 have `Config/`, 11 have
+`Http/Controllers/` and 8 have `Routes/` — and the handful with all three
+UI pieces are `Admin`, `Shop` and the payment gateways (`Stripe`, `PayU`,
+`Razorpay`, `PayGlocal`, `PhonePe`).
+
+A domain package such as `Category`, `CartRule`, `CMS` or `Marketing` is a
+**data layer only** — contracts, models and repositories. Its admin screens live
+in `Admin`, its storefront pages in `Shop`. Do not add `Routes/` or
+`Http/Controllers/` to one of those unless the feature genuinely owns its own
+routes, as a payment gateway does. Check the closest existing package before
+deciding which directories yours needs.
 
 ## The rules that are not negotiable
 

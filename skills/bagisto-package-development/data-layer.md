@@ -1,8 +1,19 @@
 # Data Layer — Migrations, Models, Repositories
 
+> **The `Webkul/RMA` + `ReturnRequest` names below are a worked example, not a
+> citation.** A real `RMA` package exists in the checkout, but it is built around
+> `RMA`, `RMAItem` and `RMAStatus` and has no `Contracts/ReturnRequest.php`,
+> `Config/` or `Routes/` directory. Read these paths as the ones *you* will
+> create; for a pattern to copy from, open an actual package such as
+> `packages/Webkul/CartRule` or `packages/Webkul/Category`.
+
 ## Migrations
 
 ### Creating Migrations
+
+The `package:make-*` commands come from `bagisto/bagisto-package-generator`,
+which is **not** a dependency of either Bagisto line — install it first
+(see [core.md](core.md)) or use the plain Laravel command beneath.
 
 ```bash
 # Using Bagisto generator

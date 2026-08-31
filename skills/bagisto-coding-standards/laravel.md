@@ -12,10 +12,11 @@
 - [Queues](#queues)
 - [What not to reach for](#what-not-to-reach-for)
 
-Bagisto is Laravel 12 on PHP 8.3+, but several places where a Laravel developer
-would reach for the framework default, Bagisto has its own convention. Following
-the framework instead of the codebase is the most common way generated code
-looks wrong here.
+Bagisto tracks recent Laravel — **2.4** on Laravel 12 and PHP 8.3, **2.5** on
+Laravel 13 and PHP 8.4. Read `composer.json` rather than assuming. In several
+places where a Laravel developer would reach for the framework default, Bagisto
+has its own convention, and following the framework instead of the codebase is
+the most common way generated code looks wrong here.
 
 ## Version and bootstrap
 

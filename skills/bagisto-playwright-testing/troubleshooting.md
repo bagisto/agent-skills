@@ -115,14 +115,22 @@ Fixes, in order of preference:
 
 ## Environment faults mistaken for bugs
 
-- **`APP_URL` is the base URL.** Neither project reads `BASE_URL`, despite CI
-  setting it. If every test 404s or hits the wrong host, check `.env`.
+- **`APP_URL` is the base URL.** On 2.5 `utils/env.ts` also accepts `BASE_URL`
+  as a fallback and fails fast with a named error when neither is set; on 2.4
+  only `APP_URL` is read and CI's `BASE_URL` is ignored. Either way, if every
+  test 404s or hits the wrong host, check `APP_URL` first.
 - **The app must be running and seeded.** CI runs `bagisto:install`, seeds the
   product table and runs `indexer:index --mode=full` before the first spec.
-- **Browsers must be installed where the tests run** —
-  `npx playwright install --with-deps chromium`. In a containerised workspace,
-  decide deliberately whether the run happens on the host or in the container,
-  and install the browsers there.
+- **The Installer suite is the exception — it needs an *uninstalled* app.** It
+  drives the guided web installer, so run it after `php artisan key:generate`
+  and *before* `bagisto:install`; against an installed app the spec skips. The
+  database it installs into comes from the `INSTALLER_DB_*` environment
+  variables, defaulting to MySQL on `127.0.0.1:3306`. Its specs are tagged per
+  locale, so select one with `--grep "@en"`.
+- **Browsers must be installed where the tests run** — `npm run install:browsers`
+  on 2.5, `npx playwright install --with-deps chromium` on 2.4. In a
+  containerised workspace, decide deliberately whether the run happens on the
+  host or in the container, and install the browsers there.
 
 ## A test that passes when it should not
 

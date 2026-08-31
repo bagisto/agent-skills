@@ -39,6 +39,31 @@ php artisan test --compact packages/Webkul/Admin/tests/
 php artisan test --compact packages/Webkul/Core/tests/
 ```
 
+### Run in parallel, and the stale-database trap
+
+```bash
+vendor/bin/pest --parallel
+```
+
+Parallel runs create one database per process — `{DB_DATABASE}_test_1`,
+`_test_2`, … — as many as the machine has CPU cores, on MySQL, MariaDB and
+PostgreSQL alike. With `DB_DATABASE=bagisto` on an 8-core machine that is
+`bagisto_test_1` through `bagisto_test_8`.
+
+**Those databases are not migrated again on the next run.** After a schema
+change they hold the old schema, and the failures that follow look like broken
+code rather than a stale fixture. Drop them, reinstall, then re-run:
+
+```bash
+php artisan tinker --execute="for (\$i = 1; \$i <= 8; \$i++) { try { DB::statement(\"DROP DATABASE IF EXISTS bagisto_test_{\$i}\"); } catch (\Exception \$e) {} }"
+
+php artisan bagisto:install --no-interaction
+
+vendor/bin/pest --parallel --no-coverage
+```
+
+Match the loop bound to the core count, or it leaves databases behind.
+
 ## Creating New Tests
 
 ### Create Feature Test
@@ -106,7 +131,8 @@ it('has valid emails', function (string $email) {
 
 ## Architecture Testing
 
-Pest 3 includes architecture testing to enforce code conventions:
+Pest includes architecture testing to enforce code conventions — available on
+both lines (**2.4** runs Pest 3, **2.5** Pest 5):
 
 ```php
 arch('controllers')
