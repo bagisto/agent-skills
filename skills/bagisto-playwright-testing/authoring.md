@@ -72,9 +72,11 @@ Rules that hold across the existing suite:
 
 - **Locators are private getters or private methods.** A spec never contains a
   selector. A locator that takes an argument (a row by name, a field by label)
-  is a private method, not a getter. The one case for a public locator is a
-  shared helper page object that a *sibling page object* composes — never a
-  spec.
+  is a private method, not a getter. A locator a subclass needs is
+  `protected`, never public — `CheckoutHelper` is the base every product-type
+  checkout extends, so its locators are protected and only its actions
+  (`searchProduct`, `checkoutWithNewAddress`) stay public. No locator is ever
+  public.
 - **Member order: fields and constructor, then getters, then private locator
   methods, then private helpers, then public actions.** A private helper wedged
   between two public methods is the same defect the
