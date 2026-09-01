@@ -96,9 +96,9 @@ change `APP_URL`.
   file only passes while cleanup never misses.
 - **Cleanup deletes what it made, and a failed step never skips the next one** —
   wrap the teardown so the product is removed even when the rule delete fails.
-- **Filenames are lower-kebab** (`buy-x-get-y-free.spec.ts`); page objects are
-  `<Feature>Page.ts`. Describe and test titles are lower case with single
-  spaces.
+- **Filenames are lower-kebab** (`buy-x-get-y-free.spec.ts`), and **a file that
+  declares a class is named exactly for it** — `CatalogAclPage.ts`, not
+  `catalog.ts`. Describe and test titles are lower case with single spaces.
 
 ## Writing a test — the shape
 

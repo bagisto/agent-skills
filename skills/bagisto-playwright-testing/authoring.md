@@ -232,9 +232,17 @@ Notes that catch people out:
   `url-key.spec.ts`, `price-in-cart.spec.ts`. Not camelCase (`urlKey.spec.ts`),
   not run-together (`buyXgetYfree.spec.ts`), and no stray dot inside the stem
   (`price-in.cart.spec.ts`).
-- Page object: `<Feature>Page.ts`, PascalCase class of the same name. The ACL
-  chain under `pages/admin/acl/` is the documented exception — `shared.ts`,
-  per-section files, `index.ts` — as are `*.types.ts` type modules.
+- **A file that declares a class is named for that class, exactly.** Page
+  objects are `<Feature>Page.ts` holding `class <Feature>Page`, and the rule
+  holds everywhere — `CatalogAclPage.ts` not `catalog.ts`, `ACLManagement.ts`
+  not `index.ts`, `TinymcePage.ts` not `tinymce.ts`. When the two disagree,
+  rename whichever is wrong: the file when the class name is good, the class
+  when it is not (`ProductCreatePage.ts` exporting `ProductCreation` is the
+  class's fault). Match the casing a sibling already set — `RmaCreatePage`
+  beside `RmaManagePage`, not `RMACreatePage`.
+- A module with no class keeps its lower-kebab name: `utils/faker.ts`,
+  `utils/paths.ts`, `*.types.ts`. If a file holds one dead class and one live
+  function, delete the class rather than rename the file around it.
 - Directories: lower-kebab, mirroring the admin menu section.
 - `test.describe("<feature> management")`, matching the existing suite.
 - **Describe blocks and test titles are lower case throughout**, including

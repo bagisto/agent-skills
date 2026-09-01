@@ -447,7 +447,8 @@ Bagisto 2.5 runs on Laravel 13.
 - No comments anywhere under `tests/e2e-pw/` — no `//`, no `/* */`, no docblock, in specs or page objects. If a step needs prose, rename the method so the name carries it.
 - Generate test data inside `beforeEach`, never at module scope: one module-scope `Date.now()` gives every test in the file the same SKU or name, and `sku`/`url_key` are unique-validated, so the file passes only while cleanup never misses. Hold the value as a thunk (`value: () => generatedSku`) if a module-scope table needs it.
 - Teardown must not leak: delete the record in a `finally` so an earlier failed step cannot strand it, and tolerate the case where the test never created the row. Positional cleanup (`.first()`, `.nth(2)`) targets whatever sits in that row, not what this test made.
-- Filenames are lower-kebab (`buy-x-get-y-free.spec.ts`, not `buyXgetYfree.spec.ts`); page objects are `<Feature>Page.ts`. Describe blocks and test titles are lower case throughout — including `rma`, `gdpr`, `sku`, `url` — single-spaced, with ` -> ` spaced on both sides.
+- Spec filenames are lower-kebab (`buy-x-get-y-free.spec.ts`, not `buyXgetYfree.spec.ts`). Describe blocks and test titles are lower case throughout — including `rma`, `gdpr`, `sku`, `url` — single-spaced, with ` -> ` spaced on both sides.
+- A file that declares a class is named exactly for that class — `CatalogAclPage.ts`, not `catalog.ts`; `ACLManagement.ts`, not `index.ts`; `TinymcePage.ts`, not `tinymce.ts`. Rename the file when the class name is good and the class when it is not, and follow the casing a sibling already set (`RmaCreatePage` beside `RmaManagePage`). Modules with no class stay lower-kebab (`utils/faker.ts`, `*.types.ts`).
 
 === bagisto-payment-method-development rules ===
 
