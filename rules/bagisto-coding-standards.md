@@ -1,7 +1,7 @@
 # Coding Standards
 
 - CRITICAL: ALWAYS use the bagisto-coding-standards skill when writing or changing any Bagisto PHP or Blade. It owns code style, comments and docblocks, Laravel idiom, data access, Blade, security and localization; `vendor/bin/pint` owns everything mechanical.
-- Every method and property carries a docblock, whatever its visibility. Class members run constants → properties → constructor → public → protected → private.
+- Every method and property carries a docblock, whatever its visibility, and it is at most two lines — one is the norm. Never put a docblock above the class, interface, trait or enum. Class members run constants → properties → constructor → public → protected → private.
 - No comments inside a method body, array literal, route group or markup — in PHP, Blade, JS or Vue alike. A non-obvious reason goes in the docblock or the commit message.
 - A condition with more than one clause goes multiline, the boolean operator leading each line.
 - All database access goes through a repository. The one sanctioned exception is a DataGrid's `prepareQueryBuilder()`.

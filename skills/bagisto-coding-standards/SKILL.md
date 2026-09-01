@@ -33,9 +33,9 @@ The PHP rules apply inside an `@php` block too, which Pint cannot reach.
 ## The rules in one screen
 
 - **Every method and property carries a docblock**, whatever its visibility. The
-  description is a capitalised sentence ending in a full stop. Type information
-  belongs in the signature; add `@param`/`@return` only for what a native type
-  cannot express.
+  description is a capitalised sentence ending in a full stop, and it is **at most
+  two lines**. Type information belongs in the signature; add `@param`/`@return`
+  only for what a native type cannot express.
 - **Class members run constants → properties → constructor → public →
   protected → private**, each visibility one contiguous block. A helper called
   by a public method still lives in the protected block at the bottom.
@@ -46,8 +46,11 @@ The PHP rules apply inside an `@php` block too, which Pint cannot reach.
   one-line "why". A non-obvious reason belongs in the method's docblock or the
   commit message. If a line needs prose to be understood, extract a named
   method instead. See [comments.md](comments.md).
-- **A class docblock defines what the class is.** It is not the history of what
-  it replaced or why the previous approach was wrong.
+- **No docblock above the class**, ever — 98.7% of core classes have none. The
+  docblock belongs on the method, property or constant, never on the class,
+  interface, trait or enum.
+- **A docblock is at most two lines.** One is the norm. If it does not fit in
+  two, it is not docblock material — cut it or move it to the commit message.
 - **All database access goes through a repository.** No `DB::` and no model
   queries in controllers, listeners, jobs or services. The single sanctioned
   exception is a DataGrid's `prepareQueryBuilder()`.

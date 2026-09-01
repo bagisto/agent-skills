@@ -8,7 +8,7 @@ CSS. `vendor/bin/pint` enforces none of it.
 - [The bar](#the-bar)
 - [Every method gets a docblock](#every-method-gets-a-docblock)
 - [Every property gets a docblock too](#every-property-gets-a-docblock-too)
-- [A class docblock defines; it does not narrate](#a-class-docblock-defines-it-does-not-narrate)
+- [No docblock above the class](#no-docblock-above-the-class)
 - [Comment only what the code cannot say](#comment-only-what-the-code-cannot-say)
 - [Syntax per layer](#syntax-per-layer)
 
@@ -16,7 +16,7 @@ CSS. `vendor/bin/pint` enforces none of it.
 
 **No comments inside a method body, an array literal, a route group or
 markup — not even a one-line "why".** The only comment this codebase wants is
-the docblock above a class, method or property.
+the docblock above a method, a property or a constant. **Not above the class.**
 
 A genuinely non-obvious reason belongs in that docblock or in the commit
 message. If a line needs prose to be followed, that is the signal to extract a
@@ -29,8 +29,12 @@ This holds in PHP, Blade, JavaScript and Vue alike.
 No exceptions, and regardless of visibility — `public`, `protected`, and `private` alike. A method
 without one is incomplete, even when its name seems to say everything.
 
-The description is a **sentence**: capitalised, ending in a full stop. One line is the norm; write a
-second only when the first cannot carry it.
+The description is a **sentence**: capitalised, ending in a full stop. **One line is the norm, two is
+the hard ceiling** — a docblock is a label, not an explanation. If what you want to say does not fit
+in two lines, it is not docblock material: cut it, or put it in the commit message.
+
+The same ceiling applies to a property, a constant, a Blade `@php` closure and a Vue
+`method`/`computed` — every layer, no exceptions.
 
 ```php
 /**
@@ -129,36 +133,39 @@ public function __construct(
 ) {}
 ```
 
-## A class docblock defines; it does not narrate
+## No docblock above the class
 
-Describe what the class **is**, in a sentence or two. Do not write the history of how it came to
-exist, what it replaced, or why a past approach was wrong — that belongs in the commit message.
+A class, interface, trait or enum carries **no docblock at all**. The declaration and the members
+below it say what it is; a preamble above it is noise the codebase does not use.
+
+This is not a preference — it is what the code does. Across `Product`, `Admin/Http/Controllers`,
+`Checkout`, `Core` and `Sales`, **462 of 468 classes have no class docblock (98.7%)**. The handful
+that do are the outliers, not the pattern.
 
 ```php
-/**
- * Drives a carrier for a saved shipment: buys the label, books the collection, and returns the
- * values to write back onto the shipment.
- */
+namespace Webkul\Marketplace\Services;
+
+use Webkul\Marketplace\Contracts\Carrier;
+
 class FulfilmentBooker
+{
+    /**
+     * Buy the label and book the collection for a saved shipment.
+     */
+    public function book(Shipment $shipment): array
 ```
 
 ```php
 /**
- * Turns a saved shipment into a real, carried parcel.
- *
- * This is the step the package was missing. A marketplace seller does not invent a tracking
- * number — they pick a carrier and a collection slot, and the carrier hands back the tracking
- * number, the label and the booking. So the carrier is driven here, straight after the shipment
- * row exists, and whatever it returns is written back onto that row.
- */                              ← history and justification, not a definition
+ * Drives a carrier for a saved shipment: buys the label, books the collection, and returns
+ * the values to write back onto the shipment.
+ */                              ← delete it; the class needs no preamble
 class FulfilmentBooker
 ```
 
-A genuine constraint still deserves a comment — put it **where it applies**, inside the method,
-under "Comment only what the code cannot say" above. A reader looking for the rule about
-re-delivered jobs wants it next to the guard, not in a preamble they scrolled past.
-
-A plain `Class ProductRepository` restates the declaration and is worse than nothing.
+Where does the "why" go, then? A genuine constraint goes **where it applies** — inside the method,
+under "Comment only what the code cannot say" below. Anything larger (history, what this replaced,
+why an earlier approach was wrong) belongs in the commit message or the PR.
 
 ## Comment only what the code cannot say
 
@@ -250,7 +257,7 @@ Each comment syntax belongs to its own layer — pick by *where* the comment sit
   <!-- SKU -->
   ```
 
-- **JS `/** … */` (JSDoc block)** — inside `<script>`. This is the **only** comment form used in the Vue layer — **no `//` line comments**. Every `computed`/`method` gets one, as a capitalized sentence ending in a full stop. Statements *inside* a method get one only when genuinely non-obvious:
+- **JS `/** … */` (JSDoc block)** — inside `<script>`. This is the **only** comment form used in the Vue layer — **no `//` line comments**. Every `computed`/`method` gets one, as a capitalized sentence ending in a full stop, **at most two lines** — the same ceiling as PHP. Statements *inside* a method get one only when genuinely non-obvious:
   ```js
   /**
    * The axis checkboxes only appear for a variable kind, once the seller has said "yes"
@@ -260,7 +267,7 @@ Each comment syntax belongs to its own layer — pick by *where* the comment sit
       return this.isVariable && this.hasVariations === true && !! this.familyId;
   }
   ```
-  A trivial one-liner still gets its docblock — but keep it to the one sentence, and don't pile extra commentary onto statements that already read clearly.
+  A trivial one-liner still gets its docblock — but keep it to the one sentence, and don't pile extra commentary onto statements that already read clearly. A three-line JSDoc describing how a method fits into the wider flow is over the ceiling: state what it returns and stop.
 
 - **CSS `/** … */` (JSDoc block)** — inside `<style>`, same form as JS: describe *why* a rule exists (especially non-obvious ones like `:checked`-driven state or scrollbar hiding), as a punctuated sentence:
   ```css

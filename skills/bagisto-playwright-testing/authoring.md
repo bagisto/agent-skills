@@ -72,17 +72,36 @@ Rules that hold across the existing suite:
 
 - **Locators are private getters or private methods.** A spec never contains a
   selector. A locator that takes an argument (a row by name, a field by label)
-  is a private method, not a getter.
-- **Member order: getters, then private helpers, then public actions.** A
-  private helper wedged between two public methods is the same defect the
+  is a private method, not a getter. The one case for a public locator is a
+  shared helper page object that a *sibling page object* composes — never a
+  spec.
+- **Member order: fields and constructor, then getters, then private locator
+  methods, then private helpers, then public actions.** A private helper wedged
+  between two public methods is the same defect the
   `bagisto-package-development` skill names for PHP classes.
 - **Public methods are named for the user's intent** — `createSection`,
   `deleteSection`, `expectFooterLinksNotOffered` — and assert their own outcome.
   A method that only clicks and returns pushes the assertion into the spec,
   where the locator is not available.
 - **Return what the caller needs to assert on**, usually the generated name.
-- **Docblock any method whose reason is not obvious from its name** — a
-  `/** … */` above the method, never a comment inside the body.
+- **No comments, anywhere under `tests/e2e-pw/`** — not a `//` line, not a
+  `/* */` block, not a docblock, in a spec or a page object. When a step needs
+  prose to be understood, that is the signal to extract a method whose name
+  carries the reason: `deleteRuleIfPresent`, not `deleteFirstRule` plus a
+  sentence explaining that it skips when none exists.
+
+An assertion is the usual thing a spec reaches a locator for. Give the page
+object the assertion instead:
+
+```ts
+// the spec holds a selector, and `visit` is protected
+await ruleApplyPage.searchInput.fill(product.name);
+await expect(ruleApplyPage.addToCartSuccessMessage).toBeVisible();
+
+// the page object owns both, and the spec reads as intent
+const subtotal = await ruleApplyPage.addSavedProductToCart(qty);
+await ruleApplyPage.expectGrandTotal(expected);
+```
 
 ## Fixtures
 
@@ -109,8 +128,62 @@ not collide: `generateName`, `generateEmail`, `generateSKU`, `generateSlug`,
 A generated name is also what makes a row-scoped assertion possible — it is
 unique, so `filter({ hasText: name })` resolves to exactly one row.
 
+**Generate the value inside `beforeEach`, never at module scope.** A module-scope
+initialiser runs once per file, so every test in that file reuses one SKU or
+name. `sku` is `Rule::unique` and `url_key` is validated by
+`ProductCategoryUniqueSlug`, so the second test 422s with "The sku has already
+been taken" the moment cleanup misses once — and since its own cleanup then
+fails too, every remaining test in the file fails with it. This is the single
+most common cause of a spec file that passes alone and fails in a suite.
+
+```ts
+let generatedSku: string;                    // declare at module scope
+
+test.beforeEach(async ({ adminPage }) => {
+    generatedSku = `SKU-${Date.now()}`;      // assign per test
+});
+```
+
+If a module-scope table needs the value, hold it as a thunk — the table is built
+at import time, when the variable is still undefined:
+
+```ts
+const testCases = [{ operator: "==", value: () => generatedSku }];
+// at the call site
+value: testCase.value(),
+```
+
+Prefer `Date.now()` over `generateSKU()` where uniqueness must hold across
+reruns: `generateSKU()` is random (`AAA1234`), and the suite never rolls back,
+so a collision with an earlier run's leftover row is possible.
+
 Binary fixtures live in `tests/e2e-pw/data/` and are reached with
 `this.dataPath("file.png")`.
+
+## Cleanup
+
+`afterEach` runs against a database that keeps everything the test made, so a
+leaked row poisons whatever runs next. Two rules:
+
+- **Never let one cleanup step's failure skip the next.** Delete the product in
+  a `finally`, so a missing rule cannot strand it.
+- **Tolerate what the test never created.** When a test fails before creating
+  its rule, the delete icon is absent; wait briefly and return rather than
+  timing out and aborting the rest of the teardown.
+
+```ts
+async deleteCatalogRuleAndProduct() {
+    try {
+        await this.deleteRuleIfPresent(path, "Catalog Rule Deleted Successfully");
+    } finally {
+        await this.deleteLatestProduct();
+    }
+}
+```
+
+Positional cleanup (`.first()`, `.nth(2)`) is a standing hazard: it deletes
+whatever currently sits in that row, not what this test created. It only works
+while nothing else writes to the same grid.
 
 ## ACL specs
 
@@ -155,9 +228,20 @@ Notes that catch people out:
 
 ## Naming
 
-- Spec file: `<feature>.spec.ts`, lower-kebab.
+- Spec file: `<feature>.spec.ts`, **lower-kebab** — `buy-x-get-y-free.spec.ts`,
+  `url-key.spec.ts`, `price-in-cart.spec.ts`. Not camelCase (`urlKey.spec.ts`),
+  not run-together (`buyXgetYfree.spec.ts`), and no stray dot inside the stem
+  (`price-in.cart.spec.ts`).
+- Page object: `<Feature>Page.ts`, PascalCase class of the same name. The ACL
+  chain under `pages/admin/acl/` is the documented exception — `shared.ts`,
+  per-section files, `index.ts` — as are `*.types.ts` type modules.
+- Directories: lower-kebab, mirroring the admin menu section.
 - `test.describe("<feature> management")`, matching the existing suite.
+- **Describe blocks and test titles are lower case throughout**, including
+  acronyms and brand names, because that is what the suite already does — `rma`,
+  `gdpr`, `sku`, `url`, `cms`, `seo`, `pdf`, `github`. Trim leading and trailing
+  spaces, never double-space, and write an arrow with one space each side:
+  `condition is -> is equal to`, not `is->is equal to`.
 - Test title: `should <expected outcome>` — describe the behaviour, not the
   mechanism. `should stage a reorder until it is published`, not
   `should call the reorder endpoint`.
-- Page object: `<Feature>Page.ts`, PascalCase class of the same name.

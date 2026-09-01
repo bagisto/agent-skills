@@ -442,6 +442,12 @@ Bagisto 2.5 runs on Laravel 13.
 - `workers: 1`, `retries: 0`, `fullyParallel: false`, and CI shards Admin and Shop 10 ways; a spec may not depend on another spec having run.
 - Admin auth is cached to `.state/admin-auth.json` by the `adminPage` fixture — never log in by hand in a spec, and keep `.state` gitignored.
 - Specs name the intent; page objects own every locator. Scope a locator to the row first — the same action markup repeats per row and an unscoped one fails strict mode.
+- Locators are private getters or private methods; a spec never holds a selector. Give the page object the assertion (`expectGrandTotal(amount)`) rather than exposing the locator. A public locator is only for a sibling page object that composes it.
+- Member order in a page object: fields and constructor, then getters, then private locator methods, then private helpers, then public actions.
+- No comments anywhere under `tests/e2e-pw/` — no `//`, no `/* */`, no docblock, in specs or page objects. If a step needs prose, rename the method so the name carries it.
+- Generate test data inside `beforeEach`, never at module scope: one module-scope `Date.now()` gives every test in the file the same SKU or name, and `sku`/`url_key` are unique-validated, so the file passes only while cleanup never misses. Hold the value as a thunk (`value: () => generatedSku`) if a module-scope table needs it.
+- Teardown must not leak: delete the record in a `finally` so an earlier failed step cannot strand it, and tolerate the case where the test never created the row. Positional cleanup (`.first()`, `.nth(2)`) targets whatever sits in that row, not what this test made.
+- Filenames are lower-kebab (`buy-x-get-y-free.spec.ts`, not `buyXgetYfree.spec.ts`); page objects are `<Feature>Page.ts`. Describe blocks and test titles are lower case throughout — including `rma`, `gdpr`, `sku`, `url` — single-spaced, with ` -> ` spaced on both sides.
 
 === bagisto-payment-method-development rules ===
 
@@ -475,7 +481,7 @@ Bagisto 2.5 runs on Laravel 13.
 # Coding Standards
 
 - CRITICAL: ALWAYS use the bagisto-coding-standards skill when writing or changing any Bagisto PHP or Blade. It owns code style, comments and docblocks, Laravel idiom, data access, Blade, security and localization; `vendor/bin/pint` owns everything mechanical.
-- Every method and property carries a docblock, whatever its visibility. Class members run constants → properties → constructor → public → protected → private.
+- Every method and property carries a docblock, whatever its visibility, and it is at most two lines — one is the norm. Never put a docblock above the class, interface, trait or enum. Class members run constants → properties → constructor → public → protected → private.
 - No comments inside a method body, array literal, route group or markup — in PHP, Blade, JS or Vue alike. A non-obvious reason goes in the docblock or the commit message.
 - A condition with more than one clause goes multiline, the boolean operator leading each line.
 - All database access goes through a repository. The one sanctioned exception is a DataGrid's `prepareQueryBuilder()`.

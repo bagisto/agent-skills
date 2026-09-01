@@ -89,6 +89,16 @@ change `APP_URL`.
   fixture and reused across specs. Do not log in by hand in a spec.
 - **Rebuild assets before running** after any frontend change, or the browser
   loads the previous bundle and the failure will look like a test bug.
+- **No comments anywhere under `tests/e2e-pw/`** — no `//`, no `/* */`, no
+  docblock, in specs or page objects. Put the reason in a method name instead.
+- **Generate test data inside `beforeEach`, never at module scope.** One
+  module-scope `Date.now()` gives every test in the file the same SKU, and the
+  file only passes while cleanup never misses.
+- **Cleanup deletes what it made, and a failed step never skips the next one** —
+  wrap the teardown so the product is removed even when the rule delete fails.
+- **Filenames are lower-kebab** (`buy-x-get-y-free.spec.ts`); page objects are
+  `<Feature>Page.ts`. Describe and test titles are lower case with single
+  spaces.
 
 ## Writing a test — the shape
 
@@ -129,5 +139,9 @@ contains a CSS selector belongs in a page object instead — see
   can match nothing. Target the label element.
 - **Forgetting an open drawer or modal covers the page.** Clicks on the list
   behind it are intercepted; close it first.
+- **Treating a server-rendered element as "form ready".** Blade paints the input
+  before Vue mounts and initialises the model, so a value typed in between is
+  discarded and the save fails validation with that field "required" while the
+  text is still on screen. A fixed `waitForTimeout` only moves the race.
 
 **REQUIRED SUB-SKILL:** Use bagisto-change-verification before calling any change done.
