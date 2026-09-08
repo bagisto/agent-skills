@@ -17,7 +17,7 @@ change that clears them locally is a change that clears the pipeline.
 |---|---|---|---|
 | 1 | Style | `vendor/bin/pint --test` | any `.php` changed |
 | 2 | Tests | `vendor/bin/pest` | any `.php` changed |
-| 3 | E2E | `npm run test:e2e` on **2.5**, `npx playwright test --config=tests/e2e-pw/playwright.config.ts` on **2.4** | any view, JS, CSS or route changed |
+| 3 | E2E | `npm run test:e2e` from the package directory | any view, JS, CSS or route changed |
 | 4 | Translations | `php artisan bagisto:translations:check` | any `Resources/lang/**` changed |
 
 Run them in that order — style is seconds, E2E is minutes, and a Pint failure
@@ -52,14 +52,23 @@ package directory. See the `bagisto-playwright-testing` skill before writing or
 debugging one.
 
 ```bash
-cd packages/Webkul/Admin   # or packages/Webkul/Shop
+cd packages/Webkul/Admin   # or Shop, or Installer
 
-npm run test:e2e                                              # 2.5
-npx playwright test --config=tests/e2e-pw/playwright.config.ts # 2.4
+npm run typecheck                          # tsc over the suite — seconds
+npm run test:e2e -- tests/<area>/<file>.spec.ts
 ```
 
-CI runs each project across **10 shards**. Locally, run the spec files your
-change touches rather than the whole suite.
+Node dependencies are installed **per package**; there is no root
+`node_modules`, so these commands only work from the package directory.
+
+CI runs Admin and Shop across **10 shards each, against MySQL, MariaDB and
+PostgreSQL**, gated by an installer job that runs the guided installer per locale
+and database. Locally, run the spec files your change touches rather than the
+whole suite, and report which ones.
+
+A failing E2E run is classified before anything is changed — the
+`bagisto-playwright-testing` skill owns that workflow, including the rule that
+one shard or one database driver failing is not evidence of flakiness.
 
 ### 4. Translations
 
