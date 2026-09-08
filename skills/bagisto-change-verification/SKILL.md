@@ -47,9 +47,9 @@ exist makes PHPUnit error.
 
 ### 3. End-to-end
 
-Admin, Shop and Installer are separate Playwright projects, each run from its own
-package directory. See the `bagisto-playwright-testing` skill before writing or
-debugging one.
+Admin, Shop and Installer are separate Playwright projects. Node dependencies are
+installed **per package** — there is no root `node_modules` — so these only work
+from the package directory:
 
 ```bash
 cd packages/Webkul/Admin   # or Shop, or Installer
@@ -58,17 +58,13 @@ npm run typecheck                          # tsc over the suite — seconds
 npm run test:e2e -- tests/<area>/<file>.spec.ts
 ```
 
-Node dependencies are installed **per package**; there is no root
-`node_modules`, so these commands only work from the package directory.
-
 CI runs Admin and Shop across **10 shards each, against MySQL, MariaDB and
-PostgreSQL**, gated by an installer job that runs the guided installer per locale
-and database. Locally, run the spec files your change touches rather than the
-whole suite, and report which ones.
+PostgreSQL**, gated by an installer job. Locally, run the spec files your change
+touches rather than the whole suite, and report which ones.
 
-A failing E2E run is classified before anything is changed — the
-`bagisto-playwright-testing` skill owns that workflow, including the rule that
-one shard or one database driver failing is not evidence of flakiness.
+Load `bagisto-playwright-testing` before writing or debugging one. It owns
+failure classification, including the rule that one shard or one database driver
+failing is not evidence of flakiness.
 
 ### 4. Translations
 

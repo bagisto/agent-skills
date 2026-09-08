@@ -15,25 +15,14 @@ A test written before that investigation is usually a duplicate, a test of the
 wrong layer, or a test that passes whether or not the feature works. All three
 cost more than they return: someone maintains them, and nobody can trust them.
 
-Work the pipeline:
-
-```
-UNDERSTAND FEATURE → INSPECT APPLICATION CODE → INSPECT VALIDATION AND BUSINESS RULES
-  ↓
-MAP IMPACT SURFACE → INSPECT EXISTING TESTS, PAGE OBJECTS, FIXTURES AND DATA HELPERS
-  ↓
-IDENTIFY WORKFLOWS AND STATE TRANSITIONS → BUILD COVERAGE MATRIX → DECIDE E2E VS PEST
-  ↓
-DESIGN TEST DATA AND PREREQUISITE STATE → DESIGN LOCATORS → IMPLEMENT
-  ↓
-RUN → CLASSIFY FAILURES → STABILISE → VERIFY ASSERTIONS → VERIFY REGRESSION BEHAVIOUR
-  ↓
-RUN FINAL QUALITY GATE
-```
+Work the pipeline in order — understand the feature and its rules, map what
+already covers it, decide the scenarios and which belong in Pest, design the data
+and locators, implement, then classify every failure before changing anything:
 
 | Phase | Read | Produces |
 |---|---|---|
 | Investigate | [investigation.md](investigation.md) | The feature, its rules, its impact surface, and what already covers it |
+| Structure | [architecture.md](architecture.md) | Where a helper, page object or shared utility belongs |
 | Design | [test-design.md](test-design.md), [admin-and-shop.md](admin-and-shop.md) | State transitions, a coverage matrix, an E2E-vs-Pest call per scenario |
 | Implement | [authoring.md](authoring.md), [test-data.md](test-data.md), [locators.md](locators.md), [assertions.md](assertions.md) | A spec and its page object |
 | Time-dependent work | [time-and-timezone.md](time-and-timezone.md) | Booking, rental, slot, availability and "today" coverage that holds in CI |
@@ -69,60 +58,27 @@ test can fail.
 
 ## Architecture
 
-Three independent Playwright projects, one per package, plus a small root-level
-layer of **dependency-free** helpers all three import through `@shared/*`.
+Three independent Playwright projects — `packages/Webkul/{Admin,Shop,Installer}/tests/e2e-pw/`,
+each with its own `playwright.config.ts`, `setup.ts`, `pages/`, `tests/`, `utils/`
+and `data/` — plus a root-level `tests/e2e-pw/helpers/` layer of
+**dependency-free** helpers all three import through `@shared/*`.
 
-```
-tests/e2e-pw/helpers/       # shared, dependency-free — imported as @shared/*
-├── env.ts                  # readEnv() → baseUrl, adminEmail, adminPassword, timezone, headed
-├── faker.ts                # uniqueStamp, generateName, generateEmail, generateSlug, …
-├── paths.ts                # createE2ePaths(e2eRootPath)
-├── prices.ts               # formatPrice
-└── regex.ts                # escapeRegExp
+Two rules follow, and both are load-bearing:
 
-packages/Webkul/{Admin,Shop,Installer}/tests/e2e-pw/
-├── playwright.config.ts    # testDir ./tests, workers 1, retries 0, chromium
-├── setup.ts                # adminPage / shopPage fixtures (Installer has neither)
-├── tsconfig.json           # strict; @pages/* @utils/* @data/* @shared/*
-├── pages/                  # BasePage.ts + page objects (admin/ and shop/)
-├── tests/                  # *.spec.ts — Admin by menu, Shop by customer journey
-├── utils/                  # package-local helpers, and the wrappers over @shared/*
-└── data/                   # fixture files for uploads
-```
+- **The shared layer takes no dependencies.** CI installs `node_modules` per
+  package only, so nothing under `helpers/` may import `@playwright/test`,
+  `dotenv` or any third-party package. A helper that needs one belongs in that
+  package's `utils/`.
+- **The suites share no page objects, fixtures or specs.** Each carries page
+  objects for whatever screens it drives, including the other side's. Never
+  import across package boundaries.
 
-**Why the shared layer must stay dependency-free.** CI runs `npm install` inside
-`packages/Webkul/<project>` only — there is no root `node_modules`, in CI or
-locally. Anything under `tests/e2e-pw/helpers/` therefore has to run with no
-imports of its own: no `@playwright/test`, no `dotenv`, no third-party package.
-Pure TypeScript over `process.env`, strings, numbers and dates.
+Per-test timeouts are 60 s in Admin, 240 s in Shop and 300 s in Installer;
+`expect` waits 30 s in all three. Raise a single flow with `test.setTimeout(...)`,
+never the config.
 
-That constraint, not taste, decides where code goes:
-
-| Put it in | When |
-|---|---|
-| `tests/e2e-pw/helpers/` | Genuinely useful to more than one suite **and** dependency-free — value generation, string/price formatting, environment parsing, path arithmetic |
-| `<package>/tests/e2e-pw/utils/` | It needs a package dependency, or encodes something only that suite knows |
-| `<package>/tests/e2e-pw/pages/` | It drives a screen |
-
-`utils/env.ts` is the pattern to copy: shared `readEnv()` does the parsing and
-validation, and the package's `utils/env.ts` owns the `dotenv` call — the
-dependency stays where the dependency is installed. `utils/faker.ts` does the
-same, re-exporting `@shared/faker` and adding package-local generators
-(`generateSKU` in Admin, `generateLocation` in Shop). A pure helper with no
-package-local variant, such as `escapeRegExp`, is imported straight from
-`@shared/regex` by the page objects that need it.
-
-**The suites still share no page objects, fixtures or specs.** Each carries page
-objects for whatever screens it must drive, including the other side's — that is
-what keeps them independently runnable. Never import across package boundaries.
-If both suites need the same *dependency-free* logic it belongs in `@shared/*`;
-if it needs Playwright, each suite keeps its own copy.
-
-Per-test timeouts are 60 s in Admin, 240 s in Shop (plus a 2 h global cap) and
-300 s in Installer; `expect` waits 30 s in all three. A single long flow raises
-its own with `test.setTimeout(...)`; never raise the config. `utils/env.ts` is
-the only place `process.env` is read and `utils/paths.ts` owns every path —
-never read either directly.
+Full layout, the where-does-code-go table and the wrapper pattern:
+[architecture.md](architecture.md).
 
 ## Running
 
