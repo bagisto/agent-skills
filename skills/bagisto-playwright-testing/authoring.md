@@ -30,6 +30,28 @@ A spec that runs longer than its suite's per-test budget declares it itself —
 `test.setTimeout(240000)` inside the describe, as the tax and omnibus specs do.
 Raise the budget for the one flow that needs it; never in the config.
 
+The test budget is not the only clock. Every action waits `actionTimeout` and
+every `expect` waits its own 30 s, so a single server round-trip that is
+legitimately slow — saving a catalog rule reprices every matched product before
+it redirects — times out at the click or the assertion long before the test
+budget is spent. Raise those in the page object, as one named constant passed
+to the action and the assertion, so the reason is visible in exactly one place:
+
+```ts
+const REPRICE_TIMEOUT = 90 * 1000;
+
+await this.saveButton.click({ timeout: REPRICE_TIMEOUT });
+
+await expect(this.flashMessage("Catalog rule created successfully"))
+    .toBeVisible({ timeout: REPRICE_TIMEOUT });
+```
+
+`DatagridPage.deleteRow(text, message, timeout?)` and
+`deleteRowsIfPresent(texts, message, timeout?)` take the same value for a slow
+delete. A raised timeout is a budget for a request you have measured, not a fix
+for a request you have not — [troubleshooting.md](troubleshooting.md) says how to
+tell the two apart.
+
 ## What goes in the spec, what goes in the page object
 
 The spec composes a workflow out of named intentions and states the guarantee.

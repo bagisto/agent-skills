@@ -208,14 +208,15 @@ What already exists:
 | Kind | Shared (`@shared/*`) | Admin | Shop |
 |---|---|---|---|
 | Fixtures | — | `adminPage`, `shopPage`, `fillInTinymce` (`setup.ts`) | same |
-| Login | — | `utils/admin.ts` → `loginAsAdmin` | `utils/admin.ts`, `utils/customer.ts` → `register`, `loginAsCustomer` |
+| Login | — | `utils/admin.ts` → `loginAsAdmin` | `utils/admin.ts` → `loginAsAdmin`, `setConfigSwitch`, `setMinimumOrder`; `utils/customer.ts` → `register`, `loginAsCustomer` |
 | Data generation | `faker.ts` | `utils/faker.ts` re-exports it, adds `generateSKU`, `generateFullName`, `generateCurrencyCode`, `getImageFile` | `utils/faker.ts` re-exports it, adds `generateLocation` |
 | Environment | `env.ts` | `utils/env.ts` (adds `dotenv`) | same |
 | Paths | `paths.ts` | `utils/paths.ts` → `DATA_PATH`, `ADMIN_AUTH_STATE_PATH` | same |
 | Prices | `prices.ts` | via `utils/tax.ts` | `utils/prices.ts` |
 | Regex | `regex.ts` | imported directly by page objects | same |
-| Listings | — | `pages/admin/DatagridPage.ts` base class | — |
-| Product setup | — | `pages/admin/catalog/products/ProductCreatePage.ts` | its own copy, plus `pages/types/product.types.ts` |
+| Listings | — | `pages/admin/DatagridPage.ts` base class — search, text and dropdown filters, column-aware rows, mass actions, tolerant cleanup | — |
+| Product setup | — | `pages/admin/catalog/products/ProductCreatePage.ts`, `ProductEditPage.ts`, `ProductListPage.ts` | its own copy, plus `pages/types/product.types.ts` |
+| Storefront product | — | — | `pages/shop/ProductPage.ts` — search, open, add-to-cart state, 404 |
 | Domain helpers | — | `utils/configuration.ts`, `tax.ts`, `numbers.ts`, `customer.ts` | `utils/TinymcePage.ts` |
 | CSV / import fixtures | — | `utils/csv.ts`, `customers-csv.ts`, `products-csv.ts`, `tax-rates-csv.ts`, `data-transfer.ts` | — |
 

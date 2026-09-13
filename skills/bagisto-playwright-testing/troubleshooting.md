@@ -9,6 +9,7 @@
 - [Failures caused by leftover data](#failures-caused-by-leftover-data)
 - ["Flaky" is a conclusion, not a starting hypothesis](#flaky-is-a-conclusion-not-a-starting-hypothesis)
 - [A flash message that never appeared](#a-flash-message-that-never-appeared)
+- [A timeout that is really a slow request](#a-timeout-that-is-really-a-slow-request)
 - [Debugging from a CI artifact](#debugging-from-a-ci-artifact)
 - [Where configuration comes from](#where-configuration-comes-from)
 - [Environment faults mistaken for bugs](#environment-faults-mistaken-for-bugs)
@@ -41,6 +42,7 @@ and guessing wastes a run:
 | **Auth / session** | Redirected to `admin/login`, or a customer action performed as a guest | Below |
 | **Clock / timezone** | A date, slot, availability or expiry assertion; fails only in CI, or only at some times of day | [time-and-timezone.md](time-and-timezone.md) |
 | **Flash message lost** | A redirect landed on the right page but the success or error message is absent | Below |
+| **Slow request** | The click or the success assertion times out, and the access log shows a `499` for that request followed by a 5xx for the same URL | The application first, then the page object's timeout — below |
 | **Stale build** | The component being targeted does not exist in the DOM at all | `npm run build` |
 | **Environment** | Every test fails, or fails at navigation | Below |
 
@@ -151,6 +153,11 @@ Fixes, in order of preference:
 3. When cleaning dev data by hand, **delete by explicit id only.** A predicate
    like `name LIKE '% Copy'` will eventually match something a person created.
 
+A record that exists but is "not listed" is usually the grid, not the database:
+the admin DataGrid remembers the filters, sort and page size a previous test
+applied, in the browser's `localStorage` — see
+[test-data.md](test-data.md#grid-state-lives-in-the-browser).
+
 The design rules that prevent this are in [test-data.md](test-data.md).
 
 ## "Flaky" is a conclusion, not a starting hypothesis
@@ -247,6 +254,43 @@ see the note on `networkidle` in [locators.md](locators.md). Settle the page you
 are about to navigate *away* from as well, so its requests are never aborted
 mid-flight.
 
+## A timeout that is really a slow request
+
+A `499` in the nginx access log means the client closed the connection: the
+browser gave up when Playwright's action or expect timeout expired, while PHP
+carried on executing. A `500` or `504` for the same URL a minute or two later is
+PHP-FPM ending that orphaned request at `max_execution_time`. Read as a pair,
+the two lines say the request was still running when the test stopped waiting
+— a performance finding, not a locator or synchronisation one.
+
+The case that proved it: saving or deleting a catalog rule reprices every
+matched product synchronously before it redirects, and the price indexer was
+issuing several queries per product, so the request outran the 60 s Admin
+budget in CI while passing on a small local catalog. The fix went into the
+application — eager loading in the indexer — and only then did the page object
+get a measured timeout for what the request honestly costs.
+
+Work it in that order:
+
+1. **Measure the request** locally against a catalog the size CI seeds. The
+   Debugbar query count, or `DB::listen`, shows whether the cost is a query per
+   row.
+2. **Fix the application** when it is. A timeout raised over an N+1 is a test
+   that will fail again the next time the catalog grows.
+3. **Then set the budget** in the page object, as one named constant on the
+   action and the assertion — [authoring.md](authoring.md).
+
+The ceiling the orphaned request runs into depends on the branch. Master's
+pipeline serves the app through nginx and PHP-FPM, with `max_execution_time`
+in `.github/ci/php-fpm.conf` and `fastcgi_read_timeout` in
+`.github/ci/nginx.conf` both at 120 s — raise them only alongside a page-object
+timeout that needs the room, since on their own they turn a `499` into a longer
+wait for the same failure. The 2.4 pipeline serves the app with `php artisan
+serve`, which applies no PHP execution limit by default, so there the request
+runs to completion and the `499` is its only server-side trace; a request that
+merely completes on 2.4 still fails on master, so measure it rather than wait
+for it.
+
 ## Debugging from a CI artifact
 
 Each `playwright_tests` job uploads one artifact named
@@ -316,6 +360,13 @@ job rewrites `APP_URL` in `.env` instead.
   it first — including that it points at the app you actually rebuilt.
 - **The app must be running and seeded.** CI runs `bagisto:install`, seeds the
   product table and runs `indexer:index --mode=full` before the first spec.
+- **Never run Pest and Playwright against the same database at the same time.**
+  The feature suites write to the `.env` database unless run with `--parallel`,
+  and an E2E run mutates it while they read: the promotion specs create
+  catalog rules that reprice every product, so a Pest price assertion reads the
+  discounted value — 720 where it expected 800 — and two dozen tests fail with
+  no code change behind them. Run one, then the other, and re-run a Pest price
+  failure alone before believing it.
 - **The Installer suite is the exception — it needs an *uninstalled* app.** It
   drives the guided web installer, so run it after `php artisan key:generate`
   and *before* `bagisto:install`; against an installed app the spec skips. The

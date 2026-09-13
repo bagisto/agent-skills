@@ -36,6 +36,8 @@ Activate this skill when:
 
 ```php
 // config/themes.php
+use Webkul\Theme\Enums\SectionTypeEnum;
+
 'shop-default' => 'default',
 
 'shop' => [
@@ -48,9 +50,46 @@ Activate this skill when:
             'build_directory' => 'themes/shop/default/build',
             'package_assets_directory' => 'src/Resources/assets',
         ],
+        'customize' => [
+            'sections' => [
+                SectionTypeEnum::IMAGE_CAROUSEL,
+                SectionTypeEnum::PRODUCT_CAROUSEL,
+                SectionTypeEnum::CATEGORY_CAROUSEL,
+                SectionTypeEnum::FOOTER_LINKS,
+                SectionTypeEnum::STATIC_CONTENT,
+                SectionTypeEnum::SERVICES_CONTENT,
+            ],
+            'image_cache' => [
+                'templates' => [],
+                'product_images' => [],
+            ],
+        ],
     ],
 ],
 ```
+
+`customize` is the one place a theme registers what it customizes in the storefront;
+`config/themes.php` explains each key in Laravel-style comment blocks. Every key
+under it is optional.
+
+`customize.sections`: without it the theme offers every core section type in
+`SectionTypeEnum` order. A theme's own section types are `SectionType` classes
+listed there — see the `bagisto-theme-sections` skill and `UPGRADE.md` →
+*Adding sections to a theme*.
+
+`customize.image_cache.templates`: a map of `cache/{template}/{path}` names to
+classes with a public `applyFilter()`, merged over the core `imagecache.templates`
+(`small`, `medium`, `large`) for the channels running the theme — the theme overrides
+a core name or adds a new one, and never edits `config/imagecache.php`.
+`Webkul\ImageCache\TemplateRegistry` resolves them per request host; see
+`UPGRADE.md` → *Theme Image Cache Templates*.
+
+`customize.image_cache.product_images` opts templates into product image arrays:
+the product image helper (and every product API, gallery and cart item) always
+carries `small`, `medium`, `large` and `original`, plus `{name}_image_url` only for
+the names listed there — never every registered template. Admin requests always
+resolve the core templates (`TemplateRegistry::currentTheme()` is null under the
+admin url), and `CatalogApiCache` keys listings by channel theme.
 
 ## Reference files — load only what the current task needs
 

@@ -34,7 +34,7 @@ Do not confuse selecting a visual theme with creating homepage customization rec
 Locate the installed contracts:
 
 ```bash
-rg -n "theme_code|getCurrentChannel\\(\\)->theme|ThemeCustomization" <discovered-package-roots>
+rg -n "theme_code|getCurrentChannel\\(\\)->theme|ThemeCustomization|SectionRepository|SectionType|'customize' =>" <discovered-package-roots>
 rg -n "home_seo|root_category_id|logo_url|favicon_url" <shop-root> --glob '*.blade.php'
 rg -n "PageRepository|shop::cms.page|whereHas\\('channels'" <discovered-package-roots>
 ```
@@ -43,7 +43,7 @@ Read:
 
 - active-theme middleware;
 - channel create and edit validation;
-- theme customization model and repository;
+- theme customization model and repository (`Section` and `SectionRepository` from v2.4, with types as `SectionType` classes a theme lists under `customize.sections` in `config/themes.php`);
 - administrator theme-customization controller;
 - homepage controller and view;
 - footer and services components;

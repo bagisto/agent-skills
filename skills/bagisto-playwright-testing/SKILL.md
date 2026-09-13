@@ -73,9 +73,14 @@ Two rules follow, and both are load-bearing:
   objects for whatever screens it drives, including the other side's. Never
   import across package boundaries.
 
-Per-test timeouts are 60 s in Admin, 240 s in Shop and 300 s in Installer;
-`expect` waits 30 s in all three. Raise a single flow with `test.setTimeout(...)`,
-never the config.
+Per-test timeouts on master are 60 s in Admin, 240 s in Shop and 300 s in
+Installer, with actions and `expect` waiting 30 s in all three; the 2.4 configs
+are tighter (Shop 120 s per test, `expect` 20 s, actions 15 s — Admin sets no
+action timeout), so read the `playwright.config.ts` of the checkout you are in.
+Raise a single flow with `test.setTimeout(...)`, never the config — and give a
+request you have measured as slow its own named timeout on the action and the
+assertion in the page object, after asking whether the application should be
+that slow ([authoring.md](authoring.md), [troubleshooting.md](troubleshooting.md)).
 
 Full layout, the where-does-code-go table and the wrapper pattern:
 [architecture.md](architecture.md).
@@ -116,6 +121,10 @@ contract.
   `loginAsAdmin(page)` are legacy — see [authoring.md](authoring.md).
 - **Rebuild assets before running** after any frontend change, or the browser
   loads the previous bundle and the failure will look like a test bug.
+- **Never run Pest and Playwright against the same database at once.** An E2E
+  run reprices products and changes settings while the feature suites read
+  them, and the Pest failures it causes look like broken code —
+  [troubleshooting.md](troubleshooting.md).
 - **No comments anywhere under `tests/e2e-pw/`** — no `//`, no `/* */`, no
   docblock. This is a Bagisto convention, held without exception across all three
   suites today, and it diverges from generic Playwright advice deliberately. Put

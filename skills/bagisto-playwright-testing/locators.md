@@ -90,6 +90,32 @@ private row(text: string) {
 Filter on a value the test owns — a generated SKU, name or email — and search
 the grid for it first, so the filter has exactly one candidate to match.
 
+**A name can appear in more than one column.** The category grid shows every
+category's parent beside its name, so `hasText: name` also matches each child
+row of the category you created, and a root category with children fails strict
+mode. When the value lives in a specific column, address the column: the header
+row is `div.row.datagrid-head > p`, so a column's position is its index there,
+and a body cell is `p:nth-child(position)` of its row. `DatagridPage` owns this
+as `columnPosition(column)`, `cellOf(row, column)` and
+`rowWithColumnValue(column, value)` — use them rather than re-deriving the
+arithmetic.
+
+**Search reaches only the searchable columns; the rest are filters.** The
+DataGrid class declares which is which. The filter drawer opens from the visible
+`Filter` toggle; each column's section is the block around the
+`p.text-xs.font-medium` label carrying the column's name, a dropdown column has a
+`Select` button over `li` options, and a text column's input is placeholdered
+with the column label. "Apply Filters" renders twice — scope it to `div.sticky` —
+and the drawer closes itself on apply, so assert that button hidden rather than
+clicking a close control that is already gone. `DatagridPage.applyTextFilter`
+and `applyDropdownFilter` do all of this and wait on the filter response.
+
+**The product grid is not the generic grid.** `catalog/products` renders a card
+per row: the name is an exact `<p>`, the SKU renders as `SKU - <sku>`, status is
+`p.label-active` or `p.label-info`, and only the name is searchable — a SKU is
+reached through the text filter. `ProductListPage` owns these shapes; do not
+assume the column-position helpers above apply to it.
+
 ## Scope before you select
 
 Every row of an admin grid carries identical markup, and Bagisto often renders
@@ -185,6 +211,17 @@ manifest alone is not enough.
   locator method so exactly one place needs updating.
 - **TinyMCE lives in an iframe.** Use the `fillInTinymce` fixture helper rather
   than reaching into the frame yourself.
+- **Some `label[for]` controls render twice, once empty.** A storefront shipping
+  or payment option and the registration agreement each emit a text-bearing
+  label and an empty one over the same input, so `label[for="free_free"]`
+  resolves to two. Keep the one a user can read:
+  `.filter({ hasText: /\S/ })`.
+- **The storefront price block is a run of `<p>`s with no price id.** Inside
+  `div.flex-wrap`, the struck-through regular price carries `.line-through` and
+  a configurable's "As low as" carries `.price-label`, so the price the customer
+  pays is `div.flex-wrap > p:not(.line-through):not(.price-label)`. A product
+  without a discount renders only the final price. `SearchPage` and
+  `CheckoutHelper` own that locator.
 - **Flash messages render twice with Laravel Debugbar on**, so
   `getByText("… successfully")` resolves to two elements locally and one in CI.
   Set `DEBUGBAR_ENABLED=false` for local E2E runs rather than adding `.first()`.
@@ -255,6 +292,7 @@ changing anything:
 | A drawer or modal is still animating | `element intercepts pointer events` | Assert the overlay is hidden before acting behind it |
 | A datagrid request is in flight | Row count is stale, or the empty state is showing | `expect.poll` over rows-vs-empty, or `waitForResponse` on the filter request |
 | A dropdown populates asynchronously | `selectOption` throws on a missing value | Assert the option exists, then select |
+| Flatpickr moves focus into its time picker after the calendar opens | A typed `11:00` lands as another time, only sometimes | `expect(hourSpinbutton).toBeFocused()` before filling the hour and minute |
 | A save is async | The next step acts on the old value | Assert the success message *and* the changed value |
 | The JS bundle is stale | The component you target does not exist at all | `npm run build` in the package |
 

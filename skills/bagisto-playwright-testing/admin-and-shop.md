@@ -120,18 +120,22 @@ the test needs another test to have run.
 
 ## Establishing an admin prerequisite from a Shop test
 
-Take guest checkout, the case the suite currently gets wrong — and a good example
-of why the prerequisites have to come from reading the code rather than the
-screen. A guest reaches the checkout page only if **both** hold:
+Take guest checkout — a good example of why the prerequisites have to come from
+reading the code rather than the screen. A guest reaches the checkout page only
+if **both** hold:
 
 | Prerequisite | Enforced in |
 |---|---|
 | `sales.checkout.shopping_cart.allow_guest_checkout` is on | `OnepageController::index` redirects to sign-in otherwise |
 | Every cart item's product has `guest_checkout` set | `Checkout/src/Models/Cart.php` — `$item->product->getAttribute('guest_checkout')` |
 
-Nothing in `tests/checkout/simple-checkout.spec.ts` establishes either. Its guest
-test passes only while an earlier run happened to leave the setting on and the
-product it inherited happened to allow it.
+The suite used to establish neither: the guest test passed only while an earlier
+run happened to leave the setting on and the product it inherited happened to
+allow it. `tests/checkout/checkout-access.spec.ts` and
+`tests/checkout/simple-checkout.spec.ts` now own both — each creates its product
+in `beforeEach`, sets the switch through `setConfigSwitch(...)` from
+`utils/admin.ts`, which returns the original value, and restores it in a
+`finally`. Read them before writing another checkout spec.
 
 The shape that owns its prerequisites, using the Shop suite's own admin page
 objects:
@@ -187,11 +191,13 @@ Five things make this correct:
 5. It asserts the **customer-visible** outcome, not the admin save toast — the
    admin side of that is the Admin suite's job.
 
-The named methods are illustrative. `CheckoutConfigurationPage` today exposes the
-group-level `readSettings()` / `applySettings(...)` pair rather than a
-per-setting getter and setter — check the page object before writing against it,
-and extend it in whichever shape it already uses. The principle is in
-[Set, never toggle](#set-never-toggle).
+The named methods are illustrative. The Admin suite's `CheckoutConfigurationPage`
+exposes the group-level `readSettings()` / `applySettings(...)` pair, and the
+Shop suite's `utils/admin.ts` exposes `setConfigSwitch(page, path, field, on)`
+for one switch and `setMinimumOrder(page, { enabled, amount })` for the
+minimum-order pair, each returning what it replaced — check what your suite has
+before writing against it, and extend it in whichever shape it already uses.
+The principle is in [Set, never toggle](#set-never-toggle).
 
 The matching negative test is worth more than the positive one, and costs almost
 nothing on top: set the config off, and assert the guest is sent to sign-in
@@ -236,6 +242,15 @@ writes a given set — which is what lets its spec capture the originals once an
 restore them wholesale. Either shape is fine; what is not fine is a method that
 clicks a label unconditionally, because a "should enable X" test written on top
 of it disables X on every other run against the same database.
+
+**A switch with dependent fields saves as a unit.** Where `system.php` declares
+a field with `depends` on a switch, the switch's validation requires the
+dependent value the moment it is on: turning on
+`sales.order_settings.minimum_order.enable` and saving fails with "The Minimum
+Order Amount field is required" unless the amount goes in the same request.
+`setMinimumOrder` in the Shop suite writes both and returns both originals;
+give any setter for such a field the same shape, or the "enable" half can never
+be restored on its own.
 
 ## The global configuration surface
 

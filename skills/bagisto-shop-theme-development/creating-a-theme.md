@@ -202,9 +202,35 @@ Webkul\CustomTheme\Providers\CustomThemeServiceProvider::class,
             'build_directory' => 'themes/custom-theme/build',
             'package_assets_directory' => 'src/Resources/assets',
         ],
+        'customize' => [
+            'sections' => [
+                \Webkul\CustomTheme\Sections\Hero::class,
+                ...\Webkul\Theme\Enums\SectionTypeEnum::cases(),
+            ],
+            'image_cache' => [
+                'templates' => [
+                    'small' => \Webkul\CustomTheme\ImageTemplates\Small::class,
+                    'product_card' => \Webkul\CustomTheme\ImageTemplates\ProductCard::class,
+                ],
+                'product_images' => ['product_card'],
+            ],
+        ],
     ],
 ],
 ```
+
+Everything a theme customizes goes under `customize`. `customize.sections` lists the section types the Appearance editor offers for this theme,
+in tile order — a core type as its `SectionTypeEnum` case, the theme's own type as
+its `SectionType` class. Leave it out to offer every core type. See `UPGRADE.md` →
+*Adding sections to a theme*.
+
+`customize.image_cache.templates` maps image cache template names to classes with a public
+`applyFilter()`. It overrides the core `small`, `medium` or `large` for this theme's
+channels and adds new names such as `product_card`, served at
+`cache/product_card/{path}`; every name it leaves out falls back to the core
+template. List a template under `product_images` to add a `{name}_image_url` to
+product image arrays; unlisted templates never appear there. See `UPGRADE.md` →
+*Theme Image Cache Templates*.
 
 ### Step 9: Publish Views
 

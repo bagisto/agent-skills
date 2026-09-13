@@ -7,6 +7,7 @@
 - [Generating values](#generating-values)
 - [Where values are generated](#where-values-are-generated)
 - [Never operate on an arbitrary record](#never-operate-on-an-arbitrary-record)
+- [Grid state lives in the browser](#grid-state-lives-in-the-browser)
 - [Global settings must be restored](#global-settings-must-be-restored)
 - [Cleanup](#cleanup)
 - [Test independence](#test-independence)
@@ -180,6 +181,27 @@ row your test owns.
 A position is a legitimate target only when position itself is the behaviour
 under test — a drag-and-drop reorder, a "first item is featured" rule. Then the
 index is the assertion, not a way of finding a record.
+
+## Grid state lives in the browser
+
+The admin DataGrid saves the filters, sort and page size applied to each grid in
+`localStorage` under the `datagrids` key, and reapplies them on the next visit.
+The `adminPage` fixture reuses one storage state across a run, so a filter that
+one test applied and never cleared is still in force when the next test opens
+the same grid — and its freshly created row is "not listed" for no reason the
+test can see.
+
+The fixture clears that key in an `addInitScript` before every page load, so a
+test starts every grid unfiltered. Keep that behaviour in any admin fixture you
+add, and remember two consequences when you write against a grid:
+
+- **Filter to the row you own, never scan the page.** A grid shows ten rows per
+  page, so a name that sorts later is on page two and a page-level `toHaveCount(1)`
+  reads zero. `DatagridPage.applyTextFilter(column, value)` narrows the grid to
+  the record before the assertion — [locators.md](locators.md) has the hooks.
+- **Leftovers change what a grid shows.** A run that failed before cleanup leaves
+  rows behind that push yours off the first page on the next run; the filter
+  above is what makes the test indifferent to them.
 
 ## Global settings must be restored
 

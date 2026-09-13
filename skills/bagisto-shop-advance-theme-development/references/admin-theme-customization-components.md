@@ -30,8 +30,8 @@ Complete `assets/theme-customization-component.contract.template.md` before chan
 Treat the target checkout as authoritative. Locate and read the installed source before choosing an extension seam:
 
 ```bash
-rg -n "ThemeCustomization|theme_customizations|theme-customizations" <package-roots> --glob '*.php' --glob '*.blade.php'
-rg -n "settings/themes|admin\.settings\.themes|theme_customization" <admin-source> --glob '*.php' --glob '*.blade.php'
+rg -n "ThemeCustomization|theme_customizations|theme-customizations|theme_sections|SectionType|SectionSchema" <package-roots> --glob '*.php' --glob '*.blade.php'
+rg -n "settings/themes|admin\.settings\.themes|theme_customization|appearance\.sections" <admin-source> --glob '*.php' --glob '*.blade.php'
 rg -n "theme_code|channel_id|sort_order|translateOrNew|options" <theme-and-shop-source> --glob '*.php' --glob '*.blade.php'
 ```
 
@@ -46,7 +46,7 @@ Inspect all of the following in the installed version:
 
 Record the exact existing type values and option shapes. A string column can permit a value in the database while the stock controller, form, DataGrid, or renderer still rejects or mishandles it.
 
-Prefer documented render events, configuration hooks, or extension points. If none can support the requirement, use the narrowest package-scoped extension that preserves the installed public Admin contract.
+Prefer documented render events, configuration hooks, or extension points. From v2.4 the extension point for a new section type is a `SectionType` class listed under the theme's `customize.sections` in `config/themes.php`; the Admin editor needs no change (see `UPGRADE.md` → *Adding sections to a theme*). If none can support the requirement, use the narrowest package-scoped extension that preserves the installed public Admin contract.
 
 ## Define the component contract
 

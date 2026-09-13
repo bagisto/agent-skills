@@ -27,8 +27,9 @@ a live preview rather than on a form of its own.
 | `admin/appearance/themes/{code}/sections` | The editor for one theme, on one channel |
 | `appearance-preview` (shop) | The storefront rendered from drafts, framed in the editor |
 
-`ThemeCatalog` supplies the gallery; `SectionSchema` supplies the field schema
-the editor renders per type; `SectionRepository` owns every read and write.
+`ThemeCatalog` supplies the gallery and answers `isInstalled()` / `isActive()`;
+`SectionSchema` resolves the section types a theme offers and their field
+schema; `SectionRepository` owns every read and write.
 
 ## Nothing goes live until it is published
 
@@ -60,15 +61,21 @@ no longer reference; `discardDraft()` clears all three and purges the same way.
 - **The preview is admin-only.** `appearance-preview` aborts unless
   `bouncer()->hasPermission('appearance.sections')` — an authenticated admin
   without that permission is not enough.
-- **Sanitise on the way in.** `static_content` HTML and CSS pass through Purify
-  and `sanitizeStaticCss()` in the repository, on both the draft and the publish
-  path. A new write path must go through `sanitizeOptions()`.
+- **Sanitise on the way in.** The repository's `sanitizeOptions()` hands options
+  to the type's `sanitize()` — `StaticContent` runs `sanitizeHtml()` (Purify) and
+  `sanitizeCss()` — on the draft, publish and preview paths. A new write path must
+  go through `sanitizeOptions()`.
+- **Only an active theme is customized.** The editor and every section action
+  refuse a theme its channel does not run — server-side, not only by hiding
+  Customize in the gallery.
+- **Section types are theme-aware.** Resolve them through `SectionSchema::types()`
+  or `$section->getTypeInstance()`, never a hardcoded list or raw string.
 - **One footer per channel.** `footer_links` is a singleton, guarded server-side
   in the controller — not only by hiding the type in the UI.
 - **Clear the page cache on every change.** FPC listens to `section.create.after`,
-  `section.update.after` and `section.delete.before`; `footer_links` and
-  `services_content` are drawn by the layout on every page, so those clear the
-  whole cache rather than just the home page.
+  `section.update.after` and `section.delete.before`; a type whose
+  `rendersInLayout()` is true (`footer_links`, `services_content`, or a theme's own
+  `$layout` type) clears the whole cache rather than just the home page.
 - **Fire before and after events.** Every action dispatches a pair —
   `section.create.*`, `section.update.*`, `section.delete.*`,
   `section.draft.save.*`, `section.draft.discard.*`, `section.media.upload.*`,

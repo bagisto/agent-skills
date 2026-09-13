@@ -132,6 +132,13 @@ hold it:
   *internal attribute bag*, not read from the query string, so no visitor can
   ask a storefront URL to render unpublished content.
 
+The preview renders the theme named by its `theme` parameter (404 when not
+installed), otherwise the channel's own. It calls `themes()->set()` for the views
+and hands the request a copy of the channel carrying that theme, so every layout
+partial — including a theme's own — reads the previewed theme's sections. Opened
+outside the editor frame it shows a banner naming the theme and channel; the
+gallery links to it for every installed theme.
+
 The editor frames the preview at the chosen device width and reloads it after
 each staged change.
 
