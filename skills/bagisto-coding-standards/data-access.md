@@ -37,6 +37,24 @@ query builder by design and returns a `Builder` for the grid to paginate. `DB::t
 `DB::raw()` inside a repository are also fine — the objection is to querying *tables* from outside
 the data layer, not to the facade itself.
 
+## Start a model query with `query()`
+
+Where a model query is allowed — inside a repository, a factory, a console command, a job, a
+DataGrid, or a test — begin it with `Model::query()` rather than forwarding statically:
+
+```php
+// Good
+Order::query()->where('customer_id', $customer->id)->get();
+
+// Avoid
+Order::where('customer_id', $customer->id)->get();
+```
+
+Both produce the same builder; `query()` says so explicitly, resolves for static analysis and
+editors instead of going through `__callStatic`, and keeps a builder call from reading like a real
+static method on the model. This is the single style across the codebase and the test suites —
+`Arr::where()` and other helper facades are unaffected.
+
 ### Scope every seller-facing query in the repository
 
 On a marketplace, a repository method that touches seller-owned data takes the seller id as its

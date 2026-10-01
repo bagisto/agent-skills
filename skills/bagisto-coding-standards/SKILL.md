@@ -68,6 +68,11 @@ The PHP rules apply inside an `@php` block too, which Pint cannot reach.
   here. See [security-authorization.md](security-authorization.md).
 - **Every user-facing string goes through `trans()`**, with the key added to all
   22 locales and verified by `php artisan bagisto:translations:check`.
+- **Translation keys are kebab-case, route names are snake_case** — the same
+  feature is `admin::app.eu-withdrawal.view.received-at` as a key and
+  `admin.sales.eu_withdrawals.index` as a route, so never rename one by searching
+  for the other's spelling. A URL path is governed by neither. See
+  [localization.md](localization.md).
 - **Fix what you touch.** A pre-existing violation in a file you edit is yours —
   scan the whole class's member order and docblocks, not just your own lines.
 

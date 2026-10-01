@@ -175,6 +175,31 @@ public function boot(): void
 }
 ```
 
+### Naming Routes
+
+**Every segment of a route name is snake_case** — `admin.sales.rma.requests.send_message`, never
+`send-message` and never `sendMessage`. The name is the identifier other code calls `route()` with,
+so it is the part that has to be predictable.
+
+The **URL is not** governed by this. A path stays in whatever spelling reads best in a browser, which
+is usually kebab-case, and the two differ on the same route without any problem:
+
+```php
+Route::controller(LoginController::class)->prefix('customer/social-login/{provider}')->group(function () {
+    Route::get('callback', 'handleProviderCallback')->name('customer.social_login.callback');
+});
+```
+
+Renaming a route name reaches well past its own routes file. `route()` calls in controllers and
+Blade, `packages/Webkul/Admin/src/Config/acl.php`, the admin menu config and the test suite all name
+routes as strings, and a few packages declare routes outside `src/Routes/` — SocialLogin keeps its in
+`src/Http/routes.php` — so search the whole package tree. Replace the entire dotted name rather than a
+single segment, which keeps the replacement unambiguous, and confirm the new name is not already
+taken. A route-name change breaks third-party modules, so it belongs in the CHANGELOG.
+
+Translation keys run the other way, in kebab-case, so never rename one by searching for the other's
+spelling. See [localization.md](../bagisto-coding-standards/localization.md).
+
 ### Loading Views
 
 ```php

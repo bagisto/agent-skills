@@ -77,9 +77,48 @@ controller propagates. Specifically:
 
 - A docblock on every method and property, whatever the visibility.
 - No comments inside method bodies. If a line needs prose, the *page* explains
-  it — that is what the page is for.
+  it — that is what the page is for. Inline `// note` comments beside array
+  items are the same defect: move the explanation under the fence.
 - Data access through a repository.
 - Namespaces and class names exactly as they are in the source.
+
+**PHP samples are formatted the way Pint formats the project.** The repository's
+`pint.json` is the `laravel` preset and nothing else, so a sample must look like
+Pint's output for that preset. The rules that documentation most often gets
+wrong:
+
+- One space either side of `=>`; **never** align a column of `=>` with extra
+  spaces. `'key' => 'value'`, not `'key'    => 'value'`.
+- A trailing comma after the last item of every multiline array, argument list
+  and match arm.
+- String concatenation with no spaces around the dot: `dirname(__DIR__).'/Config/acl.php'`.
+- `use` imports sorted alphabetically, one per line, and a class referenced by
+  its short name afterwards — no `\Illuminate\...` inline once it is imported.
+  A global class such as `Exception` is imported too, not written `\Exception`.
+- An empty method body on one line: `public function boot(): void {}`.
+- One blank line between methods and between logical groups of statements; no
+  trailing whitespace and no double blank lines.
+- A condition with more than one expression split one expression per line, the
+  `&&` or `||` leading the next line.
+
+**Run Pint on the samples, do not eyeball them.** Extract the `php` blocks into
+a scratch folder inside the Bagisto checkout so the project's `pint.json`
+applies, and run Pint there:
+
+```bash
+mkdir -p storage/pint-docs
+# write each ```php block to storage/pint-docs/NNNN.php; prefix `<?php` when the
+# block is statements only, and wrap class members in `class DocsWrap { … }`
+vendor/bin/pint storage/pint-docs
+# copy the formatted bodies back, unwrap, and delete the folder afterwards
+```
+
+A block Pint cannot parse (one that elides with `...` inside an array, or a
+fragment with no class around it) is formatted by hand to the same rules; a
+block that starts with `<?php` and parses is left exactly as Pint wrote it. For
+the other languages use their own conventions: two-space indentation in JSON and
+YAML, Blade indented four spaces like the package views, `bash` for anything
+typed into a shell, `properties` for `.env` lines.
 
 **Elide with `// ...`, and only in the middle.** Never elide the parts that make
 the sample work — the namespace, the imports, the class declaration. A reader
@@ -122,10 +161,38 @@ say so in the commit.
 
 ## Versions
 
-Behaviour changes between releases, and a page that quietly documents only the
-newest one strands everybody else. Name the release when it matters: "from 2.4,
-theme customizations are sections". Check whether the site still carries
-per-version page trees before assuming a versioned path exists.
+There is **one documentation set** for every supported release; do not create
+`/2.4/` or `/2.5/` page trees, and do not fork a page per version. The site
+describes the current release and **names it: "Bagisto 2.5"**. Never write
+"the current development version", "the development version", "master",
+"upcoming" or "next release" for what is simply the current Bagisto — a reader
+takes those words to mean unreleased software. Name a release only where
+behaviour or availability genuinely differs: "on Bagisto 2.4 the search engine
+is chosen under Catalog → Products → Search; on Bagisto 2.5 it has its own
+Search Engines group". Keep both facts in the same paragraph so the page stays
+right after the next release ships. Branch names belong only in pages about the
+contribution workflow, where they are literally branch names.
+
+Never label a feature "beta" or "experimental" because the checkout's version
+string says so. Write the page so it still reads correctly once that version is
+stable, and check the 2.4 checkout before claiming something is new.
+
+## Where a page belongs
+
+- **Package, theme, shipping, payment and product-type development** explain an
+  extension mechanism: what it is, where the code goes, the smallest working
+  sample, the registration step, then the constraints.
+- **Digging Deeper** holds the machinery underneath: helpers, indexers, events,
+  commands, queues, caches, tests.
+- **Architecture** is the map; it lists what exists and links to where it is
+  explained, and does not duplicate the how-to.
+- **AI** holds generative and agentic capabilities and the developer-facing AI
+  tooling; see the AI terminology rules in [SKILL.md](SKILL.md).
+
+Say where a file belongs (`packages/Webkul/<Package>/src/…`) every time a sample
+creates one, and name the recommended approach before any alternative. When an
+approach is a known trap — editing a core file, bypassing a repository, relying
+on provider order — say so on the page where a reader would otherwise do it.
 
 ## Tables for reference material
 

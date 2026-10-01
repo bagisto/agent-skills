@@ -62,23 +62,37 @@ and none should appear.
 ```
 
 Entries are `-` prefixed with a blank line between them, and are **prose written
-for the person upgrading**: the user-visible effect first, the cause second, in
-full sentences. Not a commit subject, not a diff summary.
+for the person upgrading**: the user-visible effect, in full sentences. Not a
+commit subject, not a diff summary.
 
 > Fixed the mega search leaving you on an empty tab when another tab had
 > results, which read as nothing being found. It now opens the first tab that
 > matched.
 
-Two shapes, and the length rule differs between them:
+**Every entry is at most two lines — clear and to the point.** This is a hard
+ceiling, and it applies to both shapes:
 
-| Shape | When | Length |
-|---|---|---|
-| `- <prose>` | A feature or a change with no reported issue | As long as it needs, one paragraph |
-| `- #11432 [fixed] - <prose>` | A fix for a reported issue | **At most two lines** |
+| Shape | When |
+|---|---|
+| `- <prose>` | A feature or a change with no reported issue |
+| `- #11432 [fixed] - <prose>` | A fix for a reported issue |
 
-An issue-numbered entry is a terse record against a ticket that carries the
-detail, so keep it to two lines. A plain entry may run longer when the change
-genuinely needs explaining, but one paragraph is the ceiling.
+State the user-visible effect and stop. The cause, the internal mechanism and
+the history are **not** CHANGELOG material — they belong in the commit message
+or the pull request, which is where anyone investigating the change will look.
+If an entry does not fit in two lines, it is carrying explanation that should
+move there.
+
+```markdown
+- Fixed the admin product listing repeating a product once for every channel it is carried by.
+```
+
+```markdown
+- Fixed the admin product listing repeating a product once for every channel it is carried by, so a
+  store with three channels listed it three times. The PostgreSQL work had widened the grouping from
+  the product to every selected column, which made the channel part of the group; it now picks one
+  row per product.        ← the cause belongs in the commit message, not here
+```
 
 Add the entry under `## Unreleased`. Do not invent a version heading or a date —
 releases are cut separately.

@@ -23,9 +23,10 @@ remember.
    ```ts
    { text: "Themes", link: "/appearance/themes" },
    ```
-   The group's `text` is the heading; a new group takes `collapsed: false` like
-   its neighbours. A page that also deserves top-bar placement goes in `nav` as
-   well; most do not.
+   The group's `text` is the heading. Every group, nested or not, takes
+   `collapsed: false`, so the whole sidebar is expanded by default; never add a
+   group with `collapsed: true`. A page that also deserves top-bar placement
+   goes in `nav` as well; most do not.
 3. Add the page to `llms.txt`, and its content to `llms-full.txt`.
 4. `npm run docs:build`.
 
@@ -137,6 +138,20 @@ So a stub should become a redirect — but **the redirect goes in first**. The
 stub is holding its URL open, and deleting it before `_redirects.ts` covers that
 URL turns a working page into a 404 in the window between the two edits, and
 permanently if the second edit is forgotten.
+
+### A site without a redirect file
+
+Not every docs repository has `.vitepress/_redirects.ts` yet. Before moving the
+first page on such a site, add one that exports `redirects` and
+`makeRedirectHtml` in the same shape as the other sites, and add the `buildEnd`
+hook to `config.mts` that writes the redirect files.
+
+### Redirects that cross sites
+
+A site can redirect to another one: the Bagisto User Guide maps old marketplace
+URLs to pages on the marketplace guide. When a marketplace page moves, add its
+redirect on the marketplace site and repoint the matching entry in the User Guide,
+so readers aren't sent through two redirects to reach the page.
 
 ## How redirects work
 

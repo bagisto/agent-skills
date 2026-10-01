@@ -72,6 +72,34 @@ the finished image in.
 | **English locale** | The pages are written in English and their screenshots must match the words in the prose. | Leave the admin locale at English |
 | **Default theme, default channel** | A customised storefront is not what the reader will see. | Do not capture from a store you have been theming |
 
+### Seed the data through the screens
+
+A feature with no data photographs as an empty grid, which tells the reader nothing.
+When the store is empty, create the data the pages need through the real screens
+before capturing: register sellers and customers on the storefront forms, approve them
+in the admin, list products in the Seller Panel, place orders at checkout. Doing it
+through the UI also checks every workflow the page describes. Use obviously fictional
+names and `example.com` addresses, and keep a record of every account you create.
+
+- **No placeholder data.** Lorem ipsum, random UUID SKUs and "test" names in any part
+  of the picture, background included, are reason to recapture.
+- **Never reuse a screenshot from another store**, even of the same feature. If a state
+  can't be reached on the store you are documenting, for example because it needs a paid
+  AI provider, describe that state in text and leave the picture out.
+- **Run commands inside the app's container as the web server's user**
+  (`docker exec -u <user> …`). A command run as root leaves root-owned cache files, and
+  the store then fails with errors that look like product bugs.
+- **Sign in fresh before every capture run.** Saved sessions expire after a couple of
+  hours, and a script that follows the redirect saves the sign-in page over a good
+  screenshot. Refresh the saved logins first, and stop a group as soon as a page lands
+  on a login URL.
+- **Pick select options the way a person does.** Some forms load the next field when a
+  select changes, such as return reasons, booking slots or a report's period. Setting
+  the value from a script doesn't trigger that. Focus the select and use the arrow keys.
+- **Produce the state the page describes.** Check the code for when a screen appears
+  before you try to photograph it. For example, an import that validates cleanly starts
+  on its own, so its "ready to start" screen only appears when some rows fail.
+
 `DEBUGBAR_ENABLED` is the surgical switch: the package reads
 `env('DEBUGBAR_ENABLED')` and falls back to `app.debug` only when it is unset,
 so setting it to `false` hides the bar while leaving `APP_DEBUG=true` for your
@@ -90,6 +118,22 @@ own work.
 - **Do not annotate.** No red arrows, no circles, no numbered callouts baked
   into the image. They cannot be translated, they cannot be updated without the
   original, and the prose should be carrying that weight anyway.
+- **A configuration screen: its header and the sections the steps cover.** Crop
+  to the screen's title row and channel and language selectors, plus the
+  section rows the page describes, at the width of the content area, so every
+  configuration image in the guide has the same width. Turn on the switch a
+  field depends on so the field is visible in the picture.
+- **Don't save settings on a shared store to take a picture.** Change fields
+  for the capture and leave without saving. If a storefront result only appears
+  after saving, describe it in the text rather than changing the store.
+- **No secrets and no pre-release labels.** Put obvious placeholders such as
+  `your-api-key` in key fields. Don't ship a screenshot of a third-party console
+  that shows a real key, or of a screen that shows a beta or development
+  version string; describe that screen in text instead.
+- **Verify every old image before keeping it.** An image is current only if it
+  matches the admin of the release being documented — the header, the field
+  labels and badges, the buttons. An old header or an annotation is reason
+  enough to replace it.
 
 ## Naming
 

@@ -120,9 +120,65 @@ repositories.
   camelCase, no underscores — for pages and images alike. Older files predate
   the rule; match the rule, not the neighbours, and do not rename unrelated
   files while you are there.
+- **Inspect the implementation before the existing page.** The page you are
+  updating may be describing a feature that has since moved, been renamed or
+  been removed. Start from the code, the config files, the language files and
+  the running admin; treat the old prose as a hypothesis, not a source.
 - **Verify claims against the codebase, not memory.** A confidently wrong
-  sentence is worse than no page, because it is believed. Open the file, run the
-  command, check the string.
+  sentence is worse than no page, because it is believed. Every command,
+  path, config key, class, method, route, label and behaviour on a page has to
+  come from a file read or a command run in this session. Open the file, run
+  the command, check the string.
+- **Code samples pass Pint.** A PHP sample is formatted exactly as the
+  project's `pint.json` (the `laravel` preset) formats it — single spaces
+  around `=>`, trailing commas, sorted imports, no aligned columns — and reads
+  like production Bagisto code. Run Pint on extracted samples rather than
+  judging by eye; the procedure is in [developer-docs.md](developer-docs.md).
+- **Sequential actions are numbered steps.** Wherever a reader must do several
+  things in order, write a numbered list with one action per step under a
+  heading that names the outcome. A sentence that chains "go to X, click Y,
+  enter Z and save" is a defect on the merchant side and a smell on the
+  developer side. Bullets are for options, properties and prerequisites, where
+  order does not matter.
+- **One documentation set across releases.** No per-version page trees, no
+  "2.5 beta" labels, and no "current development version" wording: the current
+  release is called **Bagisto 2.5**. Name a release only where behaviour or
+  availability differs, in the same paragraph as the current behaviour, so the
+  page is still right after the next release. See the Versions section in
+  [developer-docs.md](developer-docs.md).
+- **Generative AI is the term, Magic AI is the name.** Pages and headings say
+  "Generative AI (Magic AI)"; "Magic AI" alone is kept for the admin's own
+  labels and the package. "Agentic" is reserved for features where an agent
+  acts (WebMCP, agent skills). See the AI sections of both reference files.
+- **The user guide's navigation follows the merchant's journey**: getting
+  started, the headline capabilities (generative AI, then theme), store setup,
+  configuration, catalog, customers, sales, marketing, content, reporting, then
+  paid extensions. Inside Configure, the groups and their order are the admin's
+  own Configuration screen. Reorder it when a page lands in the wrong group. The
+  developer documentation's navigation is organised by extension mechanism and
+  is **not** reorganised unless the user asks for it.
+- **The marketplace guide has three readers.** Badge every page with the panels its
+  steps happen in (admin, Seller Panel, storefront), seed realistic data through the
+  real screens before capturing, and follow its navigation in the marketplace section
+  of [user-guide.md](user-guide.md).
+- **Configuration docs start from the configuration tree, not from the old
+  pages.** Dump the merged tree the admin renders (`config('core')` in the
+  running app) and account for every group, screen and section in it:
+  documented, merged into another page, or deliberately left out. See the
+  Configuration pages section of [user-guide.md](user-guide.md).
+- **AI terminology is earned by the implementation.** "Generative AI" is for
+  features that produce content (Magic AI's text, images, translations,
+  keywords). "Agentic AI" is for features where an AI agent performs actions
+  through tools (WebMCP's storefront tools, coding agents using the skills).
+  "Agentic commerce" names the direction the two add up to. Position the
+  capabilities plainly on overview pages, keep technical pages technical, and
+  never claim autonomy the code does not have: Magic AI applies nothing without
+  an admin, and WebMCP tools end on an ordinary page with the shopper in charge.
+- **Finish with an independent audit.** After editing, verify the result as a
+  reviewer who did not write it: every claim against the code, every sample
+  through Pint, every link and image resolved, the sidebar and `llms.txt`
+  consistent, then the build. A change that has only been written has not been
+  checked.
 - **`llms.txt` and `llms-full.txt` are written by hand.** Nothing generates
   them. Adding, moving or deleting a page means editing them too.
 - **The build is the gate.** `npm run docs:build` reports each redirect it
@@ -139,5 +195,17 @@ repositories.
 - **A rename shipped without a redirect.** Fixing a typo in a filename feels
   like tidying rather than a URL change, which is why it is the one that gets
   missed.
+- **Aligned `=>` columns and inline comments in PHP samples.** They look tidy in
+  the editor and are exactly what Pint rejects; the project's own code never
+  has them.
+- **A procedure written as prose.** "Go to Configure, open General, enable X
+  and save" reads fine to the author and is unusable to someone doing it with
+  the admin open beside them.
+- **Marketing language on a technical page, and a technical page's caution on
+  a marketing one.** The AI overview may say "generative AI"; the page that
+  documents `magic_ai()->generateContent()` says what the method returns.
+- **A docs skill that describes yesterday's admin.** When a menu path, label or
+  group changes in the code, the guide's paths change with it; grep the guide
+  for the old label before calling the code change done.
 
 **REQUIRED SUB-SKILL:** Use bagisto-change-verification before calling any change done.
