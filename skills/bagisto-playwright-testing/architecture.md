@@ -95,9 +95,17 @@ suite keeps its own copy and you make the change twice.
 
 ## Timeouts and configuration
 
-Per-test timeouts are 60 s in Admin, 240 s in Shop (plus a 2 h global cap) and
-300 s in Installer; `expect` waits 30 s in all three. A single long flow raises
-its own with `test.setTimeout(...)`; never raise the config.
+Per-test timeouts on master are 60 s in Admin, 240 s in Shop (plus a 2 h global
+cap) and 300 s in Installer, with actions and `expect` waiting 30 s in all three.
+The 2.4 configs are tighter — Shop 120 s per test, `expect` 20 s, actions 15 s,
+and Admin sets no action timeout — so read the `playwright.config.ts` of the
+checkout you are in.
+
+A single long flow raises its own with `test.setTimeout(...)`; never raise the
+config. A request you have measured as slow gets its own named timeout on the
+action and the assertion in the page object — after asking whether the
+application should be that slow ([authoring.md](authoring.md),
+[troubleshooting.md](troubleshooting.md)).
 
 `utils/env.ts` is the only place `process.env` is read and `utils/paths.ts` owns
 every path — never read either directly. The full environment contract is in

@@ -64,40 +64,14 @@ pages that contradict each other.
 | [user-guide.md](user-guide.md) | Writing for a reader who runs a store — voice, page shape, steps |
 | [screenshots.md](screenshots.md) | A page needs an image — capture, clean setup, naming |
 | [publishing.md](publishing.md) | Adding, moving or deleting a page — sidebar, redirects, verification |
+| [site-structure.md](site-structure.md) | Finding your way round a docs repository — layout, commands, per-site differences |
+| [common-mistakes.md](common-mistakes.md) | Auditing a finished change |
 
-## What every site has in common
-
-```
-<docs-repo>/
-├── src/                       # srcDir — every page
-│   ├── <section>/*.md          # one folder per sidebar group
-│   ├── index.md
-│   └── public/
-│       ├── images/<section>/   # per-section image folders
-│       ├── llms.txt            # hand-maintained
-│       └── llms-full.txt       # hand-maintained
-└── .vitepress/
-    ├── config.mts              # sidebar, nav, build hooks
-    ├── _redirects.ts           # legacy URL map
-    └── theme/                  # site-specific Vue components
-```
-
-```bash
-npm run docs:dev      # local preview
-npm run docs:build    # the gate — always run before calling a change done
-```
-
-**Learn the site rather than assuming it.** The sites differ in ways that matter
-and that change over time, so check rather than recall:
-
-```bash
-grep -n "app.component(" .vitepress/theme/index.ts        # custom components, e.g. an image viewer
-grep -ohE "'/[0-9][^/]*" .vitepress/_redirects.ts | tr -d "'" | sort -u   # legacy version prefixes
-```
-
-The second one matters most: a page that moves needs its redirect repointed
-under **every** prefix that site carries, and the count is not the same between
-repositories.
+Every site is a VitePress site: pages under `src/`, the sidebar in
+`.vitepress/config.mts`, legacy URLs in `.vitepress/_redirects.ts`. Preview with
+`npm run docs:dev`; `npm run docs:build` is the gate. The sites differ in their
+components and redirect prefixes, so learn the one you are in —
+[site-structure.md](site-structure.md).
 
 ## Non-negotiables
 
@@ -146,66 +120,26 @@ repositories.
   availability differs, in the same paragraph as the current behaviour, so the
   page is still right after the next release. See the Versions section in
   [developer-docs.md](developer-docs.md).
-- **Generative AI is the term, Magic AI is the name.** Pages and headings say
-  "Generative AI (Magic AI)"; "Magic AI" alone is kept for the admin's own
-  labels and the package. "Agentic" is reserved for features where an agent
-  acts (WebMCP, agent skills). See the AI sections of both reference files.
-- **The user guide's navigation follows the merchant's journey**: getting
-  started, the headline capabilities (generative AI, then theme), store setup,
-  configuration, catalog, customers, sales, marketing, content, reporting, then
-  paid extensions. Inside Configure, the groups and their order are the admin's
-  own Configuration screen. Reorder it when a page lands in the wrong group. The
-  developer documentation's navigation is organised by extension mechanism and
-  is **not** reorganised unless the user asks for it.
-- **The marketplace guide has three readers.** Badge every page with the panels its
-  steps happen in (admin, Seller Panel, storefront), seed realistic data through the
-  real screens before capturing, and follow its navigation in the marketplace section
-  of [user-guide.md](user-guide.md).
-- **Configuration docs start from the configuration tree, not from the old
-  pages.** Dump the merged tree the admin renders (`config('core')` in the
-  running app) and account for every group, screen and section in it:
-  documented, merged into another page, or deliberately left out. See the
-  Configuration pages section of [user-guide.md](user-guide.md).
 - **AI terminology is earned by the implementation.** "Generative AI" is for
-  features that produce content (Magic AI's text, images, translations,
-  keywords). "Agentic AI" is for features where an AI agent performs actions
-  through tools (WebMCP's storefront tools, coding agents using the skills).
-  "Agentic commerce" names the direction the two add up to. Position the
-  capabilities plainly on overview pages, keep technical pages technical, and
-  never claim autonomy the code does not have: Magic AI applies nothing without
-  an admin, and WebMCP tools end on an ordinary page with the shopper in charge.
+  features that produce content — pages and headings say "Generative AI (Magic
+  AI)", and "Magic AI" alone is kept for the admin's own labels and the package.
+  "Agentic AI" is for features where an agent acts through tools (WebMCP,
+  coding agents using the skills). Never claim autonomy the code does not have:
+  Magic AI applies nothing without an admin. See the AI sections of both
+  reference files.
+- **The user guide follows the merchant's journey**, and Configure follows the
+  admin's own Configuration screen; the marketplace guide has three readers;
+  configuration pages start from the `config('core')` tree, not the old pages.
+  Each has its section in [user-guide.md](user-guide.md). The developer
+  documentation's navigation is **not** reorganised unless the user asks.
 - **Finish with an independent audit.** After editing, verify the result as a
   reviewer who did not write it: every claim against the code, every sample
   through Pint, every link and image resolved, the sidebar and `llms.txt`
-  consistent, then the build. A change that has only been written has not been
-  checked.
+  consistent, then the build, then [common-mistakes.md](common-mistakes.md). A
+  change that has only been written has not been checked.
 - **`llms.txt` and `llms-full.txt` are written by hand.** Nothing generates
   them. Adding, moving or deleting a page means editing them too.
 - **The build is the gate.** `npm run docs:build` reports each redirect it
   writes. A change that has not been built has not been checked.
-
-## Common mistakes
-
-- **Mixing the two audiences on one page** — the failure this skill exists to
-  prevent. Click paths in developer docs, class names in the user guide.
-- **Documenting the intended design instead of the shipped behaviour.** When a
-  page and the code disagree, the code is right.
-- **A stub page left behind after a move.** A page whose whole body is "this
-  moved" stays in the sidebar and ranks in search. Redirect it, then delete it.
-- **A rename shipped without a redirect.** Fixing a typo in a filename feels
-  like tidying rather than a URL change, which is why it is the one that gets
-  missed.
-- **Aligned `=>` columns and inline comments in PHP samples.** They look tidy in
-  the editor and are exactly what Pint rejects; the project's own code never
-  has them.
-- **A procedure written as prose.** "Go to Configure, open General, enable X
-  and save" reads fine to the author and is unusable to someone doing it with
-  the admin open beside them.
-- **Marketing language on a technical page, and a technical page's caution on
-  a marketing one.** The AI overview may say "generative AI"; the page that
-  documents `magic_ai()->generateContent()` says what the method returns.
-- **A docs skill that describes yesterday's admin.** When a menu path, label or
-  group changes in the code, the guide's paths change with it; grep the guide
-  for the old label before calling the code change done.
 
 **REQUIRED SUB-SKILL:** Use bagisto-change-verification before calling any change done.

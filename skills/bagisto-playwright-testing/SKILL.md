@@ -73,17 +73,12 @@ Two rules follow, and both are load-bearing:
   objects for whatever screens it drives, including the other side's. Never
   import across package boundaries.
 
-Per-test timeouts on master are 60 s in Admin, 240 s in Shop and 300 s in
-Installer, with actions and `expect` waiting 30 s in all three; the 2.4 configs
-are tighter (Shop 120 s per test, `expect` 20 s, actions 15 s — Admin sets no
-action timeout), so read the `playwright.config.ts` of the checkout you are in.
-Raise a single flow with `test.setTimeout(...)`, never the config — and give a
-request you have measured as slow its own named timeout on the action and the
-assertion in the page object, after asking whether the application should be
-that slow ([authoring.md](authoring.md), [troubleshooting.md](troubleshooting.md)).
+Timeouts differ per suite and per release line, so read the checkout's
+`playwright.config.ts`. Raise a single flow with `test.setTimeout(...)`, never
+the config.
 
-Full layout, the where-does-code-go table and the wrapper pattern:
-[architecture.md](architecture.md).
+Full layout, the where-does-code-go table, the wrapper pattern and the timeout
+values: [architecture.md](architecture.md).
 
 ## Running
 

@@ -19,28 +19,7 @@ change that clears them locally is a change that clears the pipeline.
 | 2 | Tests | `vendor/bin/pest` | any `.php` changed |
 | 3 | E2E | `npm run test:e2e` from the package directory | any view, JS, CSS or route changed |
 | 4 | Translations | `php artisan bagisto:translations:check` | any `Resources/lang/**` changed |
-| 5 | Naming | the greps below | any route name, translation key or storage path added |
-
-### 5. Naming
-
-Route names are snake_case, translation keys are kebab-case, and storage directories are plural and
-kebab-case. Each grep should print nothing:
-
-```bash
-# a route name carrying a hyphen or a capital
-grep -rhoE "name\(['\"][^'\"]+['\"]\)" --include=*.php packages/Webkul routes \
-  | sed -E "s/name\(['\"]//; s/['\"]\)//" | grep -E "[-A-Z]"
-
-# a translation key segment carrying an underscore, outside the namespace itself
-grep -rnoE "::[a-z_]+\.[a-zA-Z0-9.-]*_" --include=*.php --include=*.blade.php packages/Webkul
-
-# a storage directory that is snake_case
-find storage/app/public storage/app/private -type d -name '*_*'
-```
-
-A key or name that mirrors data rather than a label is the exception — currency and locale codes keep
-their own casing.
-
+| 5 | Naming | the greps in [naming.md](naming.md) | any route name, translation key or storage path added |
 
 Run them in that order — style is seconds, E2E is minutes, and a Pint failure
 makes the rest moot.
@@ -102,6 +81,12 @@ anywhere else — a symlinked extension clone, for instance — it reports succe
 without reading one of its lang files. See [translations.md](translations.md)
 for how to verify those, and how to source wording rather than invent it.
 
+### 5. Naming
+
+Route names are snake_case, translation keys are kebab-case, and storage
+directories are plural and kebab-case. [naming.md](naming.md) has the greps that
+catch each one; every one should print nothing.
+
 ## The security checkpoint
 
 Not a gate — there is no command that returns "secure". It is a question the
@@ -125,17 +110,9 @@ absolute counts (`meta.total`) that a seeded install does not satisfy, and the
 suites share one database with no rollback between runs, so counts drift.
 
 **Never report a failure count as a regression without comparing.** Revert your
-change, run the same command, and diff the failing test **names** — not the
-counts, which move on their own:
-
-```bash
-vendor/bin/pest <path> 2>&1 | grep -E "^  ⨯" | sed 's/ *[0-9.]*s *$//' | sort > /tmp/with.txt
-# revert the change, re-run into /tmp/without.txt
-comm -23 /tmp/with.txt /tmp/without.txt   # empty means you introduced nothing
-```
-
-An empty diff is the evidence that the gate passed. A count that went 3 → 4 is
-not evidence of anything.
+change, re-run the same command, and diff the failing test **names**, not the
+counts — [baseline.md](baseline.md) has the commands. An empty diff is the
+evidence that the gate passed.
 
 ## Rules
 
