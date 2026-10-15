@@ -112,7 +112,7 @@ replacing one under its own code, layout, singleton and pinned types, sanitising
 and editing a different shape from the stored one.
 
 For a core type: add the enum case and its `getClassName()` arm, the class, the
-storefront partial, and the labels in all 22 locales.
+storefront partial, and the labels in all 23 locales.
 
 `$layout` makes FPC clear every page on change; `$singleton` is guarded
 server-side by the controller as well as withdrawn from the tiles.

@@ -22,6 +22,7 @@ cannot see — and what a reviewer will otherwise send back.
 | [comments.md](comments.md) | Any comment or docblock, in any language |
 | [laravel.md](laravel.md) | Framework idiom — events, migrations, config, helpers, validation, queues |
 | [data-access.md](data-access.md) | Reading or writing the database — the repository rule and its one exception |
+| [database-compatibility.md](database-compatibility.md) | Any query, migration or raw SQL — MySQL, MariaDB and PostgreSQL all have to pass |
 | [security.md](security.md) | Output, input, uploads, SQL, secrets, payments |
 | [security-authorization.md](security-authorization.md) | Routes, permissions, guards, one user's access to another's data |
 | [blade.md](blade.md) | Any `.blade.php` — namespaces, `:` versus `::`, components, page skeleton |
@@ -54,6 +55,10 @@ The PHP rules apply inside an `@php` block too, which Pint cannot reach.
 - **All database access goes through a repository.** No `DB::` and no model
   queries in controllers, listeners, jobs or services. The single sanctioned
   exception is a DataGrid's `prepareQueryBuilder()`.
+- **Every query has to run on MySQL, MariaDB and PostgreSQL.** Reach for `db_grammar()`
+  rather than a literal `'like'` or a hand-written SQL function, and never resolve a conflict
+  by catching a constraint violation — a failed statement aborts the whole PostgreSQL
+  transaction. See [database-compatibility.md](database-compatibility.md).
 - **Events are dot-delimited strings**, not classes — `catalog.product.update.after`
   — and fire in `before`/`after` pairs. See [laravel.md](laravel.md).
 - **`:` binds a PHP value, `::` passes a literal `:` through to Vue**, and `::`
@@ -67,7 +72,7 @@ The PHP rules apply inside an `@php` block too, which Pint cannot reach.
   selects a row on its own — that is the easiest real vulnerability to introduce
   here. See [security-authorization.md](security-authorization.md).
 - **Every user-facing string goes through `trans()`**, with the key added to all
-  22 locales and verified by `php artisan bagisto:translations:check`.
+  23 locales and verified by `php artisan bagisto:translations:check`.
 - **Translation keys are kebab-case, route names are snake_case** — the same
   feature is `admin::app.eu-withdrawal.view.received-at` as a key and
   `admin.sales.eu_withdrawals.index` as a route, so never rename one by searching

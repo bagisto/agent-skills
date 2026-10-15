@@ -19,7 +19,7 @@ Do not spend review effort on these; run them instead.
 |---|---|
 | `vendor/bin/pint --test` | Formatting, spacing, import order, trailing commas |
 | `vendor/bin/pest` | Behaviour the suite asserts |
-| `php artisan bagisto:translations:check` | A key missing from any of the 22 locales |
+| `php artisan bagisto:translations:check` | A key missing from any of the 23 locales |
 | Playwright | The browser layer |
 
 If a review comment could have been an exit code, the fix is to run the tool,

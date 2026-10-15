@@ -4,7 +4,7 @@
 
 ### Admin Routes
 
-**File:** `packages/Webkul/RMA/src/Routes/admin-routes.php`
+**File:** `packages/Webkul/RMA/src/Routes/web.php` — the admin group
 
 ```php
 <?php
@@ -40,7 +40,7 @@ Route::group([
 
 ### Shop Routes
 
-**File:** `packages/Webkul/RMA/src/Routes/shop-routes.php`
+**File:** `packages/Webkul/RMA/src/Routes/web.php` — the shop group, below the admin one
 
 ```php
 <?php

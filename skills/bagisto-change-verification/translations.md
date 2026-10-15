@@ -4,7 +4,7 @@
 php artisan bagisto:translations:check
 ```
 
-A key must exist in all 22 locales under `Resources/lang/`. One missing locale
+A key must exist in all 23 locales under `Resources/lang/`. One missing locale
 fails the workflow.
 
 ## The checker only scans `packages/Webkul`

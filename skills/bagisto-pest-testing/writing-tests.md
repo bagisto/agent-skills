@@ -44,7 +44,7 @@ vendor/bin/pest --compact packages/Webkul/Core/tests/
 
 `php artisan test` accepts the same arguments.
 
-### Run in parallel, and the stale-database trap
+### Run in parallel, and the stale seeder
 
 ```bash
 vendor/bin/pest --parallel
@@ -55,19 +55,28 @@ Parallel runs create one database per process — `{DB_DATABASE}_test_1`,
 PostgreSQL alike. With `DB_DATABASE=bagisto` on an 8-core machine that is
 `bagisto_test_1` through `bagisto_test_8`.
 
-**Those databases are not migrated again on the next run.** After a schema
-change they hold the old schema, and the failures that follow look like broken
-code rather than a stale fixture. Drop them, reinstall, then re-run:
+**The schema takes care of itself.** `Illuminate\Testing\Concerns\TestDatabases`
+calls `ensureSchemaIsUpToDate()` for any test case using `DatabaseTransactions`,
+which runs `migrate` once per worker process. Every Bagisto test case inherits
+that trait from `tests/TestCase.php`, so a new migration needs nothing from you.
+A case built on `RefreshDatabase` instead would not get it.
+
+**The seeder does not.** `ParallelTesting::setUpTestDatabase()` in
+`app/Providers/AppServiceProvider.php` runs `db:seed`, and Laravel fires that
+callback only on the run that *creates* the database. After a seeder change
+every worker is still on the old baseline, and the failures read as broken code
+rather than a stale fixture. Rebuild them:
 
 ```bash
-php artisan tinker --execute="for (\$i = 1; \$i <= 8; \$i++) { try { DB::statement(\"DROP DATABASE IF EXISTS bagisto_test_{\$i}\"); } catch (\Exception \$e) {} }"
-
-php artisan bagisto:install --no-interaction
-
-vendor/bin/pest --parallel --no-coverage
+php artisan test --parallel --recreate-databases
 ```
 
-Match the loop bound to the core count, or it leaves databases behind.
+**It has to be the artisan form.** `vendor/bin/pest --recreate-databases`
+accepts the flag and silently does nothing: Pest sets
+`LARAVEL_PARALLEL_TESTING_RECREATE_DATABASES` in `$_ENV`, while
+`ParallelTesting::option()` reads `$_SERVER`. `php artisan test` passes it as a
+real process environment variable, which is where Laravel looks. No reinstall is
+needed — the next run migrates and seeds each database as it creates it.
 
 ## Creating New Tests
 

@@ -73,7 +73,7 @@ failing is not evidence of flakiness.
 php artisan bagisto:translations:check
 ```
 
-A key must exist in all 22 locales under `Resources/lang/`. One missing locale
+A key must exist in all 23 locales under `Resources/lang/`. One missing locale
 fails the workflow.
 
 **This checker only scans `packages/Webkul`.** For a package installed from
@@ -137,7 +137,7 @@ evidence that the gate passed.
 - **Running Pint over the whole repo and reporting someone else's debt.** Scope
   it: `vendor/bin/pint --test <changed paths>`.
 - **Claiming the translation gate passed after editing only `en`.** The checker
-  compares all 22 locales; editing one and running nothing is the usual path to
+  compares all 23 locales; editing one and running nothing is the usual path to
   a red pipeline.
 - **Treating a green translation gate as covering an extension.** It only scans
   `packages/Webkul`. For a symlinked extension it reports success without having

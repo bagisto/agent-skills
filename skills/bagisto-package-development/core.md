@@ -170,8 +170,7 @@ public function boot(): void
 ```php
 public function boot(): void
 {
-    $this->loadRoutesFrom(__DIR__ . '/../Routes/admin-routes.php');
-    $this->loadRoutesFrom(__DIR__ . '/../Routes/shop-routes.php');
+    $this->loadRoutesFrom(__DIR__ . '/../Routes/web.php');
 }
 ```
 

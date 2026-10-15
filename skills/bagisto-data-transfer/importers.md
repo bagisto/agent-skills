@@ -190,6 +190,6 @@ boundary go undetected, which is the classic symptom of a half-implemented
 1. Add the entry to `Config/importers.php` with a `title`, the `importer` FQCN
    and all four `sample_paths`.
 2. Ship the sample files at those paths.
-3. Add the title and every error message to all 22 locales under
+3. Add the title and every error message to all 23 locales under
    `data_transfer::`.
 4. Verify with `php artisan bagisto:translations:check`.

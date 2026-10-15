@@ -75,7 +75,7 @@ silently.
 - **The stored value is the option id.** `select` writes one id to
   `integer_value`; `multiselect` and `checkbox` write comma-separated ids to
   `text_value`.
-- **Labels are translatable**, so a new option needs its label in all 22 locales.
+- **Labels are translatable**, so a new option needs its label in all 23 locales.
 - **`sort_order` drives display order**, not insertion order.
 - **Deleting an option orphans the products using it** — their stored id no
   longer resolves. Check usage first.

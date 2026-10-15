@@ -4,7 +4,7 @@
 
 **Every segment of a translation key is kebab-case** — `eu-withdrawal.view.received-at`, never
 `eu_withdrawal.view.received_at` and never `receivedAt`. This holds at every level of the nested
-array, in all 22 locales.
+array, in all 23 locales.
 
 A key that mirrors an identifier is still kebab-case; adapt the lookup rather than the key. The
 Elasticsearch auth types are the worked example — the enum keeps the values it has already written to

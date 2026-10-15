@@ -32,8 +32,8 @@ packages/Webkul/<Name>/src/
 ├── Models/           # Eloquent models + Proxy classes
 ├── Providers/        # <Name>ServiceProvider + ModuleServiceProvider
 ├── Repositories/     # all database access
-├── Resources/        # views/, lang/{22 locales}/, assets/
-└── Routes/           # admin-routes.php, shop-routes.php
+├── Resources/        # views/, lang/{23 locales}/, assets/
+└── Routes/           # web.php (api.php for API routes)
 ```
 
 **Most packages carry only part of this, and that is deliberate.** Only

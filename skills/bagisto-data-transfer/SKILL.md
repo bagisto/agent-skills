@@ -77,7 +77,7 @@ it reads `$this->source`, so the same importer serves every format.
   fails on the file sizes this feature exists for.
 - **Go through repositories** for writes, as everywhere else in Bagisto.
 - **Every message goes through `trans()`** in the `data_transfer::` namespace,
-  in all 22 locales.
+  in all 23 locales.
 - **Declare `isLinkingRequired()` / `isIndexingRequired()` honestly.** Returning
   true adds a queued stage per batch; returning false when linking is needed
   leaves records half-related with no error.

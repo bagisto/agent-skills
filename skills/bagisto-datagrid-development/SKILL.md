@@ -127,7 +127,7 @@ The Blade side is one tag pointing at that same route:
 - **Every action and mass action is wrapped in `bouncer()->hasPermission(...)`.**
   An ungated action renders for admins who cannot perform it, and the grid is
   the most common place this is forgotten.
-- **Every `label` goes through `trans()`**, with the key added to all 22 locales.
+- **Every `label` goes through `trans()`**, with the key added to all 23 locales.
 - **A joined query needs `addFilter()` for every aliased column** — see
   [columns.md](columns.md). Without it, filtering and sorting on that column
   produce an ambiguous-column SQL error.

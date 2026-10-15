@@ -3,7 +3,7 @@
 ## Localization
 
 Owned by the `bagisto-coding-standards` skill — see its
-[localization.md](../bagisto-coding-standards/localization.md): 22 locales, `en`
+[localization.md](../bagisto-coding-standards/localization.md): 23 locales, `en`
 canonical, and `php artisan bagisto:translations:check`.
 
 ## DataGrid
@@ -246,8 +246,8 @@ $maxDays = core()->getConfigData('rma.settings.general.max_return_days');
 | `src/Models/` | Eloquent models |
 | `src/Models/*Proxy.php` | Concord model proxies |
 | `src/Repositories/` | Repository classes |
-| `src/Routes/admin-routes.php` | Admin routes |
-| `src/Routes/shop-routes.php` | Shop routes |
+| `src/Routes/web.php` | Web routes, admin and shop groups alike |
+| `src/Routes/api.php` | API routes, when the package has any |
 | `src/Http/Controllers/` | Controllers |
 | `src/Resources/views/` | Blade templates |
 | `src/Resources/lang/` | Translation files |
