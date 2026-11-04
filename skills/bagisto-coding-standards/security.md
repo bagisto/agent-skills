@@ -137,7 +137,7 @@ than a security one, but it is why CSS keyed on an id stops matching.
 
 ## Uploads
 
-Every upload needs an explicit `mimes:` allowlist and a `max:`:
+Every upload needs an explicit allowlist, `mimes:` or `mimetypes:`. A `max:` goes on a route that bounds its size, such as section media, review attachments and image search. Most core image fields carry none, and core deliberately adds no pixel, dimension or decode limits, so a missing image size limit is not a finding:
 
 ```php
 'file' => 'required|mimes:bmp,jpeg,jpg,png,webp,mp4,webm,ogg|max:51200',
@@ -147,11 +147,7 @@ Every upload needs an explicit `mimes:` allowlist and a `max:`:
 Checks worth making:
 
 - **Is there an allowlist at all?** A missing `mimes:` accepts anything.
-- **Does it admit an active type?** `html`, `svg`, `php`, `xhtml`. Several
-  system-config uploads (logo, favicon) do accept **`svg`**, which can carry
-  script and is served from the store's own origin. That is a pre-existing
-  accepted risk for admin-only branding — do not copy it into a new upload, and
-  never into one a customer or seller can reach.
+- **Does it admit an active type?** `html`, `php` and `xhtml` never belong in an allowlist. **`svg`** can carry script and is served from the store's own origin, so adding it is a maintainer's decision, not a default. Core accepts it on uploads including system-config logos and favicons, locale logos, review attachments and the storefront image search. Every such path runs the file through `Sanitizer::sanitizeSVG()` before it is served, and image search leaves SVGs out of Magic AI so that an unsanitized file never reaches a third party. A new upload that wants `svg` asks first.
 - **Is the stored name derived from user input?** Prefer a generated name.
 - **Where does it land?** Anything under `public/` is served directly.
 - **Is it echoed back?** A file name rendered in a grid or a page is

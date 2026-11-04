@@ -43,10 +43,7 @@ The PHP rules apply inside an `@php` block too, which Pint cannot reach.
 - **A condition with more than one clause goes multiline**, the boolean operator
   leading each line. Single-clause conditions stay inline. The rule keys off the
   number of clauses, not the line length.
-- **No comments inside method bodies**, object literals or markup — not even a
-  one-line "why". A non-obvious reason belongs in the method's docblock or the
-  commit message. If a line needs prose to be understood, extract a named
-  method instead. See [comments.md](comments.md).
+- **No comments inside method bodies** or object literals — not even a one-line "why". A non-obvious reason belongs in the method's docblock or the commit message. If a line needs prose to be understood, extract a named method instead. **Markup takes HTML arrow comments, `<!-- -->`**, for labels and reasons alike, so do not convert them to `{{-- --}}`. See [comments.md](comments.md).
 - **No docblock above the class**, ever — 98.7% of core classes have none. The
   docblock belongs on the method, property or constant, never on the class,
   interface, trait or enum.
@@ -89,6 +86,8 @@ raise the drift — these files are a snapshot, not the source of truth.
 That is different from a file that is simply wrong: a missing docblock in an
 untouched class is debt, not a convention. Match the *rule*, not the worst
 example of it.
+
+**Measure before a rule here changes existing code.** Count what the checkout does across the package, not in one file, with `git grep -c` or a short script. A rule the code follows overwhelmingly is the rule. One it ignores overwhelmingly is drift to raise, not code to rewrite. AGENTS.md outranks these files where the two disagree.
 
 ## Related
 

@@ -16,7 +16,7 @@ These are enforced by hand in `.blade.php` (Pint does **not** format Blade), so 
   ```
 - **Single attribute → inline**: `<x-admin::form.control-group.error control-name="admin_name" />`.
 - Attribute lines are **contiguous** — no blank lines between attributes inside one tag.
-- Loose attribute order: control-flow/Vue directives (`v-if`, `v-else`) → `class` / `:class` → plain & `aria-*` attributes → **event handlers (`@click`, `@change`) last**.
+- Loose attribute order, as the views have it: plain attributes (`type`, `name`, `aria-*`) and `class` → `:class` → directives (`v-if`, `v-else`, `v-pre`) and bound attributes → **event handlers (`@click`, `@change`) last**. A directive does not lead the tag: `class` comes before `v-if` (617 tags to 144) and before `v-pre` (131 to 0).
 
 **`@props` — align the `=>`**
 ```blade
@@ -61,7 +61,7 @@ own layer and keeps the Blade rules on this page.
 - Standard push block: `@pushOnce('scripts')` … `@endPushOnce` (note the capital `P` in `@endPushOnce`). `'styles'` is used rarely for CSS.
 
 **Comments** — owned by [comments.md](comments.md), including the syntax to
-use in each layer (`{{-- --}}`, `<!-- -->`, JSDoc in `<script>` and `<style>`).
+use in each layer (`<!-- -->` in markup, `{{-- --}}` rarely, JSDoc in `<script>` and `<style>`).
 
 ## Recipe: New Vue-backed component
 

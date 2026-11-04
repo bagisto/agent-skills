@@ -14,15 +14,11 @@ CSS. `vendor/bin/pint` enforces none of it.
 
 ## The bar
 
-**No comments inside a method body, an array literal, a route group or
-markup — not even a one-line "why".** The only comment this codebase wants is
-the docblock above a method, a property or a constant. **Not above the class.**
+**No comments inside a method body, an array literal or a route group — not even a one-line "why".** In code, the only comment this codebase wants is the docblock above a method, a property or a constant. **Not above the class.**
 
-A genuinely non-obvious reason belongs in that docblock or in the commit
-message. If a line needs prose to be followed, that is the signal to extract a
-well-named method, not to annotate it.
+A genuinely non-obvious reason belongs in that docblock or in the commit message. If a line needs prose to be followed, that is the signal to extract a well-named method, not to annotate it.
 
-This holds in PHP, Blade, JavaScript and Vue alike.
+This holds in PHP, JavaScript and Vue alike, including the `<script>` of a Blade file. **Markup is different:** it takes HTML arrow comments, `<!-- -->`, as [Syntax per layer](#syntax-per-layer) describes.
 
 ## Every method gets a docblock
 
@@ -163,20 +159,13 @@ class FulfilmentBooker
 class FulfilmentBooker
 ```
 
-Where does the "why" go, then? A genuine constraint goes **where it applies** — inside the method,
-under "Comment only what the code cannot say" below. Anything larger (history, what this replaced,
-why an earlier approach was wrong) belongs in the commit message or the PR.
+Where does the "why" go, then? A genuine constraint goes in the **docblock of the method it applies to**, as "Comment only what the code cannot say" below describes. Anything larger (history, what this replaced, why an earlier approach was wrong) belongs in the commit message or the PR.
 
 ## Comment only what the code cannot say
 
-The rule above is about **docblocks**. This one is about **explanation inside a method body**, which
-is where over-commenting accumulates.
+The rule above says where a docblock goes. This one says when a **reason** earns a place in it, because explanation is where over-commenting accumulates.
 
-Bagisto's own packages are sparsely commented, and generated code that is not will stand out
-immediately. Inside a method the default is **no comment**. Earn one.
-
-A comment is warranted when a reader who understands the code would still act wrongly without it —
-almost always because the code encodes a **constraint that is invisible locally**:
+Inside a method body there is **no comment**. Older code still has some, which is debt rather than a pattern to copy. A reason belongs in the method's docblock when a reader who understands the code would still act wrongly without it, almost always because the code encodes a **constraint that is invisible locally**:
 
 - A line that looks removable or simplifiable but is load-bearing (a join deliberately kept out of
   a base query, a filter written as a negation for a reason).
@@ -185,16 +174,19 @@ almost always because the code encodes a **constraint that is invisible locally*
 
 ```php
 /**
- * Joined only for these filters. Kept out of the base query because the `or` in its condition is
- * not indexable — MySQL scans the whole products table per candidate row.
+ * Join the variants for these filters only, because the `or` in the condition is not indexable
+ * and MySQL would scan the whole products table per candidate row.
  */
-$qb->leftJoin('products as variants', function ($join) {
-    $join->on('variants.parent_id', '=', 'products.id')
-        ->orOn('variants.id', '=', 'products.id');
-});
+protected function joinVariants($qb)
+{
+    $qb->leftJoin('products as variants', function ($join) {
+        $join->on('variants.parent_id', '=', 'products.id')
+            ->orOn('variants.id', '=', 'products.id');
+    });
+}
 ```
 
-Do **not** explain code that already reads clearly. These are all noise:
+Do **not** explain code that already reads clearly, wherever the comment sits. These are all noise:
 
 ```php
 /**
@@ -213,9 +205,7 @@ $total = $invoice->sub_total - $invoice->discount_amount;
 Event::dispatch('marketplace.product.update.after', $sellerProduct);
 ```
 
-Keep the ones you do write **short** — two or three lines. A paragraph explaining a symptom in
-detail belongs in the commit message or the PR, not above the statement. State the constraint, not
-the war story.
+Keep what you do write within the two-line ceiling. A paragraph explaining a symptom in detail belongs in the commit message or the PR. State the constraint, not the war story.
 
 ---
 
@@ -226,21 +216,30 @@ When a comment *is* warranted, its form depends on which layer it sits in.
 Two rules from the **bagisto-package-development** skill govern Blade too, and they pull in opposite directions — apply both:
 
 - **"Every method gets a docblock"** — a Vue `method` or `computed` in a `<script>` block is a method. It gets a `/** … */` describing what it does, as a capitalised sentence ending in a full stop. Same for any function inside an `@php` block.
-- **"Comment only what the code cannot say"** — *inside* a method body, and in the markup, the default is no comment. Explain a constraint that is invisible locally, a workaround, or a line that looks removable but is load-bearing; skip anything that merely restates the markup or the call.
+- **"Comment only what the code cannot say"** — *inside* a method body there is no comment, and a reason goes in the docblock. In the markup a comment labels a section or states a reason the markup cannot say; skip anything that merely restates it.
 
 What follows is the syntax to use for each layer.
 
 Each comment syntax belongs to its own layer — pick by *where* the comment sits, then follow the casing/punctuation rule for that layer.
 
-- **Blade `{{-- --}}`** — for Blade/PHP-level notes (file headers, `@php` logic, control-flow explanations). Never ships to the browser.
-  - If the comment is a **sentence** (or sentences), write it as prose with a **capital first letter and terminal punctuation**. Multi-line headers explain *what the view is and why*:
+- **HTML `<!-- -->`** — the comment form for markup, anywhere in a Blade file. Across the Admin and Shop views it outnumbers `{{-- --}}` about 100 to 1 (3,943 lines to 36), so it is the default, and an existing one is never converted.
+  - A **section label** is short and in **Title Case**, with no trailing period (3,606 labels to 322). Mirror the heading the block renders; a `?` on a question is fine:
     ```blade
-    {{--
-        The friendly "What kind of product?" create funnel (stepped scratch page only). It maps a
-        plain kind + a "Does it have variations?" answer to a Bagisto product type behind the scenes.
-    --}}
+    <!-- What kind of product? -->
+    <!-- Attribute Family (Searchable) -->
+    <!-- SKU -->
     ```
-  - If it is a **short label/title** (not a sentence), use **Title Case** with no trailing period: `{{-- Media --}}`, `{{-- Type-Specific Controls --}}`.
+  - A **reason** is a sentence with a capital and terminal punctuation, on one line or as a multi-line block, and it stays an arrow comment. Leave the wording of an existing one alone, because shortening it to a label loses the reason:
+    ```blade
+    <!-- Use Teleport to move the modal to the body. -->
+
+    <!--
+        Kept outside of the drawer, which is only rendered while open, so that the
+        metadata is submitted with the form whether the drawer was opened or not.
+    -->
+    ```
+
+- **Blade `{{-- --}}`** — rare, for a note that must not reach the browser, such as one about the `@php` block below it. Follow the same casing and punctuation as an arrow comment.
   - **Not inside `@php … @endphp`.** Blade does not strip its own comment there — it copies it verbatim into the compiled PHP, producing a parse error. Inside an `@php` block you are writing plain PHP, so use PHP comment syntax and the PHP conventions that go with it; put a `{{-- --}}` header *above* the block if the whole block needs explaining:
     ```blade
     {{-- Everything the wizard needs to describe its steps. --}}
@@ -250,14 +249,7 @@ Each comment syntax belongs to its own layer — pick by *where* the comment sit
     @endphp
     ```
 
-- **HTML `<!-- -->`** — section dividers *inside* an x-template / markup. Keep them short: a **Title-Cased** label or a natural question — mirror the heading the block renders. No trailing period on labels; a `?` on a question is fine:
-  ```blade
-  <!-- What kind of product? -->
-  <!-- Attribute Family (Searchable) -->
-  <!-- SKU -->
-  ```
-
-- **JS `/** … */` (JSDoc block)** — inside `<script>`. This is the **only** comment form used in the Vue layer — **no `//` line comments**. Every `computed`/`method` gets one, as a capitalized sentence ending in a full stop, **at most two lines** — the same ceiling as PHP. Statements *inside* a method get one only when genuinely non-obvious:
+- **JS `/** … */` (JSDoc block)** — inside `<script>`. This is the **only** comment form used in the Vue layer — **no `//` line comments**. Every `computed`/`method` gets one, as a capitalized sentence ending in a full stop, **at most two lines** — the same ceiling as PHP. Older views mostly lack them (794 of 1,075), which is debt rather than convention, so add them in a file you touch. Lifecycle hooks and watchers do not take one (163 of 163 hooks and 28 of 29 watchers have none). Statements *inside* a method get none either, so a reason goes here:
   ```js
   /**
    * The axis checkboxes only appear for a variable kind, once the seller has said "yes"
@@ -277,4 +269,4 @@ Each comment syntax belongs to its own layer — pick by *where* the comment sit
   #rma-steps .rma-step-radio { … }
   ```
 
-Rule of thumb: **sentence → capitalized + punctuated; bare title/label → Title Case, no period.** In `<script>`/`<style>` always use the `/** … */` block form, never `//` or bare `/* */`.
+Rule of thumb: **sentence → capitalized + punctuated; bare title/label → Title Case, no period.** In markup use `<!-- -->`. In `<script>`/`<style>` always use the `/** … */` block form, never `//` or bare `/* */`.
