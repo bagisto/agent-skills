@@ -225,6 +225,14 @@ manifest alone is not enough.
 - **Flash messages render twice with Laravel Debugbar on**, so
   `getByText("… successfully")` resolves to two elements locally and one in CI.
   Set `DEBUGBAR_ENABLED=false` for local E2E runs rather than adding `.first()`.
+- **The search results heading contains the query.** The page is headed
+  "These are results for : <query>" (`shop::app.search.title`, an `<h2>`), and a
+  `name` without `exact: true` is a substring match, so
+  `getByRole("heading", { name: productName })` passes there as well as on the
+  product page — an arrival check written that way passes on the page a lost
+  click never left. The product page renders the name as its `<h1>`
+  (`products/view.blade.php`); assert
+  `getByRole("heading", { level: 1, name: productName, exact: true })`.
 
 ## Synchronisation
 
@@ -294,6 +302,7 @@ changing anything:
 | A dropdown populates asynchronously | `selectOption` throws on a missing value | Assert the option exists, then select |
 | Flatpickr moves focus into its time picker after the calendar opens | A typed `11:00` lands as another time, only sometimes | `expect(hourSpinbutton).toBeFocused()` before filling the hour and minute |
 | A save is async | The next step acts on the old value | Assert the success message *and* the changed value |
+| A lazy image swaps its placeholder during the click | Playwright reports the click done, nothing navigates, and the next assertion fails on the page the click never left | Assert the link's `img` visible, then click; see [lost-clicks.md](lost-clicks.md) |
 | The JS bundle is stale | The component you target does not exist at all | `npm run build` in the package |
 
 The last one is not a synchronisation problem, and no amount of waiting fixes

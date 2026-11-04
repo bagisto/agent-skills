@@ -5,6 +5,7 @@
 - [Triage before touching the test](#triage-before-touching-the-test)
 - [Strict mode violations](#strict-mode-violations)
 - [Clicks that never land](#clicks-that-never-land)
+- [A click that reports done but never landed](#a-click-that-reports-done-but-never-landed)
 - [Locators that match nothing](#locators-that-match-nothing)
 - [Failures caused by leftover data](#failures-caused-by-leftover-data)
 - ["Flaky" is a conclusion, not a starting hypothesis](#flaky-is-a-conclusion-not-a-starting-hypothesis)
@@ -121,6 +122,14 @@ await this.page.mouse.up();
 A stray click near a drag handle can start a real drag and reorder the list. If a
 spec's later assertions drift for no visible reason, suspect this.
 
+## A click that reports done but never landed
+
+Playwright logs `click action done`, raises nothing, and the page never changes;
+the test fails at a later assertion. On the storefront this is a lazy image
+swapping its placeholder under the press, on **2.4** and **2.5** alike. The
+cause, the trace that confirms it, the fix and a harness that forces the race
+are in [lost-clicks.md](lost-clicks.md).
+
 ## Locators that match nothing
 
 - **Icon-font glyphs pollute the accessible name.** A tile rendered as an icon
@@ -174,7 +183,9 @@ Every one of those is also what a **deterministic** failure looks like when it
 depends on a narrow condition — the position of the clock, a slot boundary, a
 request still in flight, data another spec left. Two failures in this repository
 presented exactly that way and both had precise, reproducible causes: see
-[time-and-timezone.md](time-and-timezone.md).
+[time-and-timezone.md](time-and-timezone.md). A third was a storefront click
+lost to an image that finished loading mid-press: see
+[lost-clicks.md](lost-clicks.md).
 
 Classify with evidence, in this order:
 

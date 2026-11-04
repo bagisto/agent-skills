@@ -26,6 +26,7 @@ and locators, implement, then classify every failure before changing anything:
 | Design | [test-design.md](test-design.md), [admin-and-shop.md](admin-and-shop.md) | State transitions, a coverage matrix, an E2E-vs-Pest call per scenario |
 | Implement | [authoring.md](authoring.md), [test-data.md](test-data.md), [locators.md](locators.md), [assertions.md](assertions.md) | A spec and its page object |
 | Time-dependent work | [time-and-timezone.md](time-and-timezone.md) | Booking, rental, slot, availability and "today" coverage that holds in CI |
+| Clicking a storefront product card | [lost-clicks.md](lost-clicks.md) | A click that an image finishing its load cannot swallow |
 | Prove | [troubleshooting.md](troubleshooting.md) | A run that passes for the right reason, twice |
 | Gate | [quality-gate.md](quality-gate.md) | A completed checklist |
 
