@@ -56,6 +56,11 @@ The PHP rules apply inside an `@php` block too, which Pint cannot reach.
   rather than a literal `'like'` or a hand-written SQL function, and never resolve a conflict
   by catching a constraint violation — a failed statement aborts the whole PostgreSQL
   transaction. See [database-compatibility.md](database-compatibility.md).
+- **Every validation rule matches the column it writes.** `max:255` on a
+  `varchar(255)`, no 255 cap on a `text`, a range on a free integer or decimal,
+  and the joined value where several inputs share a column. MySQL truncates
+  what does not fit and PostgreSQL throws, so only the validator answers with a
+  422. See [laravel.md](laravel.md#every-rule-matches-the-column-it-writes).
 - **Events are dot-delimited strings**, not classes — `catalog.product.update.after`
   — and fire in `before`/`after` pairs. See [laravel.md](laravel.md).
 - **`:` binds a PHP value, `::` passes a literal `:` through to Vue**, and `::`

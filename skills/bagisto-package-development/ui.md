@@ -131,12 +131,12 @@ class ReturnRequestController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'customer_id' => 'required|integer',
-            'order_id' => 'required|integer',
-            'product_sku' => 'required|string',
-            'product_name' => 'required|string',
-            'product_quantity' => 'required|integer|min:1',
-            'reason' => 'nullable|string',
+            'customer_id' => 'required|integer|exists:customers,id',
+            'order_id' => 'required|integer|exists:orders,id',
+            'product_sku' => 'required|string|max:255',
+            'product_name' => 'required|string|max:255',
+            'product_quantity' => 'required|integer|min:1|max:2147483647',
+            'reason' => 'nullable|string|max:255',
         ]);
 
         $this->returnRequestRepository->create($data);
@@ -208,10 +208,10 @@ class ReturnRequestController extends Controller
     {
         $data = $request->validate([
             'order_id' => 'required|integer',
-            'product_sku' => 'required|string',
-            'product_name' => 'required|string',
-            'product_quantity' => 'required|integer|min:1',
-            'reason' => 'required|string',
+            'product_sku' => 'required|string|max:255',
+            'product_name' => 'required|string|max:255',
+            'product_quantity' => 'required|integer|min:1|max:2147483647',
+            'reason' => 'required|string|max:255',
         ]);
 
         $data['customer_id'] = auth()->id();

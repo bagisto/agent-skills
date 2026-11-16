@@ -39,6 +39,11 @@ A change should not merge with any of these outstanding.
   scoping to the owner.
 - A raw fragment (`whereRaw`, `selectRaw`, `DB::raw`, `orderByRaw`) built by
   interpolating a request value.
+- An input written to a column without a rule the column can hold — a
+  `varchar(255)` field with no `max:255`, a free integer with no range, lines
+  checked one by one that are stored joined. Open the migration and compare;
+  MySQL truncates in silence and PostgreSQL answers with a 500. The table is in
+  `bagisto-coding-standards` → `laravel.md` → Validation.
 
 **Security**
 

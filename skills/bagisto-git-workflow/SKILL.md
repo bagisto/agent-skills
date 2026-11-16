@@ -70,12 +70,39 @@ commit subject, not a diff summary.
 > matched.
 
 **Every entry is at most two lines — clear and to the point.** This is a hard
-ceiling, and it applies to both shapes:
+ceiling, and it applies to every shape:
 
 | Shape | When |
 |---|---|
-| `- <prose>` | A feature or a change with no reported issue |
+| `- <prose>` | A change with no reported issue |
+| `- #11500 [feature] - <prose>` | A new feature for a reported issue |
+| `- #11420 [enhancement] - <prose>` | An improvement to existing behaviour for a reported issue |
 | `- #11432 [fixed] - <prose>` | A fix for a reported issue |
+
+**Entries in a section run in four groups**, top to bottom:
+
+1. Entries with no issue number.
+2. `[feature]` entries, by issue number, highest first.
+3. `[enhancement]` entries, by issue number, highest first.
+4. `[fixed]` entries, by issue number, highest first.
+
+A new entry goes where its group and number place it, not simply at the top
+or the bottom of the section. Re-check the order after merging a release line
+in, since entries from both sides land side by side.
+
+```markdown
+## Unreleased
+
+- Reworked admin notifications into a feed any package can add to.
+
+- #11500 [feature] - The storefront can be limited to some countries.
+
+- #11343 [feature] - Admin notifications now report system problems.
+
+- #11575 [fixed] - An order for a product without managed stock can be shipped.
+
+- #11574 [fixed] - Editor content keeps its formatting on the storefront.
+```
 
 State the user-visible effect and stop. The cause, the internal mechanism and
 the history are **not** CHANGELOG material — they belong in the commit message

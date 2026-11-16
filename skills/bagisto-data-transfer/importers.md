@@ -76,7 +76,8 @@ public function validateRow(array $rowData, int $rowNumber): bool
     }
 
     $validator = Validator::make($rowData, [
-        'identifier' => 'required|string',
+        'identifier' => 'required|string|max:255',
+        'zip_code'   => 'nullable|required_if:is_zip_range,0|max:255',
         'country'    => 'required|string',
         'tax_rate'   => 'required|numeric|min:0.0001',
     ]);
@@ -85,7 +86,7 @@ public function validateRow(array $rowData, int $rowNumber): bool
 }
 ```
 
-Four rules this encodes:
+Five rules this encodes:
 
 - **Memoise.** The same row can be validated more than once; the guard on
   `$this->validatedRows` keeps that cheap and keeps errors from doubling.
@@ -93,6 +94,12 @@ Four rules this encodes:
   *exists*; an append run validates the payload. Applying append rules to a
   delete file rejects perfectly good rows.
 - **Use Laravel's validator** for field rules rather than hand-rolled `if`s.
+- **Match each rule to the column the cell is written to** — `max:255` for a
+  `varchar(255)`, the slug rule for a url key, a range for a number. An import
+  never passes through a FormRequest, so a cell the column cannot hold fails the
+  whole batch on PostgreSQL, or is cut short on MySQL, unless the row is refused
+  here first. The table is in `bagisto-coding-standards` → `laravel.md` →
+  Validation.
 - **No side effects, no writes.** Validation runs over the entire file before
   anything is imported, and under `stop-on-errors` may be all that runs.
 

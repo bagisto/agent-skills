@@ -8,6 +8,7 @@
 - [Configuration and `env()`](#configuration-and-env)
 - [The global helpers](#the-global-helpers)
 - [Validation](#validation)
+  - [Every rule matches the column it writes](#every-rule-matches-the-column-it-writes)
 - [Container bindings](#container-bindings)
 - [Queues](#queues)
 - [What not to reach for](#what-not-to-reach-for)
@@ -123,6 +124,57 @@ public function update(CategoryRequest $request, int $id): JsonResponse
 Inline `$request->validate()` exists in older controllers. Do not add more —
 and a mass action validates too, since its `indices` array arrives from the
 browser.
+
+### Every rule matches the column it writes
+
+Read the column before writing the rule — its migration, including any later
+`->change()`, or the live schema — and give the field the rule that column
+needs. A value the column cannot hold does not fail safely: MySQL outside
+strict mode cuts it short or coerces it without a word, while PostgreSQL and
+strict MySQL throw a `QueryException`, which reaches the user as a 500 and
+aborts the surrounding transaction. Only the validator can answer with a 422 on
+the field that is wrong.
+
+| Column | Rule |
+|---|---|
+| `string('code')` — `varchar(255)` | `string\|max:255` |
+| `string('url_path', 2048)`, `char('code', 3)` | the length the migration gives — `max:2048`, `size:3` |
+| `text`, `mediumText`, `longText`, `json` | no `max:255` — the column is not 255 wide. Leave it unbounded, or bound it for a product reason and say so |
+| `integer`, `unsignedInteger`, `bigInteger` | `integer`, `min:0` when unsigned, and `max:2147483647` on free input such as a position or a quantity — PostgreSQL has no unsigned type, so that is the ceiling on every engine |
+| `decimal(12,4)` | `numeric` with `new Decimal` for the four places, `min:0` when negative makes no sense, and `max:99999999.9999` on free input. Without `numeric` or `integer`, `min` and `max` measure the string's length rather than the number |
+| `boolean` | `boolean` |
+| `date`, `dateTime` | `date`, or `date_format:` for the format the column stores |
+| An enum, or a fixed set of strings | `in:`, `Rule::in()` or `Rule::enum()` |
+| A foreign key | `integer\|exists:table,id`, or resolve it through the repository |
+| `nullable()` | `nullable`; a non-null column with no default is `required` |
+| A unique index | `unique:table,column,{id}`, with the note on case below |
+
+Four places where the field is not the column:
+
+- **Several inputs stored in one column.** Street lines are joined with
+  `PHP_EOL` into `address`, so validate the joined value with
+  `Webkul\Core\Rules\AddressLines`, not each line on its own.
+- **A translated field** arrives as `{$locale}.name`. Key its rule that way, and
+  map the key to the field's label in `attributes()`, or the message reads
+  "The en.name field".
+- **An importer** never passes through a FormRequest. `validateRow()` carries the
+  same limits, so an over-long cell is a row error rather than a failed batch —
+  see the `bagisto-data-transfer` skill. The REST and GraphQL API mirror the
+  core rules for the same reason.
+- **A unique value compared across databases.** MySQL's collation treats `ABC`
+  and `abc` as equal and PostgreSQL does not, so a `unique` rule lets through on
+  PostgreSQL a value MySQL's index refuses. Compare on `LOWER()` where the
+  catalogue treats the value case-insensitively, as it does SKUs.
+
+Reuse a rule from `Webkul\Core\Rules` before writing one — `Slug`, `Code`,
+`Decimal`, `PhoneNumber`, `PostCode`, `AddressLines`. A matching rule on the
+`v-field` (`rules="required|max:255"`) answers sooner, but it is a courtesy; the
+server rule is the one that holds.
+
+The checkout applies the length rule throughout — `max:255` sits on more than
+160 rules across 41 request and controller files — but not yet the numeric
+ranges. Hold new and touched rules to the whole table, and raise the rest rather
+than sweeping it.
 
 ## Container bindings
 

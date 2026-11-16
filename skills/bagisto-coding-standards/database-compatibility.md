@@ -20,6 +20,7 @@ abstractions:
   }
   ```
 
+- **A value longer than its column**: MySQL outside strict mode truncates it in silence, while PostgreSQL and strict MySQL throw and abort the transaction, so the same input saves on one store and fails on another. Validate against the column instead — see [laravel.md](laravel.md#every-rule-matches-the-column-it-writes).
 - **Boolean columns**: add `$casts` with `'boolean'`. For the write side, use repository validation or model mutators.
 - **DB-specific SQL**: use `db_grammar()` methods (`concat`, `groupConcat`, `findInSet`, `dateFormat`, `jsonExtractText`, `jsonExtractNumeric`, `caseInsensitiveLike`, `caseSensitiveLike`, and the rest of `Webkul\Core\Contracts\DatabaseGrammar`).
 - **CASE expression types**: both branches must return the same type. Use `CAST(id AS VARCHAR(255))` — `CAST(... AS CHAR)` truncates to 1 character on PostgreSQL.
